@@ -1,6 +1,5 @@
 import faker from '@faker-js/faker';
 import { PrismaClient, Role } from '@prisma/client';
-import { users } from './seeds/users';
 
 const prisma = new PrismaClient();
 
