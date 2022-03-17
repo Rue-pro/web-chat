@@ -1,13 +1,26 @@
-import { PrismaClient } from '@prisma/client';
+import faker from '@faker-js/faker';
+import { PrismaClient, Role } from '@prisma/client';
 import { users } from './seeds/users';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.createMany({
-    data: users,
-  });
-  console.log('Added users data');
+  console.info('Delete users data');
+  await prisma.user.deleteMany();
+
+  console.info('Add users data');
+  for (let i = 0; i < 100; i++) {
+    await prisma.user.create({
+      data: {
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        phone: faker.phone.phoneNumber(),
+        password: faker.internet.password(),
+        avatar: faker.image.avatar(),
+        role: faker.helpers.randomize(Object.values(Role)),
+      },
+    });
+  }
 }
 
 main()

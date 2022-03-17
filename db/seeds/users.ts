@@ -1,22 +1,21 @@
 import { Role } from '@prisma/client';
+import faker from '@faker-js/faker';
 
 export const users = [
   {
-    name: 'Alina',
-    email: 'asas@efwe.we',
+    name: faker.name.findName(),
+    email: faker.internet.email(),
     phone: 'qedq',
-    password: 'adasdad',
-    avatar: null,
-    avatarId: null,
+    password: faker.internet.password(),
+    avatar: faker.image.avatar(),
     role: Role.DEVELOPER,
   },
   {
-    name: 'Alina',
-    email: 'asafs2@efwe.we',
+    name: faker.name.findName(),
+    email: faker.internet.email(),
     phone: 'qedq2',
-    password: 'adasdad',
-    avatar: null,
-    avatarId: null,
-    role: Role.DEVELOPER,
+    password: faker.internet.password(),
+    avatar: faker.image.avatar(),
+    role: Role.ADMIN,
   },
 ];
