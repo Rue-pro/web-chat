@@ -1,3 +1,4 @@
+import { ApiPageResponse } from './../page/api-page-response';
 import { UserEntity } from './entities/user.entity';
 import {
   Controller,
@@ -7,13 +8,23 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ConnectionArgsDto } from 'src/page/connection-args.dto';
+import { Page } from 'src/page/page.dto';
 
 @Controller('users')
+@ApiTags('users')
+@ApiExtraModels(Page)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -29,6 +40,12 @@ export class UsersController {
   async findAll() {
     const users = await this.usersService.findAll();
     return users.map((user) => new UserEntity(user));
+  }
+
+  @Get('page')
+  @ApiPageResponse(UserEntity)
+  async findPage(@Query() connectionArgs: ConnectionArgsDto) {
+    return this.usersService.findPage(connectionArgs);
   }
 
   @Get(':id')
@@ -51,4 +68,7 @@ export class UsersController {
     const user = await this.usersService.remove(id);
     return new UserEntity(user);
   }
+}
+function model(model: any): string {
+  throw new Error('Function not implemented.');
 }
