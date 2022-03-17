@@ -10,7 +10,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Food {
-  id   Int    @id @default(autoincrement())
+model User {
+  id Int    @id @default(autoincrement())
   name String
+  email String @unique
+  phone String @unique @db.VarChar(11)
+  password String
+  avatar String?
+  avatarId String?
+  role Role @default(DEVELOPER)
+}
+
+enum Role {
+  USER
+  ADMIN
+  DEVELOPER
 }

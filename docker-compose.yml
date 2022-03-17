@@ -10,21 +10,6 @@ services:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
-  nest-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: nest-api
-    restart: always
-    ports:
-      - 3000:3000
-    depends_on:
-      - postgres
-    env_file:
-      - .env
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
   adminer:
     image: adminer
     restart: always

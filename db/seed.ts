@@ -1,0 +1,20 @@
+import { PrismaClient } from '@prisma/client';
+import { users } from './seeds/users';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  await prisma.user.createMany({
+    data: users,
+  });
+  console.log('Added users data');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
