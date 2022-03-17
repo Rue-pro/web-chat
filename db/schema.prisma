@@ -14,10 +14,9 @@ model User {
   id String    @id @default(cuid())
   name String
   email String @unique
-  phone String @unique @db.VarChar(11)
+  phone String @unique
   password String
   avatar String?
-  avatarId String?
   role Role @default(DEVELOPER)
 }
 
