@@ -8,11 +8,11 @@ const environment = process.env.NODE_END || 'development';
 @Module({
   imports: [
     PrismaModule,
-    AuthModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${environment}`,
       isGlobal: true,
     }),
+    AuthModule,
     UsersModule,
   ],
 })
