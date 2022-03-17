@@ -29,8 +29,10 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.2.0",
+    "@nestjs/config": "^1.2.0",
     "@nestjs/core": "^8.2.0",
     "@nestjs/platform-express": "^8.2.0",
+    "@nestjs/platform-fastify": "^8.4.1",
     "@prisma/client": "~3.4.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -73,5 +75,9 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "schema": "db/schema.prisma",
+    "seed": "ts-node db/seed.ts"
   }
 }
