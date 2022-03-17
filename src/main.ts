@@ -1,4 +1,5 @@
-import { NestFactory } from '@nestjs/core';
+import { PrismaClientExceptionFilter } from './prisma-client-exception.filter';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -14,6 +15,9 @@ async function bootstrap() {
   );
 
   app.useGlobalPipes(new ValidationPipe());
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   setupSwagger(app);
 
