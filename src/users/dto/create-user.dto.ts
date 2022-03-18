@@ -27,6 +27,6 @@ export class CreateUserDto {
   avatar?: string;
 
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: Role.DEVELOPER, enum: Role })
   role?: Role;
 }
