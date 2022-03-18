@@ -21,6 +21,10 @@ export class UserEntity implements User {
   @ApiProperty()
   phone: string;
 
+  /**
+   * TODO
+   * Make Exclude work, now it's not working
+   */
   @Exclude({ toPlainOnly: true })
   @ApiProperty()
   password: string;
