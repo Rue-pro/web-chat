@@ -1,3 +1,3 @@
-import { handler as charactersHandler } from './characters'
+import { handler as usersHandler } from './users'
 
-export const handlers = [charactersHandler]
+export const handlers = [usersHandler]

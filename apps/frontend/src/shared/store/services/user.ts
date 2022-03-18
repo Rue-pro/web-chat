@@ -1,19 +1,19 @@
-import { Character } from './../../types'
+import { User } from './../../types'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { MARVEL_API } from '../../environment-variables'
 
-const defaultCharacters: Character[] = []
+const defaultUsers: User[] = []
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({ baseUrl: MARVEL_API }),
   endpoints: builder => ({
-    getUsers: builder.query<Character[], string>({
-      query: () => `characters`,
+    getUsers: builder.query<User[], string>({
+      query: () => `users`,
       transformResponse: (res, meta, arg) => {
-        if (!isCharactersResponse(res)) return defaultCharacters
-        console.log(isCharactersResponse(res))
-        if (!isCharacters(res.data.results)) return defaultCharacters
+        if (!isUsersResponse(res)) return defaultUsers
+        console.log(isUsersResponse(res))
+        if (!isUsers(res.data.results)) return defaultUsers
         console.log('res.results', res.data.results)
         return res.data.results
       },
@@ -21,7 +21,7 @@ export const userApi = createApi({
   }),
 })
 
-type RawCharactersResponse = {
+type RawUsersResponse = {
   data: {
     count: number
     limit: number
@@ -31,33 +31,31 @@ type RawCharactersResponse = {
   }
 }
 
-function isCharactersResponse(res: unknown): res is RawCharactersResponse {
-  console.group('isCharactersResponse')
+function isUsersResponse(res: unknown): res is RawUsersResponse {
+  console.group('isUsersResponse')
   console.log(res)
   console.groupEnd()
   if (typeof res !== 'object' || !res) return false
 
-  if (!(res as RawCharactersResponse).data) return false
+  if (!(res as RawUsersResponse).data) return false
   return true
 }
 
-function isCharacter(item: unknown): item is Character {
+function isUser(item: unknown): item is User {
   return (
-    (item as Character).id !== undefined &&
-    (item as Character).name !== undefined &&
-    (item as Character).thumbnail !== undefined &&
-    (item as Character).thumbnail.path !== undefined &&
-    (item as Character).thumbnail.extension !== undefined
+    (item as User).id !== undefined &&
+    (item as User).name !== undefined &&
+    (item as User).avatar !== undefined
   )
 }
 
-function isCharacters(items: unknown): items is Character[] {
-  console.log('isCharacters')
+function isUsers(items: unknown): items is User[] {
+  console.log('isUsers')
   if (!Array.isArray(items)) {
     return false
   }
-  return items.reduce((isCharacters: boolean, item) => {
-    return isCharacters && isCharacter(item)
+  return items.reduce((isUsers: boolean, item) => {
+    return isUsers && isUser(item)
   }, true)
 }
 

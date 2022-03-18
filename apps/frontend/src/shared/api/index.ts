@@ -1,17 +1,17 @@
-import { MARVEL_API } from '../environment-variables'
-import { Character } from '../types'
+import { API } from '../environment-variables'
+import { User } from '../types'
 
-export type TGetCharacters = {
-  characters: Character[]
+export type TGetUsers = {
+  Users: User[]
   total: number
 }
 
-export function getCharacters(): Promise<TGetCharacters> {
-  return fetch(`${MARVEL_API}/characters`)
+export function getUsers(): Promise<TGetUsers> {
+  return fetch(`${API}/users`)
     .then(res => res.json())
     .then(json => json)
     .catch(error => {
-      console.error('getCharacters', error)
+      console.error('getUsers', error)
       return error
     })
 }
