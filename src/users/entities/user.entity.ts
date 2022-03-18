@@ -28,7 +28,7 @@ export class UserEntity implements User {
   @ApiProperty({ required: false, nullable: true })
   avatar: string;
 
-  @ApiProperty({ default: Role.DEVELOPER })
+  @ApiProperty({ default: Role.DEVELOPER, enum: Role })
   role: Role;
 
   constructor(partial: Partial<UserEntity>) {
