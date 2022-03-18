@@ -9,11 +9,13 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiExtraModels,
   ApiOkResponse,
@@ -21,14 +23,17 @@ import {
 } from '@nestjs/swagger';
 import { ConnectionArgsDto } from 'src/page/connection-args.dto';
 import { Page } from 'src/page/page.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('users')
 @ApiTags('users')
+@ApiBearerAuth()
 @ApiExtraModels(Page)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
@@ -36,6 +41,7 @@ export class UsersController {
   }
 
   @Get('')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [UserEntity] })
   async findAll() {
     const users = await this.usersService.findAll();
