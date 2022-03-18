@@ -1,33 +1,11 @@
-# NestJS Prisma Docker
+# Monorepo Template
 
-> DON'T commit .env files into version control, add `.env` to `.gitignore`. `.env` files are added here as an example.
+Nest + React + Postgres -> Docker
 
-Develop the Nest application
+NestJS repo in apps/backend
+React repo in apps/frontend
+Shared library example in libs/common
 
-```bash
-npm install
+Install dependencies for all with `npm install`
 
-cp .env.example .env
-
-npx prisma generate
-
-npm run start:dev
-```
-
-## Docker File
-
-Get started by running
-
-```bash
-docker build -t nest-api .
-
-docker run -p 3000:3000 --env-file .env -d nest-api
-```
-
-## Docker Compose
-
-```bash
-docker-compose up
-# or detached
-docker-compose up -d
-```
+run on docker with `docker-compose up`
