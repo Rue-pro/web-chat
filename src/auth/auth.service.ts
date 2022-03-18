@@ -9,7 +9,10 @@ import { Auth } from './entity/auth.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async login(email: string, password: string): Promise<Auth> {
     const user = await this.prisma.user.findUnique({ where: { email: email } });
@@ -27,5 +30,9 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign({ userId: user.id }),
     };
+  }
+
+  validateUser(userId: string) {
+    return this.prisma.user.findUnique({ where: { id: userId } });
   }
 }
