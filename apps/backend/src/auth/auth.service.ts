@@ -21,6 +21,10 @@ export class AuthService {
       throw new NotFoundException(`No user found for email: ${email}`);
     }
 
+    /**
+     * TODO
+     * Add encription by bcrypt
+     */
     const passwordValid = user.password === password;
 
     if (!passwordValid) {
