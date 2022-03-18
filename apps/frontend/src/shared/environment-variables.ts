@@ -6,3 +6,4 @@ const checkedEnvVariable = (envVariable: string): string => {
 }
 
 export const MARVEL_API = checkedEnvVariable('MARVEL_API')
+export const API = checkedEnvVariable('MARVEL_API')

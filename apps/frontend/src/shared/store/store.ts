@@ -1,7 +1,7 @@
 import { userApi } from './services/user'
 import { combineReducers } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import charactersReducer from './reducers/charactersSlice'
+import charactersReducer from './reducers/usersSlice'
 import { myLogger } from './middleware/log'
 import { myErrorCatcher } from './middleware/errorCatcher'
 import { configureStore } from '@reduxjs/toolkit'
