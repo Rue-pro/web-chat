@@ -1,4 +1,4 @@
-import { User } from './../../types'
+import { User, UserType } from './../../types'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { MARVEL_API } from '../../environment-variables'
 
@@ -11,6 +11,12 @@ export const userApi = createApi({
     getUsers: builder.query<User[], string>({
       query: () => `users`,
       transformResponse: (res, meta, arg) => {
+        const result = UserType.validate(res)
+        if (result.success) {
+          console.log('success')
+        } else {
+          console.log('failure')
+        }
         if (!isUsersResponse(res)) return defaultUsers
         console.log(isUsersResponse(res))
         if (!isUsers(res.data.results)) return defaultUsers
@@ -60,3 +66,9 @@ function isUsers(items: unknown): items is User[] {
 }
 
 export const { useGetUsersQuery } = userApi
+
+function makeUser() {
+  return
+} // --> ReturnType<
+
+//iots, typedcontracts, runtypes

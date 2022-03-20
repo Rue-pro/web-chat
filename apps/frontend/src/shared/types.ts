@@ -1,3 +1,5 @@
+import { Record, String, Static } from 'runtypes'
+
 export type Toast = {
   type: 'info' | 'success' | 'warning' | 'error' | 'default'
   content: string
@@ -19,9 +21,9 @@ export type Character = {
   }
 }
 
-export type User = {
-  id: string
-  name: string
+export const UserType = Record({
+  id: String,
+  name: String,
   /**
    * TODO
    * Make avatar type looks like
@@ -30,5 +32,9 @@ export type User = {
    *  extension: 'jpg' | 'png' | 'gif'
    * }
    */
-  avatar: string
-}
+  avatar: String,
+})
+
+export type User = Static<typeof UserType>
+
+// type guard
