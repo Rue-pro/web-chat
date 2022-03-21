@@ -1,12 +1,12 @@
-import { User, UserType } from './../../types'
+import { User, UserType } from '../../api/types'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { MARVEL_API } from '../../environment-variables'
+import { API } from '../../config/environment-variables'
 
 const defaultUsers: User[] = []
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({ baseUrl: MARVEL_API }),
+  baseQuery: fetchBaseQuery({ baseUrl: API }),
   endpoints: builder => ({
     getUsers: builder.query<User[], string>({
       query: () => `users`,
@@ -66,9 +66,5 @@ function isUsers(items: unknown): items is User[] {
 }
 
 export const { useGetUsersQuery } = userApi
-
-function makeUser() {
-  return
-} // --> ReturnType<
 
 //iots, typedcontracts, runtypes

@@ -5,5 +5,4 @@ const checkedEnvVariable = (envVariable: string): string => {
   return envVarFullName
 }
 
-export const MARVEL_API = checkedEnvVariable('MARVEL_API')
-export const API = checkedEnvVariable('MARVEL_API')
+export const API = checkedEnvVariable('API')
