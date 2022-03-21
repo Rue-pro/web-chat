@@ -1,4 +1,4 @@
-import { Component, useEffect } from 'react'
+import { JSXElementConstructor, useEffect } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { injectStyle } from 'react-toastify/dist/inject-style'
 
@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   injectStyle()
 }
 
-export const withToasts = (Component: Component) => () => {
+export const withToasts = (Component: JSXElementConstructor<any>) => () => {
   useEffect(() => {
     toast.info('🦄 Wow so easy!')
   }, [])

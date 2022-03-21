@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals'
 import store from './shared/store/store'
 
 if (process.env.NODE_ENV === 'development') {
-  const { worker } = require('./fixtures/browser')
+  const { worker } = require('./shared/api/fixtures/browser')
   worker.start()
 }
 
