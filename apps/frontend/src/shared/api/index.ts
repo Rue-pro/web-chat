@@ -1,5 +1,5 @@
-import { API } from '../environment-variables'
-import { User } from '../types'
+import { API } from '../config/environment-variables'
+import { User } from './types'
 
 export type TGetUsers = {
   Users: User[]

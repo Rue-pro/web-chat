@@ -1,5 +1,5 @@
 import { rest } from 'msw'
-import { API } from '../../shared/environment-variables'
+import { API } from '../../../config/environment-variables'
 
 export const handler = rest.get(`${API}/users`, (req, res, ctx) => {
   return res(

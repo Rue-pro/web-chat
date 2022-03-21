@@ -1,12 +1,8 @@
 import React from 'react'
-import Toasts from './toasts'
+import { withProviders } from './providers'
 
 const App: React.FC = () => {
-  return (
-    <>
-      <Toasts />
-    </>
-  )
+  return <div>Page</div>
 }
 
-export default App
+export default withProviders(App)
