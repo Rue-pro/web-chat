@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, ErrorInfo, JSXElementConstructor, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
@@ -14,7 +14,6 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public static getDerivedStateFromError(_: Error): State {
-    // Update state so the next render will show the fallback UI.
     return { hasError: true }
   }
 
@@ -31,6 +30,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export const withErrorBoundary = (component: Component) => () => {
-  return <ErrorBoundary>{component()}</ErrorBoundary>
-}
+export const withErrorBoundary =
+  (Component: JSXElementConstructor<any>) => () => {
+    return (
+      <ErrorBoundary>
+        <Component />
+      </ErrorBoundary>
+    )
+  }
