@@ -1,4 +1,5 @@
-import { Component, ErrorInfo, JSXElementConstructor, ReactNode } from 'react'
+import { Alert } from '@mui/material'
+import { Component, ErrorInfo, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
@@ -23,18 +24,15 @@ class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <h1>Sorry.. there was an error</h1>
+      return <Alert severity="error">Sorry.. something went wrong</Alert>
     }
 
     return this.props.children
   }
 }
 
-export const withErrorBoundary =
-  (Component: JSXElementConstructor<any>) => () => {
-    return (
-      <ErrorBoundary>
-        <Component />
-      </ErrorBoundary>
-    )
-  }
+const withErrorBoundary = (component: () => Component) => () => {
+  return <ErrorBoundary>{component()}</ErrorBoundary>
+}
+
+export default withErrorBoundary
