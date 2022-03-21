@@ -1,5 +1,6 @@
 import compose from 'compose-function'
-import { withErrorBoundary } from './withErrorBoundary'
-import { withToasts } from './withToasts'
+import withRouter from './withRouter'
+import withErrorBoundary from './withErrorBoundary'
+import withToasts from './withToasts'
 
-export const withProviders = compose(withErrorBoundary, withToasts)
+export const withProviders = compose(withErrorBoundary, withRouter, withToasts)
