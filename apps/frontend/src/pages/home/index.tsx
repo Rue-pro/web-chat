@@ -2,7 +2,7 @@ import React from 'react'
 
 const HomePage: React.FC = () => (
   <>
-    <div>Home page</div>
+    <div>Protected page</div>
   </>
 )
 

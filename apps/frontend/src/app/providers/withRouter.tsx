@@ -1,10 +1,11 @@
 import { Component, Suspense } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import { CircularProgress } from '@mui/material'
 
 const withRouter = (component: () => Component) => () =>
   (
     <BrowserRouter>
-      <Suspense fallback={<div>Гружу</div>}>{component()}</Suspense>
+      <Suspense fallback={<CircularProgress />}>{component()}</Suspense>
     </BrowserRouter>
   )
 
