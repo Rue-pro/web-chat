@@ -1,4 +1,4 @@
-import { emptyApi } from './emptySplitApi'
+import { emptyApi } from './emptyApi'
 import { Record, String, Static } from 'runtypes'
 
 type LoginData = {
@@ -35,7 +35,7 @@ const extendedApi = emptyApi
         },
       }),
       upateJWTToken: build.query<string, void>({
-        query: () => `/auth/refresh`,
+        query: () => ({ url: `/auth/refresh`, method: 'GET' }),
         transformResponse: (res, meta, arg) => {
           return ''
         },

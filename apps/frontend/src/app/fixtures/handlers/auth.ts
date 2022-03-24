@@ -1,7 +1,7 @@
 import { rest } from 'msw'
-import { API } from '../../../shared/config/environment-variables'
+import { API_URL } from '../../../shared/config/environment-variables'
 
-export const handler = rest.post(`${API}/auth/login`, (req, res, ctx) => {
+export const handler = rest.post(`${API_URL}/auth/login`, (req, res, ctx) => {
   return res(
     ctx.delay(2000),
     ctx.status(200),
