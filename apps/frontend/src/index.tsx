@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import App from './app'
+import store from './app/store/store'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
-import store from './shared/store/store'
 
 if (process.env.NODE_ENV === 'development') {
   const { worker } = require('./shared/api/fixtures/browser')
