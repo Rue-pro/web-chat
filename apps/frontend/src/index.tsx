@@ -7,7 +7,7 @@ import './index.css'
 import reportWebVitals from './reportWebVitals'
 
 if (process.env.NODE_ENV === 'development') {
-  const { worker } = require('./shared/api/fixtures/browser')
+  const { worker } = require('./app/fixtures/browser')
   worker.start()
 }
 
