@@ -5,4 +5,4 @@ const checkedEnvVariable = (envVariable: string): string => {
   return envVarFullName
 }
 
-export const API = checkedEnvVariable('API')
+export const API_URL = checkedEnvVariable('API_URL')

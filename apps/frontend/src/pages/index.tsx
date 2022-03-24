@@ -1,20 +1,26 @@
 import { lazy } from 'react'
-import { Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
+import AuthGuardedRoute from './guards/AuthGuardedRoute'
+import { PATHS } from './routes'
 
 const HomePage = lazy(() => import('./home'))
 const Error404Page = lazy(() => import('./error404'))
-
-// TODO: Сделать работу с хедером на уровне pages
-
-// TODO: Add auth zone restricting
-// TODO: Add query-params provider
-// TODO: decompose into app/hocs? (withRouter)
+const LoginPage = lazy(() => import('./login'))
 
 const Pages = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/404" element={<Error404Page />} />
+      <Route
+        path={PATHS.HomePage}
+        element={
+          <AuthGuardedRoute>
+            <HomePage />
+          </AuthGuardedRoute>
+        }
+      />
+      <Route path={PATHS.NotFoundPage} element={<Error404Page />} />
+      <Route path={PATHS.LoginPage} element={<LoginPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

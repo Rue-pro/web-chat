@@ -8,15 +8,14 @@ import { withProviders } from './providers'
  * ErvEiVySQZSyPTh
  */
 const App: React.FC = () => {
-  const [getJWTToken] = useGetJWTTokenMutation()
-
+  const [getJWTToken, { data }] = useGetJWTTokenMutation()
   useEffect(() => {
     getJWTToken({
       email: 'Sean_Quigley99@gmail.com',
       password: 'ErvEiVySQZSyPTh',
     })
   }, [])
-
+  console.log(data)
   return <Pages />
 }
 
