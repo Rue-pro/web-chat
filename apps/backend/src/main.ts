@@ -14,6 +14,11 @@ async function bootstrap() {
     new FastifyAdapter({ logger: true }),
   );
 
+  app.enableCors({
+    allowedHeaders: '*',
+    origin: '*',
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
