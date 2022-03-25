@@ -11,7 +11,7 @@ APIInstance.interceptors.request.use(({ ...config }) => {
   console.log('axios.interceptors')
   console.log(config)
   // X-Authorization
-  const accessToken = 'Bearer: 2131231' // getToken from the store
+  const accessToken = '2131231' // getToken from the store
   if (!accessToken) return config
 
   return {

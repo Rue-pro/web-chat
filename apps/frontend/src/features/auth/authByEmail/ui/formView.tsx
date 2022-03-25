@@ -18,7 +18,10 @@ const FormView = ({
   errors,
   submitForm,
   isSubmitting,
+  ...rest
 }: FormViewProps): React.ReactElement => {
+  console.log(isSubmitting)
+  console.log(rest)
   return (
     <Form>
       <div>

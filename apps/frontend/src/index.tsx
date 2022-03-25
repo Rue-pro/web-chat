@@ -6,10 +6,10 @@ import store from './app/store/store'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 
-if (process.env.NODE_ENV === 'development') {
+/*if (process.env.NODE_ENV === 'development') {
   const { worker } = require('./app/fixtures/browser')
   worker.start()
-}
+}*/
 
 ReactDOM.render(
   <React.StrictMode>
