@@ -1,7 +1,9 @@
-import { Record, String, Static } from 'runtypes'
+import { Record, String, Static, Number, Boolean } from 'runtypes'
+
+type ToastType = 'info' | 'success' | 'warning' | 'error' | 'default'
 
 export type Toast = {
-  type: 'info' | 'success' | 'warning' | 'error' | 'default'
+  type: ToastType
   content: string
 }
 
@@ -10,18 +12,10 @@ export type AvatarExtension = 'jpg' | 'png' | 'gif'
 export type Avatar = {
   path: string
   extension: AvatarExtension
+  alt: string
 }
 
-export type Character = {
-  id: number
-  name: string
-  thumbnail: {
-    path: string
-    extension: 'jpg'
-  }
-}
-
-export const UserType = Record({
+export const UserScheme = Record({
   id: String,
   name: String,
   /**
@@ -35,6 +29,21 @@ export const UserType = Record({
   avatar: String,
 })
 
-export type User = Static<typeof UserType>
+export type User = Static<typeof UserScheme>
 
-// type guard
+export const MessageSheme = Record({
+  id: Number,
+  text: String,
+  sendTime: String,
+  isRead: Boolean,
+  user: UserScheme,
+})
+
+export type Message = Static<typeof MessageSheme>
+
+export const SessionScheme = Record({
+  accessToken: String,
+  refreshToken: String,
+})
+
+export type Session = Static<typeof SessionScheme>
