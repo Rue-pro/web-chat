@@ -5,6 +5,9 @@ type Props = any
 
 export const myErrorCatcher: Props =
   (store: Props) => (next: Props) => (action: Props) => {
+    console.log('myErrorCatcher', action)
+    console.log('store', store)
+
     if (action?.meta?.requestStatus === 'rejected') {
       toast.error(action?.payload?.data?.error)
     }
