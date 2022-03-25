@@ -1,14 +1,14 @@
 import React from 'react'
-import { Navigate, Route, RouteProps } from 'react-router-dom'
-import { emptyApi } from '../../../shared/api/endpoints/emptyApi'
+import { Navigate } from 'react-router-dom'
 import { PATHS } from '../../routes'
 
-type AuthGuardedRouteProps = RouteProps
+type AuthGuardedRouteProps = {
+  children: React.ReactNode
+}
 
-const AuthGuardedRoute: React.FC<AuthGuardedRouteProps> = ({ ...rest }) => {
-  const isAuth = false
-  console.log(emptyApi)
-  return isAuth ? <Route {...rest} /> : <Navigate to={PATHS.LoginPage} />
+const AuthGuardedRoute: React.FC<AuthGuardedRouteProps> = ({ children }) => {
+  const isAuth = true
+  return isAuth ? <>{children}</> : <Navigate to={PATHS.LoginPage} />
 }
 
 export default AuthGuardedRoute
