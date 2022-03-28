@@ -29,3 +29,9 @@ enum Role {
   ADMIN
   DEVELOPER
 }
+
+model Message {
+  id String    @id @default(cuid())
+  content String
+  author User? @relation('BlogOwnerHistory', fields: [id], references: [id])
+}
