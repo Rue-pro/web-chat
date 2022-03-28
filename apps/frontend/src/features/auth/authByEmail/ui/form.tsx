@@ -1,48 +1,57 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Alert } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
 
+import { TStore } from 'app/store'
+import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
-import { login } from '../../../../shared/api'
-import { Alert } from '@mui/material'
 
 type FormProps = {
   formName: string
+  pageToNavigate: string
 }
 
-const Form: React.FC<FormProps> = ({ formName }) => {
-  const [error, setError] = useState(null)
+const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
+  const dispatch = useDispatch()
+  const auth = useSelector((state: TStore) => ({
+    status: state.AuthReducer.status,
+    error: state.AuthReducer.error,
+  }))
+  const navigate = useNavigate()
+
   const [isSubmitting, setSubmitting] = useState(false)
-  const handleSubmit = function (values: FormValues) {
-    setSubmitting(true)
-    login(values)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(error => {
+
+  const handleSubmit = useCallback(
+    (values: FormValues) => {
+      setSubmitting(true)
+      dispatch(login(values))
+    },
+    [dispatch],
+  )
+
+  useEffect(() => {
+    switch (auth.status) {
+      case 'finished':
+        navigate(pageToNavigate)
+        break
+      case 'error':
         setSubmitting(false)
-        if (error.response) {
-          console.log('Request made and server responded', error.response.data)
-          setError(error.response.data.message)
-        } else if (error.request) {
-          console.log(
-            'The request was made but no response was received',
-            error.request,
-          )
-        } else {
-          console.log(
-            'Something happened in setting up the request that triggered an Error',
-            error.message,
-          )
-        }
-      })
-  }
+        break
+      default:
+    }
+  }, [navigate, pageToNavigate, auth.status])
 
   return (
     <>
-      {error && <Alert severity="error">{error}</Alert>}
+      {auth.status === 'error' && <Alert severity="error">{auth.error}</Alert>}
       <Formik
-        initialValues={{ email: '', password: '' }}
+        initialValues={{
+          email: 'Naomi.Buckridge34@hotmail.com',
+          password: '9hgEyoMCkP9u7xf',
+        }}
         validationSchema={Schema}
         onSubmit={handleSubmit}
         component={props => (
