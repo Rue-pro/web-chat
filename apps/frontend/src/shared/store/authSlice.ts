@@ -35,18 +35,25 @@ const initialState: AuthState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.status = 'loading'
+      state.data.isAuth = false
+      saveState<AuthData>(KEY, state.data)
+    },
+  },
   extraReducers: builder => {
     builder.addCase(login.fulfilled, (state: AuthState) => {
+      state.status = 'finished'
       state.data.isAuth = true
       saveState<AuthData>(KEY, state.data)
-      state.status = 'finished'
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
-      state.error = action.error.message
       state.status = 'error'
+      state.error = action.error.message
     })
   },
 })
 
+export const { logout } = authSlice.actions
 export default authSlice.reducer

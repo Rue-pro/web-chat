@@ -1,19 +1,36 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import React, { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 import { TStore } from 'app/store'
 import { PATHS } from 'pages/routes'
+import { ActionButton } from 'shared/ui'
+import { logout } from 'shared/store/authSlice'
 
 type AuthGuardedRouteProps = {
   children: React.ReactNode
 }
 
 const AuthGuardedRoute: React.FC<AuthGuardedRouteProps> = ({ children }) => {
-  const isAuth = useSelector((state: TStore) => {
-    return state.AuthReducer.data.isAuth
-  })
-  return isAuth ? <>{children}</> : <Navigate to={PATHS.LoginPage} />
+  const dispatch = useDispatch()
+  const isAuth = useSelector((state: TStore) => state.AuthReducer.data.isAuth)
+  const navigate = useNavigate()
+
+  const handleClick = useCallback(() => {
+    dispatch(logout())
+    navigate(PATHS.LoginPage)
+  }, [dispatch, navigate])
+
+  return isAuth ? (
+    <>
+      {children}
+      <div>
+        <ActionButton onClick={handleClick}>Выйти</ActionButton>
+      </div>
+    </>
+  ) : (
+    <Navigate to={PATHS.LoginPage} />
+  )
 }
 
 export default AuthGuardedRoute
