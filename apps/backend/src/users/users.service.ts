@@ -8,6 +8,10 @@ import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection
 import { ConnectionArgsDto } from 'src/page/connection-args.dto';
 import { Page } from 'src/page/page.dto';
 
+/**
+ * TODO
+ * отрефакторить импорты
+ */
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}

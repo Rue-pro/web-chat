@@ -3,7 +3,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { AppGateway } from './app.gateway';
+import { MessagesGateway } from './messages/messages.gateway';
 
 const environment = process.env.NODE_END || 'development';
 @Module({
@@ -16,6 +16,6 @@ const environment = process.env.NODE_END || 'development';
     AuthModule,
     UsersModule,
   ],
-  providers: [AppGateway],
+  providers: [MessagesGateway],
 })
 export class AppModule {}
