@@ -1,16 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api/httpClient'
+import { loadState, saveState } from 'shared/lib'
 import { GenericState } from './genericSlice'
 
-interface AuthState
-  extends GenericState<{
-    isAuth: boolean
-  }> {}
+const KEY = 'auth'
+interface AuthData {
+  isAuth: boolean
+}
+interface AuthState extends GenericState<AuthData> {}
 
 type LoginData = {
   email: string
   password: string
+}
+
+const defaultData: AuthData = {
+  isAuth: false,
 }
 
 export const login = createAsyncThunk(
@@ -22,9 +28,7 @@ export const login = createAsyncThunk(
 )
 
 const initialState: AuthState = {
-  data: {
-    isAuth: false,
-  },
+  data: loadState<AuthData>(KEY, defaultData),
   status: 'loading',
 }
 
@@ -35,6 +39,7 @@ const authSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(login.fulfilled, (state: AuthState) => {
       state.data.isAuth = true
+      saveState<AuthData>(KEY, state.data)
       state.status = 'finished'
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
