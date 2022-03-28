@@ -12,104 +12,84 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   type,
   message,
 }: ChatMessageProps) => {
-  const Container = getContainerByType(type)
-  const Message = getMessageByType(type)
-  const Time = getTimeByType(type)
   return (
-    <Container>
-      <Message>{message}</Message>
-      <Time>10:56</Time>
+    <Container data-type={type}>
+      <Message data-type={type}>{message}</Message>
+      <Time data-type={type}>10:56</Time>
     </Container>
   )
 }
 
 export default ChatMessage
 
-const getContainerByType = (type: ChatMessageType) => {
-  switch (type) {
-    case 'own':
-      return OwnMessageContainer
-    case 'their':
-      return TheirMessageContainer
-  }
-}
-
-const getMessageByType = (type: ChatMessageType) => {
-  switch (type) {
-    case 'own':
-      return OwnMessage
-    case 'their':
-      return TheirMessage
-  }
-}
-
-const getTimeByType = (type: ChatMessageType) => {
-  switch (type) {
-    case 'own':
-      return OwnTime
-    case 'their':
-      return TheirTime
-  }
-}
-
-const OwnTime = styled(Typography)`
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 400;
-  color: #ffffff;
-`
-
-const TheirTime = styled(OwnTime)`
-  color: #999999;
-`
-
-const OwnMessage = styled(Typography)`
-  font-size: 14px;
-  line-height: 19px;
-  font-weight: 400;
-  margin-bottom: 20px;
-  word-break: break-word;
-  color: #ffffff;
-`
-
-const TheirMessage = styled(OwnMessage)`
-  color: #666666;
-`
-
-const OwnMessageContainer = styled(Box)`
+const Container = styled(Box)`
   position: relative;
   box-sizing: border-box;
   border-radius: 10px;
   width: 70%;
   padding: 16px;
-  background-color: #009ed1;
-  align-self: flex-end;
-  margin-right: 10px;
   margin-bottom: 20px;
 
   &::after {
     content: '';
     position: absolute;
     top: 0;
-    right: -6px;
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-top: 20px solid #009ed1;
+    border-top: 20px solid;
+  }
+
+  &[data-type='own'] {
+    align-self: flex-end;
+    margin-right: 10px;
+    background-color: #009ed1;
+
+    &::after {
+      right: -6px;
+      border-top-color: #009ed1;
+    }
+  }
+
+  &[data-type='their'] {
+    align-self: flex-start;
+    margin-left: 10px;
+    background-color: #e5f7fd;
+
+    &::after {
+      left: -6px;
+      border-top-color: #e5f7fd;
+    }
   }
 `
 
-const TheirMessageContainer = styled(OwnMessageContainer)`
-  align-self: flex-start;
-  margin-right: 0;
-  margin-left: 10px;
-  background-color: #e5f7fd;
-  align-self: left;
+const Time = styled(Typography)`
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
 
-  &::after {
-    left: -6px;
-    right: none;
-    border-top-color: #e5f7fd;
+  &[data-type='own'] {
+    color: #ffffff;
+  }
+
+  &[data-type='their'] {
+    color: #999999;
+  }
+`
+
+const Message = styled(Typography)`
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  word-break: break-word;
+
+  &[data-type='own'] {
+    color: #ffffff;
+  }
+
+  &[data-type='their'] {
+    color: #666666;
   }
 `
