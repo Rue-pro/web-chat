@@ -4,6 +4,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import fastifyCookie from 'fastify-cookie';
+import fastifyMultipart from 'fastify-multipart';
 import { AppModule } from './app.module';
 import { setupSwagger } from './api-docs.swagger';
 import { ValidationPipe } from '@nestjs/common';
@@ -18,6 +20,9 @@ async function bootstrap() {
     allowedHeaders: '*',
     origin: '*',
   });
+
+  app.register(fastifyCookie);
+  app.register(fastifyMultipart);
 
   app.useGlobalPipes(
     new ValidationPipe({
