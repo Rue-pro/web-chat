@@ -1,7 +1,7 @@
 import React from 'react'
 import { Divider, Grid, List } from '@mui/material'
 import { styled, Box } from '@mui/material'
-import { ChatMessage } from '../../entities/chat-message/ui'
+import { ChatMessage } from '../../entities/chatMessage/ui'
 import { DialogRow, DialogRowSketeton } from '../../entities/dialog'
 
 type ChatProps = {}
@@ -38,7 +38,6 @@ const Chat: React.FC<ChatProps> = () => {
             message="longunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessagelongunbreakablemessage"
           />
         </DialogsContainer>
-        тут поле для ввода сообщения и прикрепления разных вещей
       </Grid>
     </Grid>
   )
