@@ -22,6 +22,8 @@ model User {
 
   avatar String?
   role Role @default(DEVELOPER)
+
+  message Message[]
 }
 
 enum Role {
@@ -33,5 +35,7 @@ enum Role {
 model Message {
   id String    @id @default(cuid())
   content String
-  author User? @relation('BlogOwnerHistory', fields: [id], references: [id])
+
+  author User @relation(fields: [authorId], references: [id])
+  authorId String
 }
