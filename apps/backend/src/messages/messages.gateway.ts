@@ -1,25 +1,24 @@
 import {
   SubscribeMessage,
   WebSocketGateway,
-  OnGatewayInit,
   WebSocketServer,
   OnGatewayConnection,
-  OnGatewayDisconnect,
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Logger, UseGuards } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { MessagesService } from './messages.service';
 
 @WebSocketGateway({
   path: '/messages',
 })
-export class MessagesGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class MessagesGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
+
+  constructor(private readonly messageService: MessagesService) {}
 
   private logger: Logger = new Logger('AppGateway');
 
@@ -47,23 +46,24 @@ export class MessagesGateway
      * TODO
      * Получение автора сообщения из jwt токена
      */
-    const author = 1;
+    const authorId = 'cl10bf6sg000497l4lfivj7k7';
+    const message = await this.messageService.saveMessage({
+      authorId,
+      content,
+    });
 
     this.server.sockets.emit('receive_message', {
+      authorId,
       content,
-      author,
     });
+
+    return message;
   }
 
   @SubscribeMessage('request_all_messages')
   async requestAllMessages(@ConnectedSocket() socket: Socket) {
-    const messages = [
-      {
-        id: 1,
-        author: 2,
-        content: 'qfdqwf',
-      },
-    ];
+    const authorId = 'cl10bf6sg000497l4lfivj7k7';
+    const messages = await this.messageService.getAllMessages(authorId);
     socket.emit('send_all_messages', messages);
   }
 }

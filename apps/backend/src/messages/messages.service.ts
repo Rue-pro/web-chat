@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserEntity } from 'src/users/entities/user.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
 
 @Injectable()
@@ -10,11 +8,13 @@ export class MessagesService {
   /**
    * getUserFromSocket
    */
-  async getUserFromSocket(socket: Socket) {}
+  async getUserFromSocket() {}
 
   async saveMessage(createMessageDto: CreateMessageDto) {
     return this.prisma.message.create({ data: createMessageDto });
   }
 
-  async getAllMessages() {}
+  async getAllMessages(id: string) {
+    return this.prisma.message.findMany({ where: { id: id } });
+  }
 }
