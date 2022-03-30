@@ -1,7 +1,22 @@
+import { Record, String, Static, Number } from 'runtypes'
 import { emptyApi } from './emptyApi'
-import { ChatEvent, Message } from 'shared/api/types'
 import { io, Socket } from 'socket.io-client'
 import { API_URL } from 'shared/config/environment-variables'
+
+enum ChatEvent {
+  SendMessage = 'send_message',
+  RequestAllMessages = 'request_all_messages',
+  SendAllMessages = 'send_all_messages',
+  ReceiveMessage = 'receive_message',
+}
+
+const MessageSheme = Record({
+  id: Number,
+  authorId: String,
+  content: String,
+})
+
+type Message = Static<typeof MessageSheme>
 
 let socket: Socket
 function getSocket() {

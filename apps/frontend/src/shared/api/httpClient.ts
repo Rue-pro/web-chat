@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_URL } from 'shared/config/environment-variables'
+import { sleep } from 'shared/lib'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,
@@ -22,4 +23,9 @@ APIInstance.interceptors.request.use(({ ...config }) => {
       authorization: `${accessToken}`,
     },
   }
+})
+
+APIInstance.interceptors.response.use(async response => {
+  await sleep()
+  return response
 })
