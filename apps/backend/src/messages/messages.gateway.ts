@@ -64,11 +64,9 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_messages')
   async requestAllMessages(@ConnectedSocket() socket: Socket) {
-    console.log('REQUEST_ALL_MESSAGES');
-    const auth_token = await this.messageService.getUserFromSocket(socket);
-    console.log(auth_token);
-    const authorId = 'cl10bf6sg000497l4lfivj7k7';
-    const messages = await this.messageService.getAllMessages(authorId);
+    console.log('--------REQUEST_ALL_MESSAGES---------');
+    const user = await this.messageService.getUserFromSocket(socket);
+    const messages = await this.messageService.getAllMessages(user.id);
     socket.emit('send_all_messages', messages);
   }
 }
