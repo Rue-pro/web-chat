@@ -6,12 +6,17 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Auth } from './entity/auth.entity';
+import { ConfigService } from '@nestjs/config';
+import { TokenPayload } from './entity/tokenPayload.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {}
 
   async login(email: string, password: string): Promise<Auth> {
@@ -37,6 +42,15 @@ export class AuthService {
   }
 
   validateUser(userId: string) {
-    return this.prisma.user.findUnique({ where: { id: userId } });
+    return this.usersService.findOne(userId);
+  }
+
+  public async getUserFromAuthenticationToken(token: string) {
+    const payload: TokenPayload = this.jwtService.verify(token, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+    });
+    if (payload.userId) {
+      return this.validateUser(payload.userId);
+    }
   }
 }

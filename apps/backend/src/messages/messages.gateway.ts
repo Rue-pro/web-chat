@@ -6,9 +6,8 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { MessagesService } from './messages.service';
 
 @WebSocketGateway({
@@ -32,16 +31,19 @@ export class MessagesGateway implements OnGatewayConnection {
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  @UseGuards(JwtAuthGuard)
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
     console.log(`Client connected: ${client.id}`);
   }
 
+  @SubscribeMessage('send_message')
   async listenForMessages(
     @MessageBody() content: string,
     @ConnectedSocket() socket: Socket,
   ) {
+    console.log('LISTEN FOR MESSAGES');
+    console.log(socket);
+
     /**
      * TODO
      * Получение автора сообщения из jwt токена
@@ -62,6 +64,9 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_messages')
   async requestAllMessages(@ConnectedSocket() socket: Socket) {
+    console.log('REQUEST_ALL_MESSAGES');
+    const auth_token = await this.messageService.getUserFromSocket(socket);
+    console.log(auth_token);
     const authorId = 'cl10bf6sg000497l4lfivj7k7';
     const messages = await this.messageService.getAllMessages(authorId);
     socket.emit('send_all_messages', messages);
