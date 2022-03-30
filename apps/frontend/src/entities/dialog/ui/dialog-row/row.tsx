@@ -7,39 +7,44 @@ import {
   ListItem,
 } from '@mui/material'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
-import { AvatarBadge } from '../../../../shared/ui'
+import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
 import Template from './template'
 
-const Row: React.FC = () => {
+type RowProps = {
+  avatar: AvatarBadgeProps
+  title: string
+  message: string
+  sentTime: string
+  unreadedMessagesCount?: number
+}
+
+const Row: React.FC<RowProps> = ({
+  avatar,
+  title,
+  message,
+  sentTime,
+  unreadedMessagesCount,
+}) => {
   return (
     <ListItem button>
       <Template
-        avatar={
-          <AvatarBadge
-            src="https://mui.com/static/images/avatar/1.jpg"
-            alt="Remy Sharp"
-          />
-        }
+        avatar={<AvatarBadge {...avatar} />}
         title={
           <Typography variant="subtitle1" component="p">
-            Remy Sharp
+            {title}
           </Typography>
         }
-        message={
-          <Message>
-            Это сообщение отправил Remy Sharp. Его еще не прочитали Это
-            сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение
-            отправил Remy Sharp. Его еще не прочитали Это сообщение отправил
-            Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp.
-            Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не
-            прочитали
-          </Message>
-        }
+        message={<Message>{message}</Message>}
         info={
           <>
-            <Time>10:58 25.12.21</Time>
-            <DoneAllIcon color="primary" />
-            <MessagesCount>99+</MessagesCount>
+            <Time>{sentTime}</Time>
+            {unreadedMessagesCount ? (
+              <MessagesCount>
+                {getMessagesCount(unreadedMessagesCount)}
+              </MessagesCount>
+            ) : (
+              <DoneAllIcon color="primary" />
+            )}
           </>
         }
       />
@@ -48,6 +53,10 @@ const Row: React.FC = () => {
 }
 
 export default Row
+
+const getMessagesCount = (messagesCount: number) => {
+  return messagesCount >= 100 ? '99+' : messagesCount
+}
 
 const Time = styled(Box)`
   font-size: 12px;

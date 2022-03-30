@@ -1,20 +1,29 @@
 import React from 'react'
 import { styled, Badge, Avatar, Stack } from '@mui/material'
 
-type AvatarBadgeProps = {
+export type AvatarBadgeProps = {
   src: string
   alt: string
+  isOnline?: boolean
 }
 
-const AvatarBadge: React.FC<AvatarBadgeProps> = ({ src, alt }) => {
+const AvatarBadge: React.FC<AvatarBadgeProps> = ({
+  src,
+  alt,
+  isOnline = false,
+}) => {
   return (
     <Stack direction="row" spacing={2}>
-      <StyledBadge
-        overlap="circular"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        variant="dot">
+      {isOnline ? (
+        <StyledBadge
+          overlap="circular"
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          variant="dot">
+          <Avatar alt={alt} src={src} />
+        </StyledBadge>
+      ) : (
         <Avatar alt={alt} src={src} />
-      </StyledBadge>
+      )}
     </Stack>
   )
 }

@@ -1,5 +1,5 @@
 import { rest } from 'msw'
-import { API_URL } from '../../../shared/config/environment-variables'
+import { API_URL } from 'shared/config/environment-variables'
 
 export const handler = rest.post(`${API_URL}/auth/login`, (req, res, ctx) => {
   return res(
