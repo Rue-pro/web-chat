@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import typeOrmConfig from 'typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
@@ -8,7 +10,6 @@ import { MessagesModule } from './messages/messages.module';
 const environment = process.env.NODE_END || 'development';
 @Module({
   imports: [
-    PrismaModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${environment}`,
       isGlobal: true,
@@ -16,6 +17,7 @@ const environment = process.env.NODE_END || 'development';
     AuthModule,
     UsersModule,
     MessagesModule,
+    TypeOrmModule.forRoot(typeOrmConfig),
   ],
 })
 export class AppModule {}

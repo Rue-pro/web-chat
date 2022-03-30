@@ -1,6 +1,6 @@
 import { ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { applyDecorators, Type } from '@nestjs/common';
-import { Page } from './page.dto';
+import { PageDto } from './dto';
 
 export const ApiPageResponse = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
@@ -8,7 +8,7 @@ export const ApiPageResponse = <TModel extends Type<any>>(model: TModel) => {
       schema: {
         title: `PagePresponseOf${model.name}`,
         allOf: [
-          { $ref: getSchemaPath(Page) },
+          { $ref: getSchemaPath(PageDto) },
           {
             properties: {
               edges: {

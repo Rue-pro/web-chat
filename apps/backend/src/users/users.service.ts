@@ -1,70 +1,40 @@
-import { UserEntity } from './entities/user.entity';
-import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Message, User } from '@prisma/client';
-import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
-import { ConnectionArgsDto } from 'src/page/connection-args.dto';
-import { Page } from 'src/page/page.dto';
-import { DialogEntity } from './entities/dialog.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
-/**
- * TODO
- * отрефакторить импорты
- */
+import { ConnectionArgsDto } from 'src/page/dto';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserEntity } from './entity';
+
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
   create(createUserDto: CreateUserDto) {
-    return this.prisma.user.create({ data: createUserDto });
+    return this.userRepository.save(createUserDto);
   }
 
-  findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  findAll(): Promise<UserEntity[]> {
+    return this.userRepository.find();
   }
 
-  async findPage(connectionArgs: ConnectionArgsDto) {
-    const page = await findManyCursorConnection(
-      (args) => {
-        return this.prisma.user.findMany(args);
-      },
-      () => this.prisma.user.count(),
-      connectionArgs,
-      { recordToEdge: (record) => ({ node: new UserEntity(record) }) },
-    );
-
-    return new Page<UserEntity>(page);
-  }
+  async findPage(connectionArgs: ConnectionArgsDto) {}
 
   findOne(id: string) {
-    return this.prisma.user.findFirst({ where: { id: id } });
+    return this.userRepository.findOne({ where: { id: id } });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({ where: { id: id }, data: updateUserDto });
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    let toUpdate = await this.userRepository.findOne({ id: id });
+    Object.assign(toUpdate, updateUserDto);
+    const article = await this.userRepository.save(toUpdate);
+    return { article };
   }
 
-  remove(id: string) {
-    return this.prisma.user.delete({ where: { id: id } });
-  }
-
-  findDialogs(): Promise<Dialog[]> {
-    return this.prisma.user.findMany({
-      include: {
-        message: {
-          where: {
-            authorId: {
-              equals: 'cl1dapj8p0004ael40pqwj954',
-            },
-          },
-        },
-      },
-    });
+  delete(id: string): Promise<DeleteResult> {
+    return this.userRepository.delete({ id: id });
   }
 }
-
-type Dialog = User & {
-  message: Message[];
-};

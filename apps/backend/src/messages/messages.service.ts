@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMessageDto } from './dto/create-message.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { Socket } from 'socket.io';
-import { parse } from 'cookie';
-import { AuthService } from 'src/auth/auth.service';
 import { WsException } from '@nestjs/websockets';
+import { parse } from 'cookie';
+
+import { AuthService } from 'src/auth/auth.service';
+import { MessageEntity } from './entity';
+import { CreateMessageDto } from './dto';
 
 @Injectable()
 export class MessagesService {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    @InjectRepository(MessageEntity)
+    private readonly messageRepository: Repository<MessageEntity>,
   ) {}
 
   async getUserFromSocket(socket: Socket) {
@@ -29,11 +34,11 @@ export class MessagesService {
   }
 
   async saveMessage(createMessageDto: CreateMessageDto) {
-    return this.prisma.message.create({ data: createMessageDto });
+    return this.messageRepository.save(createMessageDto);
   }
 
   async getAllMessages(id: string) {
     console.log('GET_ALL_MESSAGES');
-    return this.prisma.message.findMany({ where: { authorId: id } });
+    return this.messageRepository.find({ where: { authorId: id } });
   }
 }
