@@ -41,21 +41,19 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() content: string,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('LISTEN FOR MESSAGES');
-    console.log(socket);
-
-    /**
-     * TODO
-     * Получение автора сообщения из jwt токена
-     */
-    const authorId = 'cl10bf6sg000497l4lfivj7k7';
+    console.log('--------LISTEN FOR MESSAGES--------');
+    const user = await this.messageService.getUserFromSocket(socket);
+    const receiverId = 'cl1dapj8p0004ael40pqwj954';
     const message = await this.messageService.saveMessage({
-      authorId,
+      authorId: user.id,
+      receiverId,
+      receiver_type: 'PERSON',
       content,
+      sentTime: new Date(),
     });
 
     this.server.sockets.emit('receive_message', {
-      authorId,
+      authorId: user.id,
       content,
     });
 
@@ -64,7 +62,7 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_messages')
   async requestAllMessages(@ConnectedSocket() socket: Socket) {
-    console.log('--------REQUEST_ALL_MESSAGES---------');
+    console.log('--------REQUEST_ALL_MESSAGES--------');
     const user = await this.messageService.getUserFromSocket(socket);
     const messages = await this.messageService.getAllMessages(user.id);
     socket.emit('send_all_messages', messages);

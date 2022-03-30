@@ -23,7 +23,9 @@ model User {
   avatar String?
   role Role @default(DEVELOPER)
 
-  message Message[]
+  message Message[] @relation("author")
+
+  @@map("users")
 }
 
 enum Role {
@@ -36,6 +38,18 @@ model Message {
   id String    @id @default(cuid())
   content String
 
-  author User @relation(fields: [authorId], references: [id])
+  author User @relation("author", fields: [authorId], references: [id])
   authorId String
+
+  receiverId String
+  receiver_type Receiver @default(PERSON)
+
+  sentTime DateTime
+
+  @@map("messages")
+}
+
+enum Receiver {
+  GROUP
+  PERSON
 }
