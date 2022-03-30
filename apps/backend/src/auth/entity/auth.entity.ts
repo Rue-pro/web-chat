@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Column } from 'typeorm';
 
-export class Auth {
-  @ApiProperty()
+@Entity('auth')
+export class AuthEntity {
+  @Column()
   accessToken: string;
 }

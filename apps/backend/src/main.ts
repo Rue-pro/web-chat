@@ -1,4 +1,4 @@
-import { PrismaClientExceptionFilter } from './prisma-client-exception.filter';
+import { ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -6,9 +6,9 @@ import {
 } from '@nestjs/platform-fastify';
 import fastifyCookie from 'fastify-cookie';
 import fastifyMultipart from 'fastify-multipart';
+
 import { AppModule } from './app.module';
 import { setupSwagger } from './api-docs.swagger';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -32,7 +32,6 @@ async function bootstrap() {
   );
 
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   setupSwagger(app);
 
