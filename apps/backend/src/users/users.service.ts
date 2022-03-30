@@ -3,10 +3,11 @@ import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
+import { Message, User } from '@prisma/client';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { ConnectionArgsDto } from 'src/page/connection-args.dto';
 import { Page } from 'src/page/page.dto';
+import { DialogEntity } from './entities/dialog.entity';
 
 /**
  * TODO
@@ -27,7 +28,6 @@ export class UsersService {
   async findPage(connectionArgs: ConnectionArgsDto) {
     const page = await findManyCursorConnection(
       (args) => {
-        console.log(args);
         return this.prisma.user.findMany(args);
       },
       () => this.prisma.user.count(),
@@ -49,4 +49,22 @@ export class UsersService {
   remove(id: string) {
     return this.prisma.user.delete({ where: { id: id } });
   }
+
+  findDialogs(): Promise<Dialog[]> {
+    return this.prisma.user.findMany({
+      include: {
+        message: {
+          where: {
+            authorId: {
+              equals: 'cl1dapj8p0004ael40pqwj954',
+            },
+          },
+        },
+      },
+    });
+  }
 }
+
+type Dialog = User & {
+  message: Message[];
+};

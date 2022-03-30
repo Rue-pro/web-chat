@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-export type Message = {
-  id: string;
-  content: string;
-  author: string;
-};
+import { Message, Receiver } from '@prisma/client';
 
 export class MessageEntity implements Message {
   @ApiProperty()
@@ -14,5 +9,14 @@ export class MessageEntity implements Message {
   content: string;
 
   @ApiProperty()
-  author: string;
+  authorId: string;
+
+  @ApiProperty()
+  receiverId: string;
+
+  @ApiProperty()
+  receiver_type: Receiver;
+
+  @ApiProperty()
+  sentTime: Date;
 }
