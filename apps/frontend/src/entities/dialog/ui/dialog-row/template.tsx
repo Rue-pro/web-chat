@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Grid, Typography, Stack } from '@mui/material'
+import { Grid, Stack } from '@mui/material'
 
 type TemplateProps = {
   avatar: ReactElement

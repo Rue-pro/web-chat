@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormikProps, Form } from 'formik'
-import { ActionButton, Input } from '../../../../shared/ui'
+import { ActionButton, Input } from 'shared/ui'
 
 export type FormValues = {
   email: string

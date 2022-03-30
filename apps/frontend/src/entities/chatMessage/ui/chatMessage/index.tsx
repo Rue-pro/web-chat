@@ -6,16 +6,18 @@ type ChatMessageType = 'own' | 'their'
 type ChatMessageProps = {
   type: ChatMessageType
   message: string
+  sentTime: string
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
   type,
   message,
+  sentTime,
 }: ChatMessageProps) => {
   return (
     <Container data-type={type}>
       <Message data-type={type}>{message}</Message>
-      <Time data-type={type}>10:56</Time>
+      <Time data-type={type}>{sentTime}</Time>
     </Container>
   )
 }

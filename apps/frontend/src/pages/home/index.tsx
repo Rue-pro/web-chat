@@ -1,5 +1,5 @@
 import React from 'react'
-import Chat from '../../widgets/chat'
+import Chat from 'widgets/chat'
 
 const HomePage: React.FC = () => (
   <>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '../config/environment-variables'
+import { API_URL } from 'shared/config/environment-variables'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,

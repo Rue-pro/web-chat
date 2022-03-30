@@ -1,6 +1,13 @@
-import { Record, String, Static, Number, Boolean } from 'runtypes'
+import { Record, String, Static, Number } from 'runtypes'
 
 type ToastType = 'info' | 'success' | 'warning' | 'error' | 'default'
+
+export enum ChatEvent {
+  SendMessage = 'send_message',
+  RequestAllMessages = 'request_all_messages',
+  SendAllMessages = 'send_all_messages',
+  ReceiveMessage = 'receive_message',
+}
 
 export type Toast = {
   type: ToastType
@@ -33,10 +40,8 @@ export type User = Static<typeof UserScheme>
 
 export const MessageSheme = Record({
   id: Number,
-  text: String,
-  sendTime: String,
-  isRead: Boolean,
-  user: UserScheme,
+  authorId: String,
+  content: String,
 })
 
 export type Message = Static<typeof MessageSheme>
