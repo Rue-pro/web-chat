@@ -2,11 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: 'postgresprisma',
-  port: +process.env.POSTGRES_PORT,
-  username: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
+  url: process.env.DATABASE_URL,
   entities: [__dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js'],
   migrationsRun: false,
   logging: true,
@@ -15,10 +11,13 @@ const typeOrmConfig: TypeOrmModuleOptions = {
     __dirname + '/migration/**/*.ts',
     __dirname + '/migration/**/*.js',
   ],
-  synchronize: false,
+  autoLoadEntities: true,
+  synchronize: true,
   cli: {
     migrationsDir: 'src/migration',
   },
+  seeds: ['src/seeds/**/*{.ts,.js}'],
+  factories: ['src/factories/**/*{.ts,.js}'],
 };
 
 export = typeOrmConfig;

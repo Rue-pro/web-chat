@@ -31,8 +31,6 @@ async function bootstrap() {
     }),
   );
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-
   setupSwagger(app);
 
   await app.listen(3005);

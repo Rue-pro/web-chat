@@ -1,24 +1,21 @@
-FROM node:14 AS builder
+FROM node:14
 
-# Create app directory
+# Create app directory, this is in our container/in our image
 WORKDIR /app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
-COPY db ./db/
-
 # Install app dependencies
-RUN npm install
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
 
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
+
+# Bundle app source
 COPY . .
 
 RUN npm run build
 
-FROM node:14
-
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-
-EXPOSE 3000
-CMD [ "npm", "run", "start:prod" ]
+EXPOSE 3005
+CMD ["npm", "run", "start:dev"]

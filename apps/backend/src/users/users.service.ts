@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    let toUpdate = await this.userRepository.findOne({ id: id });
+    let toUpdate = await this.userRepository.findOneBy({ id: id });
     Object.assign(toUpdate, updateUserDto);
     const article = await this.userRepository.save(toUpdate);
     return { article };

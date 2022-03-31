@@ -9,5 +9,5 @@ export class CreateUserDto {
 
   avatar?: string;
 
-  role?: 'USER' | 'ADMIN';
+  role: 'USER' | 'ADMIN';
 }

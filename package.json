@@ -1,11 +1,13 @@
 {
-  "name": "Web chat",
+  "name": "web_chat",
   "version": "1.0.0",
   "description": "Web chat application",
   "scripts": {
     "install:backend": "cd apps/backend && npm install",
     "install:frontend": "cd apps/frontend && npm install",
-    "postinstall": "npm run install:backend && npm run install:frontend && npm run install:lib"
+    "postinstall": "npm run install:backend && npm run install:frontend && npm run install:lib",
+    "run:b": "cd apps/backend && npm run start",
+    "run:f": "cd apps/frontend && npm run start"
   },
   "repository": {
     "type": "git",
