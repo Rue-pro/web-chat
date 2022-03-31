@@ -19,11 +19,15 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/typeorm.config.ts",
-    "typeorm:create": "npm run typeorm migration:create -- -n",
-    "typeorm:generate": "npm run typeorm migration:generate -- -n",
-    "typeorm:run": "npm run typeorm migration:run",
-    "typeorm:revert": "npm run typeorm migration:revert"
+    "migrate:create": "ts-node ./node_modules/typeorm/cli.js migrations:create",
+    "migrate:generate": "ts-node ./node_modules/typeorm/cli.js migrations:generate",
+    "migrate:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
+    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
+    "schema:log": "ts-node ./node_modules/typeorm/cli.js schema:log",
+    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
+    "db:setup": "yarn run schema:drop && yarn run migrate:run && yarn run seed:run"
   },
   "dependencies": {
     "@nestjs/common": "^8.2.0",
@@ -46,9 +50,12 @@
     "fastify-swagger": "^5.0.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.4.0"
+    "rxjs": "^7.4.0",
+    "typeorm": "^0.3.4",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.0.0",
