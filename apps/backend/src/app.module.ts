@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
+import { DialogsModule } from './dialogs/dialogs.module';
 
 const environment = process.env.NODE_END || 'development';
 @Module({
@@ -23,6 +24,7 @@ const environment = process.env.NODE_END || 'development';
     }),
     AuthModule,
     UsersModule,
+    DialogsModule,
     MessagesModule,
   ],
 })

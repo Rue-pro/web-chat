@@ -39,6 +39,5 @@ export class MessagesService {
 
   async getAllMessages(id: string) {
     console.log('GET_ALL_MESSAGES');
-    return this.messageRepository.find({ where: { authorId: id } });
   }
 }

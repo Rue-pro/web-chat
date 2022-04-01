@@ -1,5 +1,13 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import bcrypt from 'bcrypt';
+import { MessageEntity } from 'src/messages/entity';
 
 @Entity('user')
 export class UserEntity {
@@ -28,6 +36,10 @@ export class UserEntity {
   avatar: string;
 
   role: 'USER' | 'ADMIN';
+
+  @OneToMany(() => MessageEntity, (message: MessageEntity) => message.id)
+  @JoinColumn()
+  messages: MessageEntity[];
 
   @BeforeInsert()
   async setPassword(password: string) {
