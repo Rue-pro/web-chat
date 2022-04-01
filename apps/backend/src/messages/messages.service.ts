@@ -33,11 +33,17 @@ export class MessagesService {
     return user;
   }
 
-  async saveMessage(createMessageDto: CreateMessageDto) {
+  saveMessage(createMessageDto: CreateMessageDto) {
     return this.messageRepository.save(createMessageDto);
   }
 
-  async getAllMessages(id: string) {
+  getAllMessages(id: string) {
     console.log('GET_ALL_MESSAGES');
+    /**
+     * TODO
+     * на фронте сделать нормальную обработку ошибок с бэка
+     */
+    // return await this.messageRepository.find({ where: { id: id } });
+    return this.messageRepository.find({ where: { authorId: id } });
   }
 }
