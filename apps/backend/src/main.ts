@@ -9,6 +9,7 @@ import fastifyMultipart from 'fastify-multipart';
 
 import { AppModule } from './app.module';
 import { setupSwagger } from './api-docs.swagger';
+import { GlobalExceptionFilter } from './error/global.exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -30,6 +31,8 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   setupSwagger(app);
 
