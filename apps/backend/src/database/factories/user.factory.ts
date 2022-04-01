@@ -1,6 +1,6 @@
 import Faker from '@faker-js/faker';
-import { UserEntity } from 'src/users/entity';
 import { define } from 'typeorm-seeding';
+import { UserEntity } from '../../users/entity';
 
 define(UserEntity, (faker: typeof Faker) => {
   const userData = {
@@ -10,9 +10,11 @@ define(UserEntity, (faker: typeof Faker) => {
     password: faker.internet.password(),
     avatar: faker.image.avatar(),
     role: faker.helpers.randomize(['USER', 'ADMIN']),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
-  const user = new UserEntity();
-  Object.assign(user, userData);
+  let user = new UserEntity();
+  user = Object.assign(user, userData);
   return user;
 });
