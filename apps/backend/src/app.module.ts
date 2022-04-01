@@ -16,10 +16,10 @@ const environment = process.env.NODE_END || 'development';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [__dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js'],
       migrationsRun: false,
       autoLoadEntities: true,
       synchronize: true,
+      ssl: false,
     }),
     AuthModule,
     UsersModule,
