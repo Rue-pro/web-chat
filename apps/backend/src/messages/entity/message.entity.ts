@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/users/entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('message')
 export class MessageEntity {
@@ -9,9 +10,6 @@ export class MessageEntity {
   content: string;
 
   @Column()
-  authorId: string;
-
-  @Column()
   receiverId: string;
 
   @Column()
@@ -19,4 +17,7 @@ export class MessageEntity {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @ManyToOne(() => UserEntity, (user) => user.messages)
+  author: UserEntity;
 }

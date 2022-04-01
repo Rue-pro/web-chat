@@ -1,20 +1,5 @@
 version: '3.8'
 services:
-  api:
-    # image: ruelina/web_chat
-    build:
-      dockerfile: Dockerfile
-      context: .
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgres://user:password@postgres:35000/db
-      NODE_ENV: development
-      PORT: 3005
-      JWT_SECRET: 'JWT_SECRET'
-    ports:
-      - '3003:3005'
-
   adminer:
     image: adminer
     restart: always
