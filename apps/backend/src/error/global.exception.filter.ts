@@ -20,6 +20,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
+
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = (exception as any).message.message;
     let code = 'HttpException';
 
@@ -29,29 +31,30 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       `${request.method} ${request.url}`,
     );
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    if (exception.constructor === QueryFailedError) {
+      // this is a TypeOrm error
+      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      message = (exception as QueryFailedError).message;
+      code = (exception as any).code;
+    }
 
-    switch (exception.constructor) {
-      case HttpException:
-        status = (exception as HttpException).getStatus();
-        break;
-      case QueryFailedError: // this is a TypeOrm error
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
-        message = (exception as QueryFailedError).message;
-        code = (exception as any).code;
-        break;
-      case EntityNotFoundError: // this is another TypeOrm error
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
-        message = (exception as EntityNotFoundError).message;
-        code = (exception as any).code;
-        break;
-      case CannotCreateEntityIdMapError: // and another
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
-        message = (exception as CannotCreateEntityIdMapError).message;
-        code = (exception as any).code;
-        break;
-      default:
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
+    if (exception.constructor === EntityNotFoundError) {
+      // this is another TypeOrm error
+      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      message = (exception as EntityNotFoundError).message;
+      code = (exception as any).code;
+    }
+
+    if (exception.constructor === CannotCreateEntityIdMapError) {
+      // and another
+      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      message = (exception as CannotCreateEntityIdMapError).message;
+      code = (exception as any).code;
+    }
+
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      message = exception.message;
     }
 
     response
