@@ -48,9 +48,9 @@ export class MessagesGateway implements OnGatewayConnection {
     const message = await this.messageService.saveMessage({
       authorId: user.id,
       receiverId,
-      receiver_type: 'PERSON',
+      receiverType: 'PERSON',
       content,
-      sentTime: new Date(),
+      createdAt: new Date(),
     });
 
     this.server.sockets.emit('receive_message', {

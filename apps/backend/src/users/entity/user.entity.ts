@@ -2,7 +2,6 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -37,8 +36,7 @@ export class UserEntity {
 
   role: 'USER' | 'ADMIN';
 
-  @OneToMany(() => MessageEntity, (message: MessageEntity) => message.id)
-  @JoinColumn()
+  @OneToMany(() => MessageEntity, (message: MessageEntity) => message.author)
   messages: MessageEntity[];
 
   @BeforeInsert()

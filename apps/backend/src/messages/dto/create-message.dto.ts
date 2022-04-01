@@ -3,9 +3,9 @@ export class CreateMessageDto {
 
   receiverId: string;
 
-  receiver_type: 'GROUP' | 'PERSON';
+  receiverType: 'GROUP' | 'PERSON';
 
   content: string;
 
-  sentTime: Date;
+  createdAt: Date;
 }
