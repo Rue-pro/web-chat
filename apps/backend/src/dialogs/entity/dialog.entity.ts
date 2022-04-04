@@ -1,17 +1,10 @@
-import { UserEntity } from 'src/users/entity';
-import { MessageEntity } from 'src/messages/entity';
-
-export type DialogUserEntity = Pick<UserEntity, 'id' | 'name' | 'avatar'>;
-export type DialogMessageEntity = Pick<
-  MessageEntity,
-  'id' | 'content' | 'createdAt'
->;
+import { DialogMessage, DialogUser } from './types';
 
 export class DialogEntity {
-  user: DialogUserEntity;
-  message: DialogMessageEntity;
+  user: DialogUser;
+  message: DialogMessage;
 
-  constructor(user: DialogUserEntity, message: DialogMessageEntity) {
+  constructor(user: DialogUser, message?: DialogMessage) {
     (this.user = user), (this.message = message);
   }
 }
