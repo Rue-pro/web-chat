@@ -1,39 +1,51 @@
 import {
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { MessageEntity } from 'src/messages/entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('user')
 export class UserEntity {
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty()
   @Column()
   name: string;
 
-  @Column()
+  @ApiProperty()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @ApiProperty()
+  @UpdateDateColumn()
   updatedAt: Date;
 
+  @ApiProperty()
   @Column()
   email: string;
 
+  @ApiProperty()
   @Column()
   phone: string;
 
+  @ApiProperty()
   @Column()
   password: string;
 
+  @ApiProperty()
   @Column()
   avatar: string;
 
+  @ApiProperty()
   role: 'USER' | 'ADMIN';
 
   @OneToMany(() => MessageEntity, (message: MessageEntity) => message.author)
