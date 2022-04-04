@@ -1,6 +1,7 @@
 import { UserEntity } from 'src/users/entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -22,7 +23,7 @@ export class MessageEntity {
   @Column()
   receiverType: 'PERSON' | 'GROUP';
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.messages, { cascade: true })

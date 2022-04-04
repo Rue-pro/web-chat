@@ -14,6 +14,18 @@ export class DialogsService {
   ) {}
 
   async findAll(): Promise<DialogEntity[]> {
+    /**
+     * userRepository.find({
+          join: {
+              alias: "user",
+              leftJoinAndSelect: {
+                  profile: "user.profile",
+                  photo: "user.photos",
+                  video: "user.videos",
+              },
+          },
+      });
+     */
     const dialogs = await this.userRepository
       .createQueryBuilder('user')
       .select('user')

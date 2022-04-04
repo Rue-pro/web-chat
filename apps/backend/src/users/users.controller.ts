@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -20,6 +22,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entity/user.entity';
+import { SearchFilterUserDto } from './dto/search-filter-user.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -36,9 +39,13 @@ export class UsersController {
 
   @Get('')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: [UserEntity] })
-  async findAll() {
-    return this.usersService.findAll();
+  @ApiOperation({ description: 'Запрос списка всех пользователей' })
+  @ApiOkResponse({
+    description: 'Возвращает список всех пользователей',
+    type: [UserEntity],
+  })
+  async findAll(@Query() filter: SearchFilterUserDto) {
+    return this.usersService.findAll(filter);
   }
 
   @Get(':id')
