@@ -4,7 +4,7 @@ import { styled, Box } from '@mui/material'
 import { ChatInput, ChatMessage } from 'entities/chatMessage/ui'
 import { DialogRow, DialogRowSketeton } from 'entities/dialog'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
-import { useGetUsersQuery } from 'shared/api/endpoints/usersApi'
+import { useGetUsersQuery } from 'shared/api/endpoints/dialogsApi'
 
 type ChatProps = {}
 
@@ -42,41 +42,7 @@ const Chat: React.FC<ChatProps> = () => {
             </>
           ) : (
             <>
-              <DialogRow
-                avatar={{
-                  src: 'https://mui.com/static/images/avatar/1.jpg',
-                  alt: 'Remy Sharp',
-                  isOnline: true,
-                }}
-                title="Remy Sharp"
-                message="Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали"
-                sentTime="10:58 25.12.21"
-                unreadedMessagesCount={1000}
-              />
-              <Divider />
-              <DialogRow
-                avatar={{
-                  src: 'https://mui.com/static/images/avatar/1.jpg',
-                  alt: 'Remy Sharp',
-                }}
-                title="Remy Sharp"
-                message="Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали"
-                sentTime="10:58 25.12.21"
-                unreadedMessagesCount={0}
-              />
-              <Divider />
-              <DialogRow
-                avatar={{
-                  src: 'https://mui.com/static/images/avatar/1.jpg',
-                  alt: 'Remy Sharp',
-                  isOnline: true,
-                }}
-                title="Remy Sharp"
-                message="Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали Это сообщение отправил Remy Sharp. Его еще не прочитали"
-                sentTime="10:58 25.12.21"
-                unreadedMessagesCount={99}
-              />
-
+              {/*  TODO unreadedMessagesCount={1000} */}
               {dialogs?.map(dialog => (
                 <Box
                   key={dialog.user.id}
@@ -90,7 +56,7 @@ const Chat: React.FC<ChatProps> = () => {
                     }}
                     title={dialog.user.name}
                     message={dialog.message?.content ?? ''}
-                    sentTime={dialog.message?.sentTime ?? ''}
+                    sentTime={dialog.message?.createdAt ?? ''}
                     unreadedMessagesCount={1000}
                   />
                 </Box>

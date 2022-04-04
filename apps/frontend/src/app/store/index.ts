@@ -5,7 +5,6 @@ import thunkMiddleware from 'redux-thunk'
 import { emptyApi as api } from 'shared/api/endpoints/emptyApi'
 import AuthReducer from 'shared/store/authSlice'
 import { myLogger } from './middleware/log'
-import { myErrorCatcher } from './middleware/errorCatcher'
 
 const store = configureStore({
   reducer: combineReducers({
@@ -13,12 +12,7 @@ const store = configureStore({
     AuthReducer,
   }),
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(
-      thunkMiddleware,
-      myLogger,
-      myErrorCatcher,
-      api.middleware,
-    ),
+    getDefaultMiddleware().concat(thunkMiddleware, myLogger, api.middleware),
 })
 
 export default store
