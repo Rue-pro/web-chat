@@ -36,7 +36,20 @@ export const extendedApi = emptyApi
   .enhanceEndpoints({ addTagTypes: ['session'] })
   .injectEndpoints({
     endpoints: build => ({
-      getUsers: build.query<Dialog[], void>({
+      findDialogs: build.query<Dialog[], void>({
+        query: () => ({
+          url: `/dialogs`,
+          method: 'GET',
+        }),
+        transformResponse: (res): Dialog[] => {
+          const isDialogArr = DialogArrSchema.guard(res)
+          if (isDialogArr) {
+            return res
+          }
+          return []
+        },
+      }),
+      getDialogs: build.query<Dialog[], void>({
         query: () => ({
           url: `/dialogs`,
           method: 'GET',
@@ -52,4 +65,4 @@ export const extendedApi = emptyApi
     }),
   })
 
-export const { useGetUsersQuery } = extendedApi
+export const { useGetDialogsQuery, useFindDialogsQuery } = extendedApi

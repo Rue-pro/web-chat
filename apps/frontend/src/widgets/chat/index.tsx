@@ -4,18 +4,22 @@ import { styled, Box } from '@mui/material'
 import { ChatInput, ChatMessage } from 'entities/chatMessage/ui'
 import { DialogRow, DialogRowSketeton } from 'entities/dialog'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
-import { useGetUsersQuery } from 'shared/api/endpoints/dialogsApi'
+import {
+  useGetDialogsQuery,
+  useFindDialogsQuery,
+} from 'shared/api/endpoints/dialogsApi'
 import { SearchInput } from 'shared/ui'
 
 type ChatProps = {}
 
 const Chat: React.FC<ChatProps> = () => {
   const { data: messages, isLoading: isMessagesLoading } = useGetMessagesQuery()
-  const { data: dialogs, isLoading: isDialogsLoading } = useGetUsersQuery()
+  const { data: dialogs, isLoading: isDialogsLoading } = useGetDialogsQuery()
+  const { data, isLoading: isDataLoading } = useFindDialogsQuery()
   const [currentDialog, setCurrentDialog] = useState<string>('')
   console.log(messages)
   console.log(isMessagesLoading)
-  console.log('DIALOGS', dialogs)
+  console.log('DATA', data)
 
   const handleClick = (e: MouseEvent<HTMLElement>) => {
     console.log('yo')
