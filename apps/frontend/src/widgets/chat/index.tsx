@@ -1,10 +1,11 @@
-import React, { MouseEvent, useState } from 'react'
+import React, { MouseEvent, useState, ChangeEvent } from 'react'
 import { Divider, Grid, List } from '@mui/material'
 import { styled, Box } from '@mui/material'
 import { ChatInput, ChatMessage } from 'entities/chatMessage/ui'
 import { DialogRow, DialogRowSketeton } from 'entities/dialog'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
 import { useGetUsersQuery } from 'shared/api/endpoints/dialogsApi'
+import { SearchInput } from 'shared/ui'
 
 type ChatProps = {}
 
@@ -21,6 +22,11 @@ const Chat: React.FC<ChatProps> = () => {
     console.log(e)
   }
 
+  const handleChangeSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log('deqwd')
+    console.log(e)
+  }
+
   if (isMessagesLoading) {
     return <div>Показываю скелетон</div>
   }
@@ -28,6 +34,11 @@ const Chat: React.FC<ChatProps> = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={4} sx={{ height: '800px', overflowY: 'auto' }}>
+        <SearchInput
+          placeholder="Find or search dialog"
+          onChange={handleChangeSearchInput}
+          debounceTimeout={300}
+        />
         <List component="div" aria-label="users list">
           {isDialogsLoading ? (
             <>
