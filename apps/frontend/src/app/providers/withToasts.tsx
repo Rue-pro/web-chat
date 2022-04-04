@@ -1,5 +1,5 @@
-import { Component, useEffect } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+import { Component } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { injectStyle } from 'react-toastify/dist/inject-style'
 
 if (typeof window !== 'undefined') {
@@ -7,10 +7,6 @@ if (typeof window !== 'undefined') {
 }
 
 const withToasts = (component: () => Component) => () => {
-  useEffect(() => {
-    toast.info('🦄 Wow so easy!')
-  }, [])
-
   return (
     <>
       <ToastContainer
