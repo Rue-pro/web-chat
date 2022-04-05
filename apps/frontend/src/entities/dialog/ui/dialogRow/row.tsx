@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo, MouseEvent } from 'react'
 import {
   Typography,
   styled,
@@ -7,26 +7,31 @@ import {
   ListItem,
 } from '@mui/material'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
+
 import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
 import Template from './template'
 
-type RowProps = {
+export type RowProps = {
+  id: string
   avatar: AvatarBadgeProps
   title: string
   message: string
   sentTime: string
   unreadedMessagesCount?: number
+  onClick?: (e: MouseEvent<HTMLElement>) => void
 }
 
 const Row: React.FC<RowProps> = ({
+  id,
   avatar,
   title,
   message,
   sentTime,
   unreadedMessagesCount,
+  onClick,
 }) => {
   return (
-    <ListItem button>
+    <ListItem button data-id={id} onClick={onClick}>
       <Template
         avatar={<AvatarBadge {...avatar} />}
         title={
@@ -52,7 +57,7 @@ const Row: React.FC<RowProps> = ({
   )
 }
 
-export default Row
+export default memo(Row)
 
 const getMessagesCount = (messagesCount: number) => {
   return messagesCount >= 100 ? '99+' : messagesCount

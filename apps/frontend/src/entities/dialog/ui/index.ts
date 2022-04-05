@@ -1,2 +1,2 @@
-export { DialogRow } from './dialog-row'
-export { DialogRowSketeton } from './dialog-row'
+export * from './dialogRow'
+export { default as DialogLoadingTemplate } from './dialogLoadingTemplate'
