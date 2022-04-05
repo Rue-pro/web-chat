@@ -28,7 +28,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   })
 
   return (
-    <Paper component="form" sx={{ display: 'flex', alignItems: 'center' }}>
+    <Paper component="div" sx={{ display: 'flex', alignItems: 'center' }}>
       <InputBase
         sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}

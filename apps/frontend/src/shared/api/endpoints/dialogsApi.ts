@@ -1,48 +1,46 @@
-import { Record, String, Static, Number, Array } from 'runtypes'
+import { Record, String, Static, Number, Array, Optional } from 'runtypes'
 
-import { io, Socket } from 'socket.io-client'
-import { API_URL } from 'shared/config/environment-variables'
 import { emptyApi } from './emptyApi'
 
+const DialogUserSchema = Record({
+  id: String,
+  name: String,
+  avatar: String,
+})
+
+const DialogMessageSchema = Record({
+  id: Number,
+  content: String,
+  createdAt: String,
+})
+
 const DialogSchema = Record({
-  user: Record({
-    id: String,
-    name: String,
-    avatar: String,
-  }),
-  message: Record({
-    id: Number,
-    content: String,
-    createdAt: String,
-  }),
+  user: DialogUserSchema,
+  message: DialogMessageSchema,
+})
+
+const SearchDialogResultSchema = Record({
+  user: DialogUserSchema,
+  message: Optional(DialogMessageSchema),
 })
 
 const DialogArrSchema = Array(DialogSchema)
+const SearchDialogResultArrSchema = Array(SearchDialogResultSchema)
 
 type Dialog = Static<typeof DialogSchema>
-
-let socket: Socket
-function getSocket() {
-  if (!socket) {
-    socket = io(`${API_URL}`, {
-      withCredentials: true,
-      path: '/users',
-    })
-  }
-  return socket
-}
+export type SearchDialogResult = Static<typeof SearchDialogResultSchema>
 
 export const extendedApi = emptyApi
-  .enhanceEndpoints({ addTagTypes: ['session'] })
+  .enhanceEndpoints({ addTagTypes: ['dialogs'] })
   .injectEndpoints({
     endpoints: build => ({
-      findDialogs: build.query<Dialog[], void>({
-        query: () => ({
-          url: `/dialogs`,
+      findDialogs: build.query<SearchDialogResult[], string>({
+        query: query => ({
+          url: `/dialogs/search?query=${query}`,
           method: 'GET',
         }),
-        transformResponse: (res): Dialog[] => {
-          const isDialogArr = DialogArrSchema.guard(res)
+        transformResponse: (res): SearchDialogResult[] => {
+          const isDialogArr = SearchDialogResultArrSchema.guard(res)
           if (isDialogArr) {
             return res
           }

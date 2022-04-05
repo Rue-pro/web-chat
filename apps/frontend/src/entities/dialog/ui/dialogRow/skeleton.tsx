@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Box, Skeleton as MuiSkeleton, styled } from '@mui/material'
 import Template from './template'
 
@@ -17,7 +17,7 @@ const Skeleton: React.FC<SkeletonProps> = () => {
   )
 }
 
-export default Skeleton
+export default memo(Skeleton)
 
 const Container = styled(Box)`
   padding: 8px 16px;
