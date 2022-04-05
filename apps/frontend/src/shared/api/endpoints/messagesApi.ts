@@ -1,7 +1,8 @@
 import { Record, String, Static, Number } from 'runtypes'
-import { emptyApi } from './emptyApi'
 import { io, Socket } from 'socket.io-client'
+
 import { API_URL } from 'shared/config/environment-variables'
+import { emptyApi } from './emptyApi'
 
 enum ChatEvent {
   SendMessage = 'send_message',
@@ -50,7 +51,7 @@ export const extendedApi = emptyApi
           })
         },
       }),
-      getMessages: build.query<Message[], void>({
+      getMessages: build.query<Message[], string>({
         queryFn: () => ({ data: [] }),
         async onCacheEntryAdded(
           id,

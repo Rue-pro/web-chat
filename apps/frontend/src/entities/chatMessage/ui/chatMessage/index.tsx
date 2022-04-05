@@ -3,7 +3,7 @@ import { Box, styled, Typography } from '@mui/material'
 
 type ChatMessageType = 'own' | 'their'
 
-type ChatMessageProps = {
+interface ChatMessageProps {
   type: ChatMessageType
   message: string
   sentTime: string

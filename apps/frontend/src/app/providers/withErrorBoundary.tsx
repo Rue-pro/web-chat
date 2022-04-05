@@ -1,5 +1,5 @@
-import { Alert } from '@mui/material'
 import { Component, ErrorInfo, ReactNode } from 'react'
+import { Alert } from '@mui/material'
 
 interface Props {
   children: ReactNode

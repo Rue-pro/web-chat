@@ -1,5 +1,6 @@
-import { emptyApi } from './emptyApi'
 import { Record, String, Static } from 'runtypes'
+
+import { emptyApi } from './emptyApi'
 
 type LoginData = {
   email: string
