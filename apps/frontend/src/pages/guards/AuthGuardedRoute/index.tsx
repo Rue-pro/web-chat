@@ -7,7 +7,7 @@ import { PATHS } from 'pages/routes'
 import { ActionButton } from 'shared/ui'
 import { logout } from 'shared/store/authSlice'
 
-type AuthGuardedRouteProps = {
+interface AuthGuardedRouteProps {
   children: React.ReactNode
 }
 

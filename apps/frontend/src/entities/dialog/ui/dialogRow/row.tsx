@@ -11,7 +11,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
 import Template from './template'
 
-export type RowProps = {
+export interface RowProps {
   id: string
   avatar: AvatarBadgeProps
   title: string

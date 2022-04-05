@@ -22,9 +22,8 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
   onOpenDialog,
 }) => {
   const [query, setQuery] = useState<string>('')
-  const isSearching: boolean = Boolean(query)
   const { data, isLoading } = useFindDialogsQuery(query, {
-    skip: !isSearching,
+    skip: !Boolean(query),
   })
 
   const handleChangeSearchInput = useCallback(
@@ -48,7 +47,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
           skeletonsCount={6}
         />
       ) : (
-        isSearching &&
+        Boolean(query) &&
         data?.map((dialog: SearchDialogResult) => (
           <DialogRow
             key={dialog.user.id}

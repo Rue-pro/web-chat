@@ -9,7 +9,7 @@ import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
 
-type FormProps = {
+interface FormProps {
   formName: string
   pageToNavigate: string
 }

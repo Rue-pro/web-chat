@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useGetDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import {
@@ -9,10 +9,21 @@ import {
 
 interface DialogsProps {
   onOpenDialog: (dialogId: string) => void
+  onLoadDialogs?: (dialogId: string | null) => void
 }
 
-const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog }) => {
+const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog, onLoadDialogs }) => {
   const { data: dialogs, isLoading } = useGetDialogsQuery()
+
+  useEffect(() => {
+    if (onLoadDialogs) {
+      if (dialogs?.length) {
+        onLoadDialogs(dialogs[0].user.id)
+      } else {
+        onLoadDialogs(null)
+      }
+    }
+  }, [dialogs, onLoadDialogs])
 
   if (isLoading) {
     return (
@@ -28,6 +39,7 @@ const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog }) => {
       {/*  TODO unreadedMessagesCount={1000} */}
       {dialogs?.map(dialog => (
         <DialogRow
+          key={dialog.user.id}
           id={dialog.user.id}
           avatar={{
             src: dialog.user.avatar,

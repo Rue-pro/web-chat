@@ -1,14 +1,16 @@
-import { ChatMessage } from 'entities/chatMessage/ui'
-import * as React from 'react'
+import React from 'react'
 
+import { ChatMessage } from 'entities/chatMessage/ui'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
 
 interface DialogProps {
-  id: string | null
+  id: string
 }
 
-const Dialog: React.FC<DialogProps> = () => {
-  const { data: messages, isLoading } = useGetMessagesQuery()
+const Dialog: React.FC<DialogProps> = ({ id }) => {
+  const { data: messages, isLoading } = useGetMessagesQuery(id, {
+    skip: !Boolean(id),
+  })
 
   if (isLoading) {
     return <div>Показываю скелетон</div>

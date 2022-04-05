@@ -1,7 +1,7 @@
 import React, { memo, ReactElement, Fragment } from 'react'
 import { Box, Divider } from '@mui/material'
 
-type DialogLoadingTemplateProps = {
+interface DialogLoadingTemplateProps {
   skeleton: React.ReactElement
   skeletonsCount: number
 }

@@ -1,5 +1,6 @@
-import { API_URL } from 'shared/config/environment-variables'
 import { io, Socket as IOSocket } from 'socket.io-client'
+
+import { API_URL } from 'shared/config/environment-variables'
 
 class Socket {
   private _socket: IOSocket

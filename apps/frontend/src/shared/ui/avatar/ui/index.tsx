@@ -1,7 +1,7 @@
 import React from 'react'
 import { styled, Badge, Avatar, Stack } from '@mui/material'
 
-export type AvatarBadgeProps = {
+export interface AvatarBadgeProps {
   src: string
   alt: string
   isOnline?: boolean
