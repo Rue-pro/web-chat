@@ -26,7 +26,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
-
+    console.log('LOGIN', user);
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`);
     }

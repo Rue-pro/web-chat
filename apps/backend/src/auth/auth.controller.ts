@@ -15,8 +15,9 @@ export class AuthController {
     @Body() { email, password }: LoginDto,
     @Res() reply: FastifyReply,
   ) {
+    console.log('LOGIN', email, password);
     const { accessToken } = await this.authService.login(email, password);
-
+    console.log('ACCESS_TOKEN', accessToken);
     reply
       .setCookie('access_token', accessToken, {
         domain: 'localhost',
