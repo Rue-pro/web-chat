@@ -39,7 +39,7 @@ export class MessagesService {
     });
   }
 
-  async getAllMessages(id: string) {
+  async getAllMessages(userId: string) {
     console.log('GET_ALL_MESSAGES');
     /**
      * TODO
@@ -47,17 +47,31 @@ export class MessagesService {
      */
     const query = this.messageRepository
       .createQueryBuilder('message')
-      .select('*');
+      .addSelect([
+        'id',
+        'content',
+        '"createdAt"',
+        '"receiverId"',
+        '"authorId"',
+      ]);
 
-    query.where({ authorId: id });
-    query.orWhere({ receiverId: id });
+    query.where({ authorId: userId });
+    query.orWhere({ receiverId: userId });
 
     query.orderBy({
       'message."createdAt"': 'ASC',
     });
 
     const messages = await query.getRawMany();
-    console.log('MESSAGES', messages);
-    return messages;
+
+    return messages.map((message) => {
+      const owner = message.authorId === userId ? 'own' : 'theirs';
+      return {
+        id: message.id,
+        content: message.content,
+        createdAt: new Date(message.createdAt).toISOString(),
+        owner,
+      };
+    });
   }
 }

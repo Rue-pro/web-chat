@@ -12,7 +12,6 @@ interface MessageInputProps {
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
-  console.log(extendedApi)
   const [message, setMessage] = useState('')
   const [sendMessage, { isLoading }] = useSendMessageMutation()
 
@@ -21,7 +20,6 @@ const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
   }
 
   const handleSubmit = (event: any) => {
-    console.log(event)
     sendMessage({
       receiverId: receiverId,
       content: message,

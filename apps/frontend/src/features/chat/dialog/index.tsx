@@ -2,6 +2,7 @@ import React from 'react'
 
 import { ChatMessage } from 'entities/chatMessage/ui'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
+import { timeStampToRuDate } from 'entities/chatMessage/lib'
 
 interface DialogProps {
   id: string
@@ -21,9 +22,9 @@ const Dialog: React.FC<DialogProps> = ({ id }) => {
       {messages?.map(message => (
         <ChatMessage
           key={message.id}
-          type="own"
+          type={message.owner}
           message={message.content}
-          sentTime={'10:56'}
+          sentTime={timeStampToRuDate(message.createdAt)}
         />
       ))}
     </>

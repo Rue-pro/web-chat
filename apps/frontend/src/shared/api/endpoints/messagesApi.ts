@@ -1,4 +1,4 @@
-import { Record, String, Static, Number } from 'runtypes'
+import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
 import { io, Socket } from 'socket.io-client'
 
 import { API_URL } from 'shared/config/environment-variables'
@@ -11,13 +11,17 @@ enum ChatEvent {
   ReceiveMessage = 'receive_message',
 }
 
-const MessageSheme = Record({
+const OwnerSchema = Union(Literal('own'), Literal('theirs'))
+const MessageSchema = Record({
   id: Number,
-  authorId: String,
+  createdAt: String,
   content: String,
+  owner: OwnerSchema,
 })
+const MessagesArrSchema = Array(MessageSchema)
 
-type Message = Static<typeof MessageSheme>
+export type MessageOwner = Static<typeof OwnerSchema>
+type Message = Static<typeof MessageSchema>
 interface NewMessage {
   receiverId: string
   content: string
@@ -41,10 +45,8 @@ export const extendedApi = emptyApi
       sendMessage: build.mutation<Message, NewMessage>({
         queryFn: (message: NewMessage) => {
           const socket = getSocket()
-          console.log('SEND MESSAGE')
 
           return new Promise(resolve => {
-            console.log(socket)
             socket.emit(ChatEvent.SendMessage, message, (message: Message) => {
               resolve({ data: message })
             })
@@ -55,35 +57,36 @@ export const extendedApi = emptyApi
         queryFn: () => ({ data: [] }),
         async onCacheEntryAdded(
           id,
-          {
-            dispatch,
-            getState,
-            extra,
-            requestId,
-            cacheEntryRemoved,
-            cacheDataLoaded,
-            getCacheEntry,
-            updateCachedData,
-          },
+          { cacheEntryRemoved, cacheDataLoaded, updateCachedData },
         ) {
           try {
-            console.log('ON_CACHE_ENTRY_ADDED')
             await cacheDataLoaded
 
             const socket = getSocket()
 
             socket.on('connect', () => {
-              console.log('REQUEST_ALL_MESSAGES')
               socket.emit(ChatEvent.RequestAllMessages)
             })
 
             socket.on(ChatEvent.SendAllMessages, (messages: Message[]) => {
+              const isMessagesArr = MessagesArrSchema.guard(messages)
+              if (!isMessagesArr) {
+                console.error(
+                  'Fetched through socket messages format is wrong!',
+                )
+                return
+              }
               updateCachedData(draft => {
                 draft.splice(0, draft.length, ...messages)
               })
             })
 
             socket.on(ChatEvent.ReceiveMessage, (message: Message) => {
+              const isMessage = MessageSchema.guard(message)
+              if (!isMessage) {
+                console.error('Fetched through socket message format is wrong!')
+                return
+              }
               updateCachedData(draft => {
                 draft.push(message)
               })

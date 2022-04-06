@@ -13,18 +13,14 @@ const Chat: React.FC<ChatProps> = () => {
   const [isDialogsLoaded, setDialogsLoaded] = useState<boolean>(false)
 
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('CHAT_HANDLE_CHANGE_SEARCH_INPUT', e.target.value)
-    console.log('Boolean(e.target.value)', Boolean(e.target.value))
     setShowDialogs(!Boolean(e.target.value))
   }
 
   const handleOpenDialog = useCallback((dialogId: string) => {
-    console.log('CHAT_OPEN_DIALOG', dialogId)
     setCurrentDialog(dialogId)
   }, [])
 
   const handleOnLoadDialogs = useCallback((dialogId: string | null) => {
-    console.log('DIALOGS_LOADED', dialogId)
     if (dialogId) {
       setCurrentDialog(dialogId)
     } else {

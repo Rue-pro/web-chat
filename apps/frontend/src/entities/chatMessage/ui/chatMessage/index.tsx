@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box, styled, Typography } from '@mui/material'
 
-type ChatMessageType = 'own' | 'their'
+import { MessageOwner } from 'shared/api/endpoints/messagesApi'
 
 interface ChatMessageProps {
-  type: ChatMessageType
+  type: MessageOwner
   message: string
   sentTime: string
 }
@@ -13,14 +13,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   type,
   message,
   sentTime,
-}: ChatMessageProps) => {
-  return (
-    <Container data-type={type}>
-      <Message data-type={type}>{message}</Message>
-      <Time data-type={type}>{sentTime}</Time>
-    </Container>
-  )
-}
+}: ChatMessageProps) => (
+  <Container data-type={type}>
+    <Message data-type={type}>{message}</Message>
+    <Time data-type={type}>{sentTime}</Time>
+  </Container>
+)
 
 export default ChatMessage
 
@@ -54,7 +52,7 @@ const Container = styled(Box)`
     }
   }
 
-  &[data-type='their'] {
+  &[data-type='theirs'] {
     align-self: flex-start;
     margin-left: 10px;
     background-color: #e5f7fd;
@@ -75,7 +73,7 @@ const Time = styled(Typography)`
     color: #ffffff;
   }
 
-  &[data-type='their'] {
+  &[data-type='theirs'] {
     color: #999999;
   }
 `
@@ -91,7 +89,7 @@ const Message = styled(Typography)`
     color: #ffffff;
   }
 
-  &[data-type='their'] {
+  &[data-type='theirs'] {
     color: #666666;
   }
 `

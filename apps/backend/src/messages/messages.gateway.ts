@@ -45,8 +45,8 @@ export class MessagesGateway implements OnGatewayConnection {
   ) {
     console.log('--------LISTEN FOR MESSAGES--------');
     const user = await this.messageService.getUserFromSocket(socket);
-    const receiverId = 'cl1dapj8p0004ael40pqwj954';
     console.log('REQUEST', newMessage);
+
     const message = await this.messageService.saveMessage({
       authorId: user.id,
       receiverId: newMessage.receiverId,
@@ -54,8 +54,10 @@ export class MessagesGateway implements OnGatewayConnection {
     });
 
     this.server.sockets.emit('receive_message', {
-      authorId: user.id,
+      id: message.id,
       content: newMessage.content,
+      createdAt: message.createdAt,
+      owner: 'ours',
     });
 
     return message;
@@ -66,6 +68,7 @@ export class MessagesGateway implements OnGatewayConnection {
     console.log('--------REQUEST_ALL_MESSAGES--------');
     const user = await this.messageService.getUserFromSocket(socket);
     const messages = await this.messageService.getAllMessages(user.id);
+    console.log('MESSAGES', messages);
     socket.emit('send_all_messages', messages);
   }
 }
