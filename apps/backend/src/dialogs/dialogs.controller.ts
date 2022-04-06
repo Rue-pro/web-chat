@@ -29,8 +29,14 @@ export class DialogsController {
     description: 'Возвращает список диалогов проходящих под критерии фильтра',
     type: [UserEntity],
   })
-  async searchAll(@Query() filter: SearchFilterDialogDto) {
-    return this.dialogsService.searchAll(filter);
+  async searchAll(
+    @Query() filter: SearchFilterDialogDto,
+    @Req() request: FastifyRequest,
+  ) {
+    const user = await this.authService.getUserFromAuthenticationToken(
+      request.cookies.access_token,
+    );
+    return this.dialogsService.searchAll(filter, user.id);
   }
 
   @Get('')

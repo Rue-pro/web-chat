@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
+import { Brackets, Not, Repository, SelectQueryBuilder } from 'typeorm';
 
 import { UserEntity } from 'src/users/entity';
 import { MessageEntity } from 'src/messages/entity';
@@ -17,6 +17,7 @@ export class DialogsService {
 
   async searchAll(
     filter: SearchFilterDialogDto,
+    userId: string,
   ): Promise<SearchResultDialogEntity[]> {
     const { query: filterString } = filter;
     const query = this.userRepository.createQueryBuilder('user').select('user');
@@ -33,6 +34,8 @@ export class DialogsService {
           ),
         );
     }
+
+    query.andWhere({ id: Not(userId) });
 
     query.leftJoinAndSelect(
       (
@@ -65,22 +68,50 @@ export class DialogsService {
     });
   }
 
-  async findAll(): Promise<DialogEntity[]> {
+  async findAll(userId: string): Promise<DialogEntity[]> {
     const query = this.userRepository.createQueryBuilder('user').select('user');
 
-    query.innerJoinAndSelect(
+    query.leftJoinAndSelect(
       (
         qb: SelectQueryBuilder<MessageEntity>,
       ): SelectQueryBuilder<MessageEntity> => {
         const r = qb
-          .from(MessageEntity, 'messages')
-          .orderBy({ 'messages.createdAt': 'ASC' })
+          .from(MessageEntity, 'm')
+          .orderBy({ 'm.createdAt': 'ASC' })
           .take(1);
         return r;
       },
-      'messages',
-      'messages."authorId" = user.id',
+      'm',
+      'm."authorId" = user.id ',
     );
+
+    query.leftJoinAndSelect(
+      (
+        qb: SelectQueryBuilder<MessageEntity>,
+      ): SelectQueryBuilder<MessageEntity> => {
+        const r = qb
+          .from(MessageEntity, 'm2')
+          .orderBy({ 'm2.createdAt': 'ASC' })
+          .take(1);
+        return r;
+      },
+      'm2',
+      'm2."receiverId" = user.id ',
+    );
+
+    /* query.innerJoinAndSelect(
+      (
+        qb: SelectQueryBuilder<MessageEntity>,
+      ): SelectQueryBuilder<MessageEntity> => {
+        const r = qb
+          .from(MessageEntity, 'm')
+          .orderBy({ 'm.createdAt': 'ASC' })
+          .take(1);
+        return r;
+      },
+      'm',
+      'm."authorId" = user.id ',
+    );*/
 
     const dialogs = await query.getRawMany();
 

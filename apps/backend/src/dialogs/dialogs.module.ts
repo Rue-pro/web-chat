@@ -1,12 +1,13 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
+import { AuthModule } from 'src/auth/auth.module';
 import { DialogsService } from './dialogs.service';
 import { DialogsController } from './dialogs.controller';
 import { UserEntity } from 'src/users/entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity]), AuthModule],
   controllers: [DialogsController],
   providers: [DialogsService],
 })
