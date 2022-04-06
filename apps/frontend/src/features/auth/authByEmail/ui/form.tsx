@@ -49,9 +49,9 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
       {auth.status === 'error' && <Alert severity="error">{auth.error}</Alert>}
       <Formik
         initialValues={{
-          email: 'Larissa_Schaefer17@gmail.com',
+          email: 'Fae.Stokes@yahoo.com',
           password:
-            '$2b$10$v8ssdzbWbUCoFewDgMmHoeGqf3xkgoY7JBud94tExI0B/eBk0cnqm',
+            '$2b$10$2n7swA4tfW7e.QfNaJAP7.35Qo9rx/kRLytYwMW9H3Z3qpzi1oV2S',
         }}
         validationSchema={Schema}
         onSubmit={handleSubmit}

@@ -53,7 +53,7 @@ const Chat: React.FC<ChatProps> = () => {
             <DialogContainer sx={{ height: '700px', overflowY: 'auto' }}>
               <Dialog id={currentDialog} />
             </DialogContainer>
-            <ChatInput />
+            <ChatInput receiverId={currentDialog} />
           </>
         ) : (
           /**

@@ -7,9 +7,11 @@ import {
 } from 'shared/api/endpoints/messagesApi'
 import { ActionButton, Input as BaseInput } from 'shared/ui'
 
-type MessageInputProps = {}
+interface MessageInputProps {
+  receiverId: string
+}
 
-const MessageInput: React.FC<MessageInputProps> = () => {
+const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
   console.log(extendedApi)
   const [message, setMessage] = useState('')
   const [sendMessage, { isLoading }] = useSendMessageMutation()
@@ -20,7 +22,10 @@ const MessageInput: React.FC<MessageInputProps> = () => {
 
   const handleSubmit = (event: any) => {
     console.log(event)
-    sendMessage(message)
+    sendMessage({
+      receiverId: receiverId,
+      content: message,
+    })
     setMessage('')
   }
 

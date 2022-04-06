@@ -10,6 +10,7 @@ import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
 import { MessagesService } from './messages.service';
+import { CreateMessageDto } from './dto';
 
 @WebSocketGateway({
   path: '/messages',
@@ -39,23 +40,22 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('send_message')
   async listenForMessages(
-    @MessageBody() content: string,
+    @MessageBody() newMessage: CreateMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
     console.log('--------LISTEN FOR MESSAGES--------');
     const user = await this.messageService.getUserFromSocket(socket);
     const receiverId = 'cl1dapj8p0004ael40pqwj954';
+    console.log('REQUEST', newMessage);
     const message = await this.messageService.saveMessage({
       authorId: user.id,
-      receiverId,
-      receiverType: 'PERSON',
-      content,
-      createdAt: new Date(),
+      receiverId: newMessage.receiverId,
+      content: newMessage.content,
     });
 
     this.server.sockets.emit('receive_message', {
       authorId: user.id,
-      content,
+      content: newMessage.content,
     });
 
     return message;
