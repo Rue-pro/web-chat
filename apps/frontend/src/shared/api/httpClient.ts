@@ -11,8 +11,6 @@ export const APIInstance = axios.create({
 })
 
 APIInstance.interceptors.request.use(({ ...config }) => {
-  console.log('axios.interceptors')
-  console.log(config)
   // X-Authorization
   const accessToken = '2131231' // getToken from the store
   if (!accessToken) return config
