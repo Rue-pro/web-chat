@@ -17,20 +17,17 @@ export class MessageEntity {
   @Column()
   content: string;
 
-  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'authorId' })
+  authorId: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'receiverId' })
   receiverId: string;
 
   @Column()
   receiverType: 'PERSON' | 'GROUP';
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @ManyToOne(() => UserEntity, (user) => user.messages, { cascade: true })
-  @JoinColumn({ name: 'authorId' })
-  author: UserEntity;
-
-  @Column()
-  @RelationId((message: MessageEntity) => message.author)
-  authorId: string;
 }

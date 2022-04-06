@@ -48,9 +48,6 @@ export class UserEntity {
   @ApiProperty()
   role: 'USER' | 'ADMIN';
 
-  @OneToMany(() => MessageEntity, (message: MessageEntity) => message.author)
-  messages: MessageEntity[];
-
   @BeforeInsert()
   async setPassword(password: string) {
     const salt = await bcrypt.genSalt();
