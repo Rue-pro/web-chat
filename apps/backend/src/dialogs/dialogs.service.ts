@@ -13,6 +13,8 @@ export class DialogsService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(MessageEntity)
+    private readonly messageRepository: Repository<MessageEntity>,
   ) {}
 
   async searchAll(
@@ -69,64 +71,55 @@ export class DialogsService {
   }
 
   async findAll(userId: string): Promise<DialogEntity[]> {
-    const query = this.userRepository.createQueryBuilder('user').select('user');
+    /**
+     * TODO
+     * Переписать за более эффективное решение
+     */
+    const query2 = this.messageRepository
+      .createQueryBuilder('message')
+      .select('message');
+    query2.leftJoinAndSelect('message.authorId', 'author');
+    query2.leftJoinAndSelect('message.receiverId', 'receiver');
+    query2.orderBy('message.createdAt', 'DESC');
+    query2.where('message.authorId = :id', { id: userId });
+    query2.orWhere('message.receiverId = :id', { id: userId });
 
-    query.leftJoinAndSelect(
-      (
-        qb: SelectQueryBuilder<MessageEntity>,
-      ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
-          .from(MessageEntity, 'm')
-          .orderBy({ 'm.createdAt': 'ASC' })
-          .take(1);
-        return r;
-      },
-      'm',
-      'm."authorId" = user.id ',
-    );
+    const messages = await query2.getRawMany();
 
-    query.leftJoinAndSelect(
-      (
-        qb: SelectQueryBuilder<MessageEntity>,
-      ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
-          .from(MessageEntity, 'm2')
-          .orderBy({ 'm2.createdAt': 'ASC' })
-          .take(1);
-        return r;
-      },
-      'm2',
-      'm2."receiverId" = user.id ',
-    );
+    const result: DialogEntity[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      const lastAddedDialog = result[result.length - 1];
 
-    /* query.innerJoinAndSelect(
-      (
-        qb: SelectQueryBuilder<MessageEntity>,
-      ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
-          .from(MessageEntity, 'm')
-          .orderBy({ 'm.createdAt': 'ASC' })
-          .take(1);
-        return r;
-      },
-      'm',
-      'm."authorId" = user.id ',
-    );*/
-
-    const dialogs = await query.getRawMany();
-
-    return dialogs.map((dialog) => {
-      const user: DialogUser = {
-        id: dialog.user_id,
-        name: dialog.user_name,
-        avatar: dialog.user_avatar,
+      const user: DialogUser =
+        message.author_id === userId
+          ? {
+              id: message.receiver_id,
+              name: message.receiver_name,
+              avatar: message.receiver_avatar,
+            }
+          : {
+              id: message.author_id,
+              name: message.author_name,
+              avatar: message.author_avatar,
+            };
+      const lastMessage: DialogMessage = {
+        id: message.message_id,
+        content: message.message_content,
+        createdAt: message.message_createdAt,
       };
-      const message: DialogMessage = {
-        id: dialog.id,
-        content: dialog.content,
-        createdAt: dialog.createdAt,
-      };
-      return new DialogEntity(user, message);
-    });
+
+      const dialog = new DialogEntity(user, lastMessage);
+      if (i == 0) {
+        result.push(dialog);
+        continue;
+      }
+      if (dialog.user.id === lastAddedDialog.user.id) {
+        continue;
+      }
+      result.push(dialog);
+    }
+
+    return result;
   }
 }

@@ -3,12 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import bcrypt from 'bcrypt';
-import { MessageEntity } from 'src/messages/entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('user')

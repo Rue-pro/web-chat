@@ -18,6 +18,10 @@ const MessageSheme = Record({
 })
 
 type Message = Static<typeof MessageSheme>
+interface NewMessage {
+  receiverId: string
+  content: string
+}
 
 let socket: Socket
 function getSocket() {
@@ -31,23 +35,19 @@ function getSocket() {
 }
 
 export const extendedApi = emptyApi
-  .enhanceEndpoints({ addTagTypes: ['session'] })
+  .enhanceEndpoints({ addTagTypes: ['messages'] })
   .injectEndpoints({
     endpoints: build => ({
-      sendMessage: build.mutation<Message, string>({
-        queryFn: (chatMessageContent: string) => {
+      sendMessage: build.mutation<Message, NewMessage>({
+        queryFn: (message: NewMessage) => {
           const socket = getSocket()
           console.log('SEND MESSAGE')
 
           return new Promise(resolve => {
             console.log(socket)
-            socket.emit(
-              ChatEvent.SendMessage,
-              chatMessageContent,
-              (message: Message) => {
-                resolve({ data: message })
-              },
-            )
+            socket.emit(ChatEvent.SendMessage, message, (message: Message) => {
+              resolve({ data: message })
+            })
           })
         },
       }),

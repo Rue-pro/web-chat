@@ -34,16 +34,30 @@ export class MessagesService {
   }
 
   saveMessage(createMessageDto: CreateMessageDto) {
-    return this.messageRepository.save(createMessageDto);
+    return this.messageRepository.save({
+      ...createMessageDto,
+    });
   }
 
-  getAllMessages(id: string) {
+  async getAllMessages(id: string) {
     console.log('GET_ALL_MESSAGES');
     /**
      * TODO
      * на фронте сделать нормальную обработку ошибок с бэка
      */
-    // return await this.messageRepository.find({ where: { id: id } });
-    return this.messageRepository.find({ where: { authorId: id } });
+    const query = this.messageRepository
+      .createQueryBuilder('message')
+      .select('*');
+
+    query.where({ authorId: id });
+    query.orWhere({ receiverId: id });
+
+    query.orderBy({
+      'message."createdAt"': 'ASC',
+    });
+
+    const messages = await query.getRawMany();
+    console.log('MESSAGES', messages);
+    return messages;
   }
 }

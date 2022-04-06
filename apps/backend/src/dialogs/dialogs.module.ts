@@ -5,9 +5,10 @@ import { AuthModule } from 'src/auth/auth.module';
 import { DialogsService } from './dialogs.service';
 import { DialogsController } from './dialogs.controller';
 import { UserEntity } from 'src/users/entity';
+import { MessageEntity } from 'src/messages/entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), AuthModule],
+  imports: [TypeOrmModule.forFeature([UserEntity, MessageEntity]), AuthModule],
   controllers: [DialogsController],
   providers: [DialogsService],
 })
