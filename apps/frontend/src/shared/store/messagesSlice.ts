@@ -13,7 +13,8 @@ const MessageSchema = Record({
   id: Number,
   createdAt: String,
   content: String,
-  owner: OwnerSchema,
+  authorId: String,
+  receiverId: String,
 })
 const MessagesArrSchema = Array(MessageSchema)
 export type MessageOwner = Static<typeof OwnerSchema>
@@ -54,6 +55,7 @@ const chatSlice = createSlice({
       if (!isMessagesArr) {
         console.error('Fetched through socket messages format is wrong!')
         state.messages = []
+        return
       }
       state.messages = messages
     },
@@ -68,9 +70,11 @@ const chatSlice = createSlice({
     submitMessage: (
       state,
       action: PayloadAction<{
+        receiverId: string
         content: string
       }>,
     ) => {
+      console.log('SUBMIT_MESSAGE')
       return
     },
     getAllMessages: (

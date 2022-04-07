@@ -52,7 +52,7 @@ export class DialogsController {
     const user = await this.authService.getUserFromAuthenticationToken(
       request.cookies.access_token,
     );
-    console.log('FIND_ALL_USER', user);
+
     return this.dialogsService.findAll(user.id);
   }
 }

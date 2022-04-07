@@ -21,7 +21,6 @@ export class MessagesService {
   }
 
   async getAllMessages(userId: string, dialogId: string) {
-    console.log('GET_ALL_MESSAGES');
     /**
      * TODO
      * на фронте сделать нормальную обработку ошибок с бэка
@@ -60,12 +59,12 @@ export class MessagesService {
     const messages = await query.getRawMany();
 
     return messages.map((message) => {
-      const owner = message.authorId === userId ? 'own' : 'theirs';
       return {
         id: message.id,
         content: message.content,
         createdAt: new Date(message.createdAt).toISOString(),
-        owner,
+        authorId: message.authorId,
+        receiverId: message.receiverId,
       };
     });
   }

@@ -11,13 +11,13 @@ interface DialogProps {
 }
 
 const Dialog: React.FC<DialogProps> = ({ id }) => {
-  console.log('DIALOGS')
   const dispatch = useDispatch()
-  const messages: Message[] = useSelector(
-    (state: TStore) => state.MessagesReducer.messages,
-  )
-  console.log(chatActions)
-  console.log('MESSAGES', messages)
+  const { messages, userId } = useSelector((state: TStore) => {
+    return {
+      messages: state.MessagesReducer.messages,
+      userId: state.AuthReducer.data.userId,
+    }
+  })
 
   useEffect(() => {
     dispatch(chatActions.getAllMessages({ userId: id }))
@@ -35,10 +35,10 @@ const Dialog: React.FC<DialogProps> = ({ id }) => {
 
   return (
     <>
-      {messages?.map(message => (
+      {messages?.map((message: Message) => (
         <ChatMessage
           key={message.id}
-          type={message.owner}
+          type={message.authorId === userId ? 'own' : 'theirs'}
           message={message.content}
           sentTime={timeStampToRuDate(message.createdAt)}
         />

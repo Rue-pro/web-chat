@@ -11,8 +11,6 @@ const socketMiddleware: Middleware = store => {
   return next => action => {
     const isConnectionEstablished =
       socket && store.getState().SocketReducer.isConnected
-    console.log('SOCKET_MIDDLEWARE', isConnectionEstablished)
-    console.log(store.getState())
 
     if (socketActions.startConnecting.match(action)) {
       console.log('SOCKET_MIDDLEWARE_START_CONNECTING')
@@ -31,13 +29,16 @@ const socketMiddleware: Middleware = store => {
         store.dispatch(chatActions.receiveAllMessages({ messages }))
       })
 
+      console.log('Навешиваю события')
       socket.on(ChatEvent.ReceiveMessage, (message: Message) => {
+        console.log('CHAT_MIDDLEWARE_RECEIVE_MESSAGE', message)
         store.dispatch(chatActions.receiveMessage({ message }))
       })
     }
 
     if (chatActions.submitMessage.match(action) && isConnectionEstablished) {
-      socket.emit(ChatEvent.SendMessage, action.payload.content)
+      console.log('SOCKET_EMIT')
+      socket.emit(ChatEvent.SendMessage, action.payload)
     }
 
     if (chatActions.getAllMessages.match(action) && isConnectionEstablished) {

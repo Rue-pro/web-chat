@@ -30,7 +30,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
-    console.log('LOGIN', user);
+
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`);
     }
@@ -65,12 +65,11 @@ export class AuthService {
   }
 
   public async getUserFromSocket(socket: Socket): Promise<UserEntity> {
-    console.log('GET_USER_FROM_SOCKET');
     const cookie = socket.handshake.headers.cookie;
     const { access_token } = parse(cookie);
-    console.log('ACCESS_TOKEN', access_token);
+
     const user = await this.getUserFromAuthenticationToken(access_token);
-    console.log('USER', user);
+
     if (!user) {
       throw new WsException('Invalid credentials.');
     }

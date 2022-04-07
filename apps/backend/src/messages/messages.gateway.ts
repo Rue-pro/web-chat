@@ -31,9 +31,6 @@ export class MessagesGateway implements OnGatewayConnection {
   private connections = [];
 
   handleDisconnect(socket: Socket) {
-    this.logger.log(`Client disconnected: ${socket.id}`);
-    console.log(`Client disconnected: ${socket.id}`);
-
     this.connectionService.delete(socket.id);
 
     /**
@@ -62,7 +59,6 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() newMessage: CreateMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('--------LISTEN FOR MESSAGES--------');
     const user = await this.authService.getUserFromSocket(socket);
     const receiverId = newMessage.receiverId;
 
@@ -73,15 +69,18 @@ export class MessagesGateway implements OnGatewayConnection {
     });
 
     const connection = await this.connectionService.findOne(receiverId);
-    if (connection) {
-      console.log('ОПОВЕЩАЮ пользователя', connection.userId);
-      this.server.sockets.to(connection.socketId).emit('receive_message', {
-        id: message.id,
-        content: newMessage.content,
-        createdAt: message.createdAt,
-        owner: 'ours',
-      });
-    }
+    const receivers = [socket.id];
+    if (connection) receivers.push(connection.socketId);
+
+    console.log('Получатели', receivers);
+
+    this.server.sockets.to(receivers).emit('receive_message', {
+      id: message.id,
+      content: newMessage.content,
+      createdAt: message.createdAt,
+      authorId: user.id,
+      receiverId: receiverId,
+    });
 
     return message;
   }
@@ -91,14 +90,12 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() dialogId: string,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('--------REQUEST_ALL_MESSAGES--------');
-    console.log('DIALOG_ID', dialogId);
     const user = await this.authService.getUserFromSocket(socket);
     const messages = await this.messageService.getAllMessages(
       user.id,
       dialogId,
     );
-    console.log('MESSAGES', messages);
+
     socket.emit('send_all_messages', messages);
   }
 }

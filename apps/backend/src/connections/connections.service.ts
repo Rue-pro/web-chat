@@ -16,7 +16,10 @@ export class ConnectionsService {
 
   async create(createMessageDto: CreateConnectionDto) {
     const user = await this.findOne(createMessageDto.userId);
-    if (user) return user;
+    if (user) {
+      Object.assign(user, createMessageDto);
+      return this.connectionRepository.save(user);
+    }
     return this.connectionRepository.save(createMessageDto);
   }
 
