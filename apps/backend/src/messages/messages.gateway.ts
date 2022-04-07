@@ -46,12 +46,11 @@ export class MessagesGateway implements OnGatewayConnection {
     console.log(`Client connected: ${socket.id}`);
 
     const user = await this.authService.getUserFromSocket(socket);
+
     await this.connectionService.create({
       userId: user.id,
       socketId: socket.id,
     });
-
-    console.log('Connection saved', this.connections);
 
     /**
      * Уведомить всех друзей об онлайне
