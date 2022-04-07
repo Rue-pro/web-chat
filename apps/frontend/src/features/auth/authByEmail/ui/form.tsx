@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
 
-import { TStore } from 'app/store'
+import { TStore } from 'shared/store'
 import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
