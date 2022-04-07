@@ -24,7 +24,6 @@ export class DialogsService {
     const { query: filterString } = filter;
     const query = this.userRepository.createQueryBuilder('user').select('user');
 
-    console.log('FILTER', filterString);
     if (filterString) {
       query
         .setParameter('filter', `%${filterString}%`)

@@ -28,6 +28,8 @@ const Chat: React.FC<ChatProps> = () => {
     }
   }, [])
 
+  console.log(currentDialog)
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={4} sx={{ height: '800px', overflowY: 'auto' }}>

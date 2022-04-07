@@ -5,7 +5,7 @@ import { sleep } from 'shared/lib'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,
-  timeout: 1000,
+  timeout: 10000,
   withCredentials: true,
 })
 

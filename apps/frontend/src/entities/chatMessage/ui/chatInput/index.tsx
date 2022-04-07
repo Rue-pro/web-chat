@@ -6,24 +6,28 @@ import {
   useSendMessageMutation,
 } from 'shared/api/endpoints/messagesApi'
 import { ActionButton, Input as BaseInput } from 'shared/ui'
+import { useDispatch } from 'react-redux'
+import { chatActions } from 'shared/store/messagesSlice'
 
 interface MessageInputProps {
   receiverId: string
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
+  const dispatch = useDispatch()
   const [message, setMessage] = useState('')
-  const [sendMessage, { isLoading }] = useSendMessageMutation()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value)
   }
 
   const handleSubmit = (event: any) => {
-    sendMessage({
-      receiverId: receiverId,
-      content: message,
-    })
+    dispatch(
+      chatActions.submitMessage({
+        receiverId,
+        content: message,
+      }),
+    )
     setMessage('')
   }
 

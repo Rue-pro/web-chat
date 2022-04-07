@@ -7,7 +7,6 @@ import AuthReducer from 'shared/store/authSlice'
 import SocketReducer from 'shared/store/socketSlice'
 import MessagesReducer from 'shared/store/messagesSlice'
 import { myLogger } from './middleware/log'
-import chatMiddleware from './middleware/chatMiddleware'
 import socketMiddleware from './middleware/socketMiddleware'
 
 const store = configureStore({
@@ -22,7 +21,6 @@ const store = configureStore({
       thunkMiddleware,
       myLogger,
       socketMiddleware,
-      chatMiddleware,
       api.middleware,
     ),
 })
