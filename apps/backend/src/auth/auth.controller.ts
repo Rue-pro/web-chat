@@ -16,7 +16,10 @@ export class AuthController {
     @Res() reply: FastifyReply,
   ) {
     console.log('LOGIN', email, password);
-    const { accessToken } = await this.authService.login(email, password);
+    const { accessToken, userId } = await this.authService.login(
+      email,
+      password,
+    );
     console.log('ACCESS_TOKEN', accessToken);
     reply
       .setCookie('access_token', accessToken, {
@@ -25,6 +28,8 @@ export class AuthController {
         httpOnly: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
-      .send({ success: true });
+      .send({
+        userId,
+      });
   }
 }
