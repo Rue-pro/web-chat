@@ -33,6 +33,7 @@ function getSocket() {
     socket = io(`${API_URL}`, {
       withCredentials: true,
       path: '/messages',
+      transports: ['websocket', 'polling', 'flashsocket'],
     })
   }
   return socket
