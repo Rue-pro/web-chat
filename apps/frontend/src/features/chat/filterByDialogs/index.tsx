@@ -11,6 +11,7 @@ import {
   DialogLoadingTemplate,
   DialogRowSketeton,
 } from 'entities/dialog'
+import { timeStampToRuDate } from 'shared/lib'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
@@ -59,7 +60,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
             }}
             title={dialog.user.name}
             message={dialog.message?.content ?? ''}
-            sentTime={dialog.message?.createdAt ?? ''}
+            sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
             unreadedMessagesCount={0}
             onClick={() => {
               onOpenDialog(dialog.user.id)

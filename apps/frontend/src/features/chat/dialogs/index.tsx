@@ -6,6 +6,7 @@ import {
   DialogLoadingTemplate,
   DialogRowSketeton,
 } from 'entities/dialog'
+import { timeStampToRuDate } from 'shared/lib'
 
 interface DialogsProps {
   onOpenDialog: (dialogId: string) => void
@@ -48,7 +49,7 @@ const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog, onLoadDialogs }) => {
           }}
           title={dialog.user.name}
           message={dialog.message?.content ?? ''}
-          sentTime={dialog.message?.createdAt ?? ''}
+          sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
           unreadedMessagesCount={1000}
           onClick={() => {
             onOpenDialog(dialog.user.id)
