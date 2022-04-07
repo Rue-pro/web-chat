@@ -64,7 +64,7 @@ export class AuthService {
     }
   }
 
-  public async getUserFromSocket(socket: Socket) {
+  public async getUserFromSocket(socket: Socket): Promise<UserEntity> {
     console.log('GET_USER_FROM_SOCKET');
     const cookie = socket.handshake.headers.cookie;
     const { access_token } = parse(cookie);

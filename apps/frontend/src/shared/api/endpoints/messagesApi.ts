@@ -55,21 +55,76 @@ export const extendedApi = emptyApi
         },
       }),
       getMessages: build.query<Message[], string>({
-        queryFn: () => ({ data: [] }),
+        queryFn: (id: string) => {
+          return new Promise(resolve => {
+            console.log('queryFN')
+            const socket = getSocket()
+
+            socket.on('connect', () => {
+              console.log('ALL_MESSAGES')
+              socket.emit(
+                ChatEvent.RequestAllMessages,
+                id,
+                (messages: Message[]) => {
+                  console.log('FULFILLED', messages)
+                  resolve({ data: messages })
+                },
+              )
+            })
+          })
+
+          if (socket.connected) {
+            console.log('socket connected')
+            return new Promise(resolve => {
+              console.log('get messages')
+              socket.emit(
+                ChatEvent.RequestAllMessages,
+                id,
+                (messages: Message[]) => {
+                  console.log('FILFILLED', messages)
+                  resolve({ data: messages })
+                },
+              )
+            })
+          } else {
+            console.log('socket not connected')
+            return { data: [] }
+          }
+        },
         async onCacheEntryAdded(
           id,
-          { cacheEntryRemoved, cacheDataLoaded, updateCachedData },
+          {
+            dispatch,
+            getState,
+            extra,
+            requestId,
+            cacheEntryRemoved,
+            cacheDataLoaded,
+            getCacheEntry,
+            updateCachedData,
+          },
         ) {
           try {
+            console.log('onCacheEntryAdded')
             await cacheDataLoaded
 
             const socket = getSocket()
 
-            socket.on('connect', () => {
-              socket.emit(ChatEvent.RequestAllMessages)
+            /* socket.on('connect', () => {
+              console.log('ALL_MESSAGES')
+              return new Promise(resolve => {
+                socket.emit(
+                  ChatEvent.RequestAllMessages,
+                  id,
+                  (messages: Message[]) => {
+                    resolve({ data: messages })
+                  },
+                )
+              })
             })
 
             socket.on(ChatEvent.SendAllMessages, (messages: Message[]) => {
+              console.log('SEND ALL MESSAGES')
               const isMessagesArr = MessagesArrSchema.guard(messages)
               if (!isMessagesArr) {
                 console.error(
@@ -80,9 +135,10 @@ export const extendedApi = emptyApi
               updateCachedData(draft => {
                 draft.splice(0, draft.length, ...messages)
               })
-            })
+            })*/
 
             socket.on(ChatEvent.ReceiveMessage, (message: Message) => {
+              console.log('RECEIVE MESSAFE')
               const isMessage = MessageSchema.guard(message)
               if (!isMessage) {
                 console.error('Fetched through socket message format is wrong!')
@@ -103,6 +159,20 @@ export const extendedApi = emptyApi
             // cacheDataLoaded throws
           }
         },
+        /*async onQueryStarted(
+          arg,
+          {
+            dispatch,
+            getState,
+            queryFulfilled,
+            requestId,
+            extra,
+            getCacheEntry,
+          },
+        ) {
+          console.log('query started')
+          console.log(arg)
+        },*/
       }),
     }),
     overrideExisting: false,

@@ -8,6 +8,7 @@ import { TStore } from 'shared/store'
 import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
+import { socketActions } from 'shared/store/socketSlice'
 
 interface FormProps {
   formName: string

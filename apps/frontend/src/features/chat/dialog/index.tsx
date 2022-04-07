@@ -1,20 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage/ui'
-import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
 import { timeStampToRuDate } from 'shared/lib'
+import { chatActions, Message } from 'shared/store/messagesSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { TStore } from 'shared/store'
 
 interface DialogProps {
   id: string
 }
 
 const Dialog: React.FC<DialogProps> = ({ id }) => {
-  const { data: messages, isLoading } = useGetMessagesQuery(id, {
-    skip: !Boolean(id),
-  })
-
+  console.log('DIALOGS')
+  const dispatch = useDispatch()
+  const messages: Message[] = useSelector(
+    (state: TStore) => state.MessagesReducer.messages,
+  )
+  console.log(chatActions)
   console.log('MESSAGES', messages)
-  if (isLoading) {
+
+  useEffect(() => {
+    dispatch(chatActions.getAllMessages({ userId: id }))
+  }, [dispatch, id])
+
+  /*if (isLoading) {
     return (
       <>
         <ChatMessageSkeleton />
@@ -22,7 +31,7 @@ const Dialog: React.FC<DialogProps> = ({ id }) => {
         <ChatMessageSkeleton />
       </>
     )
-  }
+  }*/
 
   return (
     <>

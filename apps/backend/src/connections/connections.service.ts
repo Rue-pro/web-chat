@@ -1,3 +1,5 @@
+import { UserEntity } from 'src/users/entity';
+import { UpdateConnectionDto } from './dto/update-connection.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,14 +15,7 @@ export class ConnectionsService {
   ) {}
 
   async create(createMessageDto: CreateConnectionDto) {
-    console.log('CREATE');
-    console.log(createMessageDto);
-    const user = await this.connectionRepository.findOne({
-      where: {
-        id: createMessageDto.userId,
-      },
-    });
-    console.log('connection', user);
+    const user = await this.findOne(createMessageDto.userId);
     if (user) return user;
     return this.connectionRepository.save(createMessageDto);
   }
@@ -29,9 +24,19 @@ export class ConnectionsService {
     return this.connectionRepository.delete({ socketId });
   }
 
-  async findOne(userId: string) {
-    return this.connectionRepository.findOneBy({
-      userId,
+  findOne(userId: string) {
+    return this.connectionRepository
+      .createQueryBuilder('connection')
+      .innerJoinAndSelect(UserEntity, 'user', 'connection.userId=user.id')
+      .where('user.id = :id', { id: userId })
+      .getOne();
+  }
+
+  async update(connectionId: string, updateConnection: UpdateConnectionDto) {
+    const toUpdate = await this.connectionRepository.findOneBy({
+      id: connectionId,
     });
+    Object.assign(toUpdate, updateConnection);
+    return this.connectionRepository.save(toUpdate);
   }
 }
