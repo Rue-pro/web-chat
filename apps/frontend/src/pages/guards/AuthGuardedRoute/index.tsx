@@ -2,10 +2,10 @@ import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useNavigate } from 'react-router-dom'
 
-import { TStore } from 'app/store'
 import { PATHS } from 'pages/routes'
 import { ActionButton } from 'shared/ui'
 import { logout } from 'shared/store/authSlice'
+import { TStore } from 'shared/store'
 
 interface AuthGuardedRouteProps {
   children: React.ReactNode

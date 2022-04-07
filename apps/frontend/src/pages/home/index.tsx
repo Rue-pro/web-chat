@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import { TStore } from 'app/store'
 import Chat from 'widgets/chat'
+import { TStore } from 'shared/store'
 import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
 
 const HomePage: React.FC = () => {
