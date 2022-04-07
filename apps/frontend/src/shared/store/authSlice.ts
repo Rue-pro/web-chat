@@ -7,6 +7,7 @@ import { GenericState } from './genericSlice'
 const KEY = 'auth'
 interface AuthData {
   isAuth: boolean
+  userId: string
 }
 interface AuthState extends GenericState<AuthData> {}
 
@@ -17,6 +18,7 @@ type LoginData = {
 
 const defaultData: AuthData = {
   isAuth: false,
+  userId: '',
 }
 
 export const login = createAsyncThunk(
@@ -39,13 +41,15 @@ const authSlice = createSlice({
     logout(state) {
       state.status = 'loading'
       state.data.isAuth = false
+      state.data.userId = ''
       saveState<AuthData>(KEY, state.data)
     },
   },
   extraReducers: builder => {
-    builder.addCase(login.fulfilled, (state: AuthState) => {
+    builder.addCase(login.fulfilled, (state: AuthState, action) => {
       state.status = 'finished'
       state.data.isAuth = true
+      state.data.userId = action.payload.userId
       saveState<AuthData>(KEY, state.data)
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
