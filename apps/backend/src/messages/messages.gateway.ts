@@ -9,6 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
+import { ConnectionsService } from './../connections/connections.service';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto';
 
@@ -19,23 +20,40 @@ export class MessagesGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly messageService: MessagesService) {}
+  constructor(
+    private readonly messageService: MessagesService,
+    private readonly connectionService: ConnectionsService,
+  ) {}
 
   private logger: Logger = new Logger('AppGateway');
+  private connections = [];
 
-  afterInit(server: Server) {
-    this.logger.log('Init');
-    console.log('Init');
+  handleDisconnect(socket: Socket) {
+    this.logger.log(`Client disconnected: ${socket.id}`);
+    console.log(`Client disconnected: ${socket.id}`);
+
+    this.connectionService.delete(socket.id);
+
+    /**
+     * Уведомить всех друзей об оффлайне
+     */
   }
 
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
-    console.log(`Client disconnected: ${client.id}`);
-  }
+  async handleConnection(socket: Socket, ...args: any[]) {
+    this.logger.log(`Client connected: ${socket.id}`);
+    console.log(`Client connected: ${socket.id}`);
 
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
-    console.log(`Client connected: ${client.id}`);
+    const user = await this.messageService.getUserFromSocket(socket);
+    await this.connectionService.create({
+      userId: user.id,
+      socketId: socket.id,
+    });
+
+    console.log('Connection saved', this.connections);
+
+    /**
+     * Уведомить всех друзей об онлайне
+     */
   }
 
   @SubscribeMessage('send_message')
@@ -45,29 +63,40 @@ export class MessagesGateway implements OnGatewayConnection {
   ) {
     console.log('--------LISTEN FOR MESSAGES--------');
     const user = await this.messageService.getUserFromSocket(socket);
-    console.log('REQUEST', newMessage);
+    const receiverId = newMessage.receiverId;
 
     const message = await this.messageService.saveMessage({
       authorId: user.id,
-      receiverId: newMessage.receiverId,
+      receiverId: receiverId,
       content: newMessage.content,
     });
 
-    this.server.sockets.emit('receive_message', {
-      id: message.id,
-      content: newMessage.content,
-      createdAt: message.createdAt,
-      owner: 'ours',
-    });
+    const connection = await this.connectionService.findOne(receiverId);
+    if (connection) {
+      console.log('ОПОВЕЩАЮ пользователя', connection.userId);
+      this.server.sockets.to(connection.socketId).emit('receive_message', {
+        id: message.id,
+        content: newMessage.content,
+        createdAt: message.createdAt,
+        owner: 'ours',
+      });
+    }
 
     return message;
   }
 
   @SubscribeMessage('request_all_messages')
-  async requestAllMessages(@ConnectedSocket() socket: Socket) {
+  async requestAllMessages(
+    @MessageBody() dialogId: string,
+    @ConnectedSocket() socket: Socket,
+  ) {
     console.log('--------REQUEST_ALL_MESSAGES--------');
+    console.log('DIALOG_ID', dialogId);
     const user = await this.messageService.getUserFromSocket(socket);
-    const messages = await this.messageService.getAllMessages(user.id);
+    const messages = await this.messageService.getAllMessages(
+      user.id,
+      dialogId,
+    );
     console.log('MESSAGES', messages);
     socket.emit('send_all_messages', messages);
   }

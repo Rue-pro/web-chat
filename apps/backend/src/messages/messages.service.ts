@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
@@ -39,7 +39,7 @@ export class MessagesService {
     });
   }
 
-  async getAllMessages(userId: string) {
+  async getAllMessages(userId: string, dialogId: string) {
     console.log('GET_ALL_MESSAGES');
     /**
      * TODO
@@ -55,8 +55,22 @@ export class MessagesService {
         '"authorId"',
       ]);
 
-    query.where({ authorId: userId });
-    query.orWhere({ receiverId: userId });
+    query.setParameter('authorId', userId);
+    query.setParameter('receiverId', dialogId);
+    query.andWhere(
+      new Brackets((qb) =>
+        qb
+          .where('"authorId" = :authorId')
+          .andWhere('"receiverId" = :receiverId'),
+      ),
+    );
+    query.orWhere(
+      new Brackets((qb) =>
+        qb
+          .where('"authorId" = :receiverId')
+          .andWhere('"receiverId" = :authorId'),
+      ),
+    );
 
     query.orderBy({
       'message."createdAt"': 'ASC',
