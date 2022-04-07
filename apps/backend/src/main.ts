@@ -18,8 +18,12 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    allowedHeaders: '*',
-    origin: '*',
+    allowedHeaders: [
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    ],
+    origin: 'http://localhost:3001',
+    credentials: true,
   });
 
   app.register(fastifyCookie);
