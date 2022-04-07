@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { ChatMessage } from 'entities/chatMessage/ui'
+import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage/ui'
 import { useGetMessagesQuery } from 'shared/api/endpoints/messagesApi'
-import { timeStampToRuDate } from 'entities/chatMessage/lib'
+import { timeStampToRuDate } from 'shared/lib'
 
 interface DialogProps {
   id: string
@@ -13,8 +13,15 @@ const Dialog: React.FC<DialogProps> = ({ id }) => {
     skip: !Boolean(id),
   })
 
+  console.log('MESSAGES', messages)
   if (isLoading) {
-    return <div>Показываю скелетон</div>
+    return (
+      <>
+        <ChatMessageSkeleton />
+        <ChatMessageSkeleton />
+        <ChatMessageSkeleton />
+      </>
+    )
   }
 
   return (
