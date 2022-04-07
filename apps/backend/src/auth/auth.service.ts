@@ -8,6 +8,10 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
+import { Socket } from 'socket.io';
+import { WsException } from '@nestjs/websockets';
+import { parse } from 'cookie';
+
 import { UsersService } from 'src/users/users.service';
 import { UserEntity } from 'src/users/entity';
 import { AuthEntity, TokenPayloadEntity } from './entity';
@@ -58,5 +62,18 @@ export class AuthService {
     if (payload.userId) {
       return this.validateUser(payload.userId);
     }
+  }
+
+  public async getUserFromSocket(socket: Socket) {
+    console.log('GET_USER_FROM_SOCKET');
+    const cookie = socket.handshake.headers.cookie;
+    const { access_token } = parse(cookie);
+    console.log('ACCESS_TOKEN', access_token);
+    const user = await this.getUserFromAuthenticationToken(access_token);
+    console.log('USER', user);
+    if (!user) {
+      throw new WsException('Invalid credentials.');
+    }
+    return user;
   }
 }

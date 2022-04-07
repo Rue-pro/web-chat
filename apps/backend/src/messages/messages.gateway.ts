@@ -1,3 +1,4 @@
+import { AuthService } from 'src/auth/auth.service';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -23,6 +24,7 @@ export class MessagesGateway implements OnGatewayConnection {
   constructor(
     private readonly messageService: MessagesService,
     private readonly connectionService: ConnectionsService,
+    private readonly authService: AuthService,
   ) {}
 
   private logger: Logger = new Logger('AppGateway');
@@ -43,7 +45,7 @@ export class MessagesGateway implements OnGatewayConnection {
     this.logger.log(`Client connected: ${socket.id}`);
     console.log(`Client connected: ${socket.id}`);
 
-    const user = await this.messageService.getUserFromSocket(socket);
+    const user = await this.authService.getUserFromSocket(socket);
     await this.connectionService.create({
       userId: user.id,
       socketId: socket.id,
@@ -62,7 +64,7 @@ export class MessagesGateway implements OnGatewayConnection {
     @ConnectedSocket() socket: Socket,
   ) {
     console.log('--------LISTEN FOR MESSAGES--------');
-    const user = await this.messageService.getUserFromSocket(socket);
+    const user = await this.authService.getUserFromSocket(socket);
     const receiverId = newMessage.receiverId;
 
     const message = await this.messageService.saveMessage({
@@ -92,7 +94,7 @@ export class MessagesGateway implements OnGatewayConnection {
   ) {
     console.log('--------REQUEST_ALL_MESSAGES--------');
     console.log('DIALOG_ID', dialogId);
-    const user = await this.messageService.getUserFromSocket(socket);
+    const user = await this.authService.getUserFromSocket(socket);
     const messages = await this.messageService.getAllMessages(
       user.id,
       dialogId,
