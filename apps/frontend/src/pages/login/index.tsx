@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { PATHS } from 'pages/routes'
+import { PATHS } from 'shared/config/routes'
 import { AuthByEmailForm } from 'features/auth/authByEmail'
 
 const LoginPage: React.FC = () => (

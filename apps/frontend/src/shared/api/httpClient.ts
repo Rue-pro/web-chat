@@ -26,3 +26,30 @@ APIInstance.interceptors.response.use(async response => {
   await sleep()
   return response
 })
+
+APIInstance.interceptors.request.use(async request => {
+  console.log('request')
+  console.log(request)
+  return request
+})
+
+APIInstance.interceptors.response.use(async response => {
+  console.log('response')
+  console.log(response)
+  return response
+})
+
+/**
+ * console.log('axiosError', axiosError)
+      let err = axiosError as AxiosError
+      console.log('ERROR', err.response)
+      if(err.response === undefined) {
+        
+      }
+      toast.error(
+        `Error: ${err.response?.status} \n ${err.response?.data?.message}`,
+      )
+      return {
+        error: { status: err.response?.status, data: err.response?.data },
+      }
+ */
