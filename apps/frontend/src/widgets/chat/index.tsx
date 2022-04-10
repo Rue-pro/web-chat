@@ -48,9 +48,7 @@ const Chat: React.FC<ChatProps> = () => {
       <Grid item xs={8}>
         {currentDialog ? (
           <>
-            <DialogContainer sx={{ height: '700px', overflowY: 'auto' }}>
-              <Dialog id={currentDialog} />
-            </DialogContainer>
+            <Dialog id={currentDialog} />
             <ChatInput receiverId={currentDialog} />
           </>
         ) : (
@@ -65,8 +63,3 @@ const Chat: React.FC<ChatProps> = () => {
 }
 
 export default Chat
-
-const DialogContainer = styled(Box)`
-  display: flex;
-  flex-direction: column;
-`

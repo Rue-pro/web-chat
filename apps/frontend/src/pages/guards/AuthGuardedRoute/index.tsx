@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useNavigate } from 'react-router-dom'
 
-import { PATHS } from 'pages/routes'
+import { PATHS } from 'shared/config/routes'
 import { ActionButton } from 'shared/ui'
 import { logout } from 'shared/store/authSlice'
 import { TStore } from 'shared/store'

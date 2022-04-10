@@ -24,12 +24,16 @@ interface ChatState {
   isEstablishingConnection: boolean
   isConnected: boolean
   messages: Message[]
+  status: 'loading' | 'idle' | 'error'
+  error: string | null
 }
 
 const initialState: ChatState = {
   isEstablishingConnection: false,
   isConnected: false,
   messages: [],
+  status: 'idle',
+  error: null,
 }
 
 const chatSlice = createSlice({
@@ -58,6 +62,7 @@ const chatSlice = createSlice({
         return
       }
       state.messages = messages
+      state.status = 'idle'
     },
     receiveMessage: (
       state,
@@ -66,6 +71,7 @@ const chatSlice = createSlice({
       }>,
     ) => {
       state.messages.push(action.payload.message)
+      state.status = 'idle'
     },
     submitMessage: (
       state,
@@ -74,6 +80,7 @@ const chatSlice = createSlice({
         content: string
       }>,
     ) => {
+      state.status = 'loading'
       console.log('SUBMIT_MESSAGE')
       return
     },
@@ -83,6 +90,7 @@ const chatSlice = createSlice({
         userId: string
       }>,
     ) => {
+      state.status = 'loading'
       return
     },
   },

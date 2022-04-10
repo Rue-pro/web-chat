@@ -2,10 +2,11 @@ import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 
 import AuthGuardedRoute from './guards/AuthGuardedRoute'
-import { PATHS } from './routes'
+import { PATHS } from '../shared/config/routes'
 
 const HomePage = lazy(() => import('./home'))
 const Error404Page = lazy(() => import('./error404'))
+const ErrorBadGateway = lazy(() => import('./error502'))
 const LoginPage = lazy(() => import('./login'))
 
 const Pages = () => (
@@ -19,6 +20,7 @@ const Pages = () => (
       }
     />
     <Route path={PATHS.NotFoundPage} element={<Error404Page />} />
+    <Route path={PATHS.BadGatewayPage} element={<ErrorBadGateway />} />
     <Route path={PATHS.LoginPage} element={<LoginPage />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>

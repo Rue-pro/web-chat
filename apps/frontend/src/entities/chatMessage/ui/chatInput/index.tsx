@@ -1,11 +1,7 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import { styled } from '@mui/material'
 
-import {
-  extendedApi,
-  useSendMessageMutation,
-} from 'shared/api/endpoints/messagesApi'
-import { ActionButton, Input as BaseInput } from 'shared/ui'
+import { Input as BaseInput } from 'shared/ui'
 import { useDispatch } from 'react-redux'
 import { chatActions } from 'shared/store/messagesSlice'
 
@@ -13,24 +9,26 @@ interface MessageInputProps {
   receiverId: string
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
+const ChatInput: React.FC<MessageInputProps> = ({ receiverId }) => {
   const dispatch = useDispatch()
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<string>('')
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value)
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value)
+  }, [])
+
+  const handleEnterClick = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      dispatch(
+        chatActions.submitMessage({
+          receiverId,
+          content: message,
+        }),
+      )
+      setMessage('')
+    }
   }
-
-  const handleSubmit = (event: any) => {
-    dispatch(
-      chatActions.submitMessage({
-        receiverId,
-        content: message,
-      }),
-    )
-    setMessage('')
-  }
-
+  console.log('MEssage', message)
   return (
     <div>
       <Input
@@ -39,13 +37,14 @@ const MessageInput: React.FC<MessageInputProps> = ({ receiverId }) => {
         variant="outlined"
         placeholder="Write a message..."
         onChange={handleChange}
+        onKeyPress={handleEnterClick}
+        value={message}
       />
-      <ActionButton onClick={handleSubmit}>Send</ActionButton>
     </div>
   )
 }
 
-export default MessageInput
+export default ChatInput
 
 const Input = styled(BaseInput)`
   width: 100%;

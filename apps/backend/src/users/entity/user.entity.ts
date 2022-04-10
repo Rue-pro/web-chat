@@ -28,11 +28,11 @@ export class UserEntity {
   updatedAt: Date;
 
   @ApiProperty()
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ unique: true })
   phone: string;
 
   @ApiProperty()
