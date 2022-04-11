@@ -7,6 +7,7 @@ import {
   Paper,
   Modal,
   Box,
+  styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 
@@ -16,7 +17,7 @@ interface TemplateProps {
   main: React.ReactNode
 }
 
-const Template: React.FC<TemplateProps> = ({ aside, title, main }) => {
+const ChatTemplate: React.FC<TemplateProps> = ({ aside, title, main }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = useCallback(() => {
@@ -58,9 +59,15 @@ const Template: React.FC<TemplateProps> = ({ aside, title, main }) => {
           {aside}
         </Paper>
       </Modal>
-      <Box sx={{ height: 'calc(100vh - 63.99px)', width: '100%' }}>{main}</Box>
+      <Main>{main}</Main>
     </>
   )
 }
 
-export default Template
+export default ChatTemplate
+
+const Main = styled(Box)`
+  height: calc(100vh - 63.99px);
+  width: 100%;
+  padding-top: 20px;
+`
