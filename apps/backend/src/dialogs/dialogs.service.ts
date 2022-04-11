@@ -4,7 +4,11 @@ import { Brackets, Not, Repository, SelectQueryBuilder } from 'typeorm';
 
 import { UserEntity } from 'src/users/entity';
 import { MessageEntity } from 'src/messages/entity';
-import { DialogEntity, SearchResultDialogEntity } from './entity';
+import {
+  ConversationEntity,
+  DialogEntity,
+  SearchResultDialogEntity,
+} from './entity';
 import { DialogMessage, DialogUser } from './entity/types';
 import { SearchFilterDialogDto } from './dto';
 
@@ -15,6 +19,7 @@ export class DialogsService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
+    private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
   async searchAll(
@@ -120,5 +125,37 @@ export class DialogsService {
     }
 
     return result;
+  }
+
+  async createConversation(
+    authorId: string,
+    receiverId: string,
+  ): Promise<ConversationEntity> {
+    const query = await this.conversationRepository.createQueryBuilder(
+      'conversation',
+    );
+    query.setParameter('authorId', authorId);
+    query.setParameter('receiverId', receiverId);
+    query.andWhere(
+      new Brackets((qb) =>
+        qb.where('"user1" = :authorId').andWhere('"user2" = :receiverId'),
+      ),
+    );
+    query.orWhere(
+      new Brackets((qb) =>
+        qb.where('"user1" = :receiverId').andWhere('"user2" = :authorId'),
+      ),
+    );
+
+    const conversation = await query.getOne();
+    console.log(conversation);
+
+    if (!conversation) {
+      return await this.conversationRepository.save({
+        user1: authorId,
+        user2: receiverId,
+      });
+    }
+    return conversation;
   }
 }

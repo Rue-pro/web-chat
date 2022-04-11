@@ -6,11 +6,16 @@ import { DialogsService } from './dialogs.service';
 import { DialogsController } from './dialogs.controller';
 import { UserEntity } from 'src/users/entity';
 import { MessageEntity } from 'src/messages/entity';
+import { ConversationEntity } from './entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, MessageEntity]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity, MessageEntity, ConversationEntity]),
+    AuthModule,
+  ],
   controllers: [DialogsController],
   providers: [DialogsService],
+  exports: [DialogsService],
 })
 export class DialogsModule {}
 
