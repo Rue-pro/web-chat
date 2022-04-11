@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { useGetDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import {
@@ -7,14 +8,34 @@ import {
   DialogRowSketeton,
 } from 'entities/dialog'
 import { timeStampToRuDate } from 'shared/lib'
+import { TStore } from 'shared/store'
+import { chatActions } from 'shared/store/messagesSlice'
 
 interface DialogsProps {
   onOpenDialog: (dialogId: string) => void
   onLoadDialogs?: (dialogId: string | null) => void
+  currentDialog: string | null
 }
 
-const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog, onLoadDialogs }) => {
+const Dialogs: React.FC<DialogsProps> = ({
+  onOpenDialog,
+  onLoadDialogs,
+  currentDialog,
+}) => {
+  const dispatch = useDispatch()
+  const { status, messages, userId } = useSelector((state: TStore) => {
+    return {
+      status: state.MessagesReducer.status,
+      messages: state.MessagesReducer.dialogs,
+      userId: state.AuthReducer.data.userId,
+    }
+  })
+  console.log('DIALOGS_COMPONENT', messages)
   const { data: dialogs, isLoading } = useGetDialogsQuery()
+
+  useEffect(() => {
+    dispatch(chatActions.getAllDialogs({ userId: userId }))
+  }, [dispatch, userId])
 
   useEffect(() => {
     if (onLoadDialogs) {
@@ -54,6 +75,7 @@ const Dialogs: React.FC<DialogsProps> = ({ onOpenDialog, onLoadDialogs }) => {
           onClick={() => {
             onOpenDialog(dialog.user.id)
           }}
+          isCurrent={currentDialog === dialog.user.id}
         />
       ))}
     </>

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Stack, Box, styled, IconButton } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage/ui'
 import { throttle, timeStampToRuDate } from 'shared/lib'
 import { chatActions, Message } from 'shared/store/messagesSlice'
-import { useDispatch, useSelector } from 'react-redux'
 import { TStore } from 'shared/store'
 
 interface DialogProps {
