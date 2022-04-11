@@ -27,13 +27,7 @@ export class MessagesService {
      */
     const query = this.messageRepository
       .createQueryBuilder('message')
-      .addSelect([
-        'id',
-        'content',
-        '"createdAt"',
-        '"receiverId"',
-        '"authorId"',
-      ]);
+      .addSelect(['id', 'content', '"createdAt"', '"channelId"', '"authorId"']);
 
     query.setParameter('authorId', userId);
     query.setParameter('receiverId', dialogId);
@@ -41,14 +35,14 @@ export class MessagesService {
       new Brackets((qb) =>
         qb
           .where('"authorId" = :authorId')
-          .andWhere('"receiverId" = :receiverId'),
+          .andWhere('"channelId" = :receiverId'),
       ),
     );
     query.orWhere(
       new Brackets((qb) =>
         qb
           .where('"authorId" = :receiverId')
-          .andWhere('"receiverId" = :authorId'),
+          .andWhere('"channelId" = :authorId'),
       ),
     );
 
@@ -64,7 +58,7 @@ export class MessagesService {
         content: message.content,
         createdAt: new Date(message.createdAt).toISOString(),
         authorId: message.authorId,
-        receiverId: message.receiverId,
+        receiverId: message.channelId,
       };
     });
   }

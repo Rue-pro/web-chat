@@ -19,6 +19,7 @@ export class DialogsService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
+    @InjectRepository(ConversationEntity)
     private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
@@ -82,14 +83,17 @@ export class DialogsService {
     const query2 = this.messageRepository
       .createQueryBuilder('message')
       .select('message');
-    query2.leftJoinAndSelect('message.authorId', 'author');
-    query2.leftJoinAndSelect('message.receiverId', 'receiver');
+    query2.innerJoinAndSelect(
+      ConversationEntity,
+      'conversation',
+      'message."channelId"=conversation.id',
+    );
     query2.orderBy('message.createdAt', 'DESC');
-    query2.where('message.authorId = :id', { id: userId });
-    query2.orWhere('message.receiverId = :id', { id: userId });
+    query2.where('conversation.user1 = :id', { id: userId });
+    query2.orWhere('conversation.user2 = :id', { id: userId });
 
     const messages = await query2.getRawMany();
-
+    console.log('MESSAGES', messages);
     const result: DialogEntity[] = [];
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
