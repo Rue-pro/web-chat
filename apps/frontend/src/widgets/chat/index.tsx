@@ -55,7 +55,7 @@ const Chat: React.FC<ChatProps> = () => {
           /**
            * TODO сделать единый компоенент на всю ширину и высоту с полупрозрачным гигантским текстом ну или рисунок
            */
-          <Box>Sorry, no dialog was chosen</Box>
+          <Box>Select a chat to start messaging</Box>
         )}
       </Grid>
     </Grid>
