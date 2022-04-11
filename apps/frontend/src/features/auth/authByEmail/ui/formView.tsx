@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormikProps, Form } from 'formik'
+import { FormikProps } from 'formik'
 import { ActionButton, Input } from 'shared/ui'
 
 export type FormValues = {
@@ -21,7 +21,7 @@ const FormView = ({
   ...rest
 }: FormViewProps): React.ReactElement => {
   return (
-    <Form>
+    <>
       <div>
         <Input
           formName={formName}
@@ -49,7 +49,7 @@ const FormView = ({
       <ActionButton type="submit" disabled={isSubmitting} onClick={submitForm}>
         Войти
       </ActionButton>
-    </Form>
+    </>
   )
 }
 
