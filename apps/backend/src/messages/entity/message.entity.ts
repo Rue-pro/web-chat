@@ -1,3 +1,4 @@
+import { ConversationEntity } from 'src/dialogs/entity';
 import { UserEntity } from 'src/users/entity';
 import {
   Column,
@@ -23,7 +24,7 @@ export class MessageEntity {
   @JoinColumn({ name: 'authorId' })
   authorId: string;
 
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'receiverId' })
-  receiverId: string;
+  @ManyToOne(() => ConversationEntity)
+  @JoinColumn({ name: 'channelId' })
+  channelId: string;
 }

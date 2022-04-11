@@ -10,7 +10,8 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-import { ConnectionsService } from './../connections/connections.service';
+import { ConnectionsService } from 'src/connections/connections.service';
+import { DialogsService } from 'src/dialogs/dialogs.service';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto';
 
@@ -23,6 +24,7 @@ export class MessagesGateway implements OnGatewayConnection {
 
   constructor(
     private readonly messageService: MessagesService,
+    private readonly dialogService: DialogsService,
     private readonly connectionService: ConnectionsService,
     private readonly authService: AuthService,
   ) {}
@@ -62,6 +64,13 @@ export class MessagesGateway implements OnGatewayConnection {
     const user = await this.authService.getUserFromSocket(socket);
     const receiverId = newMessage.receiverId;
 
+    const conversation = this.dialogService.createConversation(
+      user.id,
+      receiverId,
+    );
+
+    console.log('CONVERSATION', conversation);
+
     const message = await this.messageService.saveMessage({
       authorId: user.id,
       receiverId: receiverId,
@@ -82,7 +91,9 @@ export class MessagesGateway implements OnGatewayConnection {
       receiverId: receiverId,
     });
 
-    return message;
+    const dialogs = [];
+
+    this.server.sockets.to(receivers).emit('send_all_dialogs', dialogs);
   }
 
   @SubscribeMessage('request_all_messages')
@@ -97,5 +108,16 @@ export class MessagesGateway implements OnGatewayConnection {
     );
 
     socket.emit('send_all_messages', messages);
+  }
+
+  @SubscribeMessage('request_all_dialogs')
+  async requestAllDialogs(
+    @MessageBody() dialogId: string,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const user = await this.authService.getUserFromSocket(socket);
+    const dialogs = await this.dialogService.findAll(user.id);
+
+    socket.emit('send_all_dialogs', dialogs);
   }
 }
