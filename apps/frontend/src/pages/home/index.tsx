@@ -1,23 +1,23 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { Box } from '@mui/material'
 
 import Chat from 'widgets/chat'
-import { TStore } from 'shared/store'
-import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
+import Template from 'shared/ui/template'
+import { Profile } from 'entities/profile'
 
 const HomePage: React.FC = () => {
-  const userId = useSelector((state: TStore) => state.AuthReducer.data.userId)
-
-  const { data, isLoading } = useGetProfileQuery(userId, {
-    skip: !Boolean(userId),
-  })
-
   return (
     <>
-      <div>Protected page</div>
-      {isLoading ? 'Данные о пользователе загружаются' : data?.name}
-      <h1>Чат</h1>
-      <Chat />
+      <Template
+        title="Чат"
+        aside={<Profile />}
+        main={
+          <>
+            <div>Protected page</div>
+            <Chat />
+          </>
+        }
+      />
     </>
   )
 }
