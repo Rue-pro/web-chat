@@ -10,7 +10,7 @@ import { ConversationEntity } from './entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, MessageEntity, ConversationEntity]),
+    TypeOrmModule.forFeature([UserEntity, ConversationEntity, MessageEntity]),
     AuthModule,
   ],
   controllers: [DialogsController],

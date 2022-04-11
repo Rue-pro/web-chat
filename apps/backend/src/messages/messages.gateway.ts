@@ -62,22 +62,22 @@ export class MessagesGateway implements OnGatewayConnection {
     @ConnectedSocket() socket: Socket,
   ) {
     const user = await this.authService.getUserFromSocket(socket);
-    const receiverId = newMessage.receiverId;
+    const channelId = newMessage.channelId;
 
-    const conversation = this.dialogService.createConversation(
+    const conversation = await this.dialogService.createConversation(
       user.id,
-      receiverId,
+      channelId,
     );
 
     console.log('CONVERSATION', conversation);
 
     const message = await this.messageService.saveMessage({
       authorId: user.id,
-      receiverId: receiverId,
+      channelId: conversation.id,
       content: newMessage.content,
     });
 
-    const connection = await this.connectionService.findOne(receiverId);
+    const connection = await this.connectionService.findOne(channelId);
     const receivers = [socket.id];
     if (connection) receivers.push(connection.socketId);
 
@@ -88,7 +88,7 @@ export class MessagesGateway implements OnGatewayConnection {
       content: newMessage.content,
       createdAt: message.createdAt,
       authorId: user.id,
-      receiverId: receiverId,
+      receiverId: channelId,
     });
 
     const dialogs = [];
