@@ -2,10 +2,7 @@ import React, { ChangeEvent, useCallback, useState } from 'react'
 import { Box } from '@mui/material'
 
 import { SearchInput } from 'shared/ui'
-import {
-  SearchDialogResult,
-  useFindDialogsQuery,
-} from 'shared/api/endpoints/dialogsApi'
+import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import {
   DialogRow,
   DialogLoadingTemplate,
@@ -16,11 +13,13 @@ import { timeStampToRuDate } from 'shared/lib'
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
   onOpenDialog: (dialogId: string) => void
+  currentDialog: string | null
 }
 
 const FilterByDialogs: React.FC<FilterByUsersProps> = ({
   onSearch,
   onOpenDialog,
+  currentDialog,
 }) => {
   const [query, setQuery] = useState<string>('')
   const { data, isLoading } = useFindDialogsQuery(query, {
@@ -38,7 +37,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
   return (
     <Box>
       <SearchInput
-        placeholder="Find or search dialog"
+        placeholder="Find or start conversation"
         onChange={handleChangeSearchInput}
         debounceTimeout={100}
       />
@@ -49,7 +48,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
         />
       ) : (
         Boolean(query) &&
-        data?.map((dialog: SearchDialogResult) => (
+        data?.map(dialog => (
           <DialogRow
             key={dialog.user.id}
             id={dialog.user.id}
@@ -65,6 +64,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
             onClick={() => {
               onOpenDialog(dialog.user.id)
             }}
+            isCurrent={currentDialog === dialog.user.id}
           />
         ))
       )}

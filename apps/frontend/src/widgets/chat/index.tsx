@@ -45,12 +45,14 @@ const Chat: React.FC<ChatProps> = () => {
         <FilterByDialogs
           onSearch={handleOnSearch}
           onOpenDialog={handleOpenDialog}
+          currentDialog={currentDialog}
         />
 
         {showDialogs && (
           <Dialogs
             onOpenDialog={handleOpenDialog}
             onLoadDialogs={handleOnLoadDialogs}
+            currentDialog={currentDialog}
           />
         )}
       </Grid>

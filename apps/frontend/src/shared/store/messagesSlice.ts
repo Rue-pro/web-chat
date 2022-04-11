@@ -6,7 +6,26 @@ export enum ChatEvent {
   RequestAllMessages = 'request_all_messages',
   SendAllMessages = 'send_all_messages',
   ReceiveMessage = 'receive_message',
+  RequestAllDialogs = 'request_all_dialogs',
+  SendAllDialogs = 'send_all_dialogs',
 }
+
+const DialogUserSchema = Record({
+  id: String,
+  name: String,
+  avatar: String,
+})
+const DialogMessageSchema = Record({
+  id: Number,
+  content: String,
+  createdAt: String,
+})
+const DialogSchema = Record({
+  user: DialogUserSchema,
+  message: DialogMessageSchema,
+})
+const DialogArrSchema = Array(DialogSchema)
+export type Dialog = Static<typeof DialogSchema>
 
 const OwnerSchema = Union(Literal('own'), Literal('theirs'))
 const MessageSchema = Record({
@@ -24,6 +43,7 @@ interface ChatState {
   isEstablishingConnection: boolean
   isConnected: boolean
   messages: Message[]
+  dialogs: Dialog[]
   status: 'loading' | 'idle' | 'error'
   error: string | null
 }
@@ -32,6 +52,7 @@ const initialState: ChatState = {
   isEstablishingConnection: false,
   isConnected: false,
   messages: [],
+  dialogs: [],
   status: 'idle',
   error: null,
 }
@@ -73,6 +94,23 @@ const chatSlice = createSlice({
       state.messages.push(action.payload.message)
       state.status = 'idle'
     },
+    receiveAllDialogs: (
+      state,
+      action: PayloadAction<{
+        dialogs: Dialog[]
+      }>,
+    ) => {
+      console.log('MESSAGES_SLICE_RECEIVE_ALL_DIALOGS', action)
+      const dialogs = action.payload.dialogs
+      const isDialogsArr = DialogArrSchema.guard(dialogs)
+      if (!isDialogsArr) {
+        console.error('Fetched through socket dialogs format is wrong!')
+        state.dialogs = []
+        return
+      }
+      state.dialogs = dialogs
+      state.status = 'idle'
+    },
     submitMessage: (
       state,
       action: PayloadAction<{
@@ -85,6 +123,15 @@ const chatSlice = createSlice({
       return
     },
     getAllMessages: (
+      state,
+      action: PayloadAction<{
+        userId: string
+      }>,
+    ) => {
+      state.status = 'loading'
+      return
+    },
+    getAllDialogs: (
       state,
       action: PayloadAction<{
         userId: string

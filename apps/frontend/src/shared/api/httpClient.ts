@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { API_URL } from 'shared/config/environment-variables'
+import { PATHS } from 'shared/config/routes'
 import { sleep } from 'shared/lib'
 
 export const APIInstance = axios.create({
@@ -40,11 +41,12 @@ APIInstance.interceptors.request.use(
 
 APIInstance.interceptors.response.use(
   async response => {
-    console.log('response')
-    console.log(response)
     return response
   },
   function (error) {
+    if (!error.response) {
+      document.location = document.location.origin + PATHS.BadGatewayPage
+    }
     return Promise.reject({
       message: error.response.data.message,
       name: `Error: ${error.response.status} ${error.response.statusText}`,

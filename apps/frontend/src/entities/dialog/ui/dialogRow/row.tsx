@@ -4,7 +4,8 @@ import {
   styled,
   Box,
   TypographyProps,
-  ListItem,
+  ButtonBaseProps,
+  ButtonBase,
 } from '@mui/material'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 
@@ -19,6 +20,7 @@ export interface RowProps {
   sentTime: string
   unreadedMessagesCount?: number
   onClick?: (e: MouseEvent<HTMLElement>) => void
+  isCurrent?: boolean
 }
 
 const Row: React.FC<RowProps> = ({
@@ -29,22 +31,23 @@ const Row: React.FC<RowProps> = ({
   sentTime,
   unreadedMessagesCount,
   onClick,
+  isCurrent = false,
 }) => {
   return (
-    <ListItem button data-id={id} onClick={onClick}>
+    <Container onClick={onClick} data-current={isCurrent}>
       <Template
         avatar={<AvatarBadge {...avatar} />}
         title={
-          <Typography variant="subtitle1" component="p">
+          <Title variant="subtitle1" data-current={isCurrent}>
             {title}
-          </Typography>
+          </Title>
         }
-        message={<Message>{message}</Message>}
+        message={<Message data-current={isCurrent}>{message}</Message>}
         info={
           <>
-            <Time>{sentTime}</Time>
+            <Time data-current={isCurrent}>{sentTime}</Time>
             {unreadedMessagesCount ? (
-              <MessagesCount>
+              <MessagesCount data-current={isCurrent}>
                 {getMessagesCount(unreadedMessagesCount)}
               </MessagesCount>
             ) : (
@@ -53,7 +56,7 @@ const Row: React.FC<RowProps> = ({
           </>
         }
       />
-    </ListItem>
+    </Container>
   )
 }
 
@@ -63,11 +66,29 @@ const getMessagesCount = (messagesCount: number) => {
   return messagesCount >= 100 ? '99+' : messagesCount
 }
 
+const Container = styled((props: ButtonBaseProps) => <ButtonBase {...props} />)`
+  padding: 10px 24px;
+  &[data-current='true'] {
+    background-color: #1976d2;
+  }
+
+  &[data-current='false'] {
+    background-color: #999999;
+  }
+`
+
 const Time = styled(Box)`
   font-size: 12px;
   line-height: 16px;
   font-weight: 400;
-  color: #999999;
+
+  &[data-current='true'] {
+    color: #ffffff;
+  }
+
+  &[data-current='false'] {
+    color: #999999;
+  }
 `
 
 const MessagesCount = styled(Box)`
@@ -85,9 +106,27 @@ const MessagesCount = styled(Box)`
   border-radius: 50%;
 `
 
+const Title = styled((props: TypographyProps) => <Typography {...props} />)`
+  &[data-current='true'] {
+    color: #ffffff;
+  }
+
+  &[data-current='false'] {
+    color: #000000;
+  }
+`
+
 const Message = styled((props: TypographyProps) => <Typography {...props} />)`
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &[data-current='true'] {
+    color: #ffffff;
+  }
+
+  &[data-current='false'] {
+    color: #000000;
+  }
 `
