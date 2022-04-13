@@ -49,7 +49,7 @@ APIInstance.interceptors.response.use(
   function (error) {
     console.log('RESPOSE INTERCEPTOR', error.response)
     if (!error.response) {
-      document.location = document.location.origin + PATHS.BadGatewayPage
+      //document.location = document.location.origin + PATHS.BadGatewayPage
     }
     if (
       error.response.data.message ===

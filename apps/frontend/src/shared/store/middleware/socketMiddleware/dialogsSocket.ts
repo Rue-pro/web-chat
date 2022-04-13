@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io-client'
+import { AnyAction, Dispatch, MiddlewareAPI } from 'redux'
 
-import { TStore } from 'shared/store'
 import { dialogsActions, Dialog } from 'shared/store/dialogsSlice'
+import { TStore } from 'shared/store'
 
 export enum ChatDialogEvent {
   RequestAllDialogs = 'request_all_dialogs',
@@ -9,7 +10,10 @@ export enum ChatDialogEvent {
   ReceiveCreatedDialog = 'receive_created_dialog',
 }
 
-export function dialogsSocketListeners(socket: Socket, store: TStore) {
+export function dialogsSocketListeners(
+  socket: Socket,
+  store: MiddlewareAPI<Dispatch<AnyAction>, TStore>,
+) {
   socket.on(ChatDialogEvent.SendAllDialogs, (dialogs: Dialog[]) => {
     console.log('CHAT_DIALOGS_MIDDLEWARE_SEND_ALL_DIALOGS', dialogs)
     store.dispatch(dialogsActions.receiveAllDialogs({ dialogs }))
@@ -29,7 +33,7 @@ export function dialogsSocketListeners(socket: Socket, store: TStore) {
 
 export function dialogsSocketEmiters(
   socket: Socket,
-  action: any,
+  action: AnyAction,
   isConnectionEstablished: boolean,
 ) {
   if (dialogsActions.getAllDialogs.match(action) && isConnectionEstablished) {

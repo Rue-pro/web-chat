@@ -136,8 +136,13 @@ export class DialogsService {
     });
   }
 
-  findOne(id: ConversationId): Promise<ConversationEntity> {
-    return this.conversationRepository.findOne({ where: { id } });
+  async findOne(id: ConversationId): Promise<ConversationEntity> {
+    const query = await this.conversationRepository.createQueryBuilder('*');
+    query.select(['id', 'user1', 'user2']);
+    query.setParameter('conversationId', id);
+    query.where('id = :conversationId');
+
+    return query.getRawOne();
   }
 
   async createConversation(

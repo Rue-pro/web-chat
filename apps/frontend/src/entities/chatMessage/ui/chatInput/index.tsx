@@ -10,9 +10,9 @@ interface MessageInputProps {}
 
 const ChatInput: React.FC<MessageInputProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { currentDialog } = useSelector((state: TStore) => {
+  const { currentDialogId } = useSelector((state: TStore) => {
     return {
-      currentDialog: state.DialogsReducer.data.currentDialogId,
+      currentDialogId: state.DialogsReducer.data.currentDialog.id,
     }
   })
   const [message, setMessage] = useState<string>('')
@@ -25,7 +25,7 @@ const ChatInput: React.FC<MessageInputProps> = () => {
     if (e.key === 'Enter') {
       dispatch(
         messagesActions.submitMessage({
-          dialogId: currentDialog,
+          dialogId: currentDialogId || 0,
           content: message,
         }),
       )

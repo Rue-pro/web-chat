@@ -10,14 +10,16 @@ import DialogsReducer from 'shared/store/dialogsSlice'
 import { myLogger } from './middleware/log'
 import socketMiddleware from './middleware/socketMiddleware'
 
+const rootReducer = combineReducers({
+  [api.reducerPath]: api.reducer,
+  AuthReducer,
+  SocketReducer,
+  MessagesReducer,
+  DialogsReducer,
+})
+
 const store = configureStore({
-  reducer: combineReducers({
-    [api.reducerPath]: api.reducer,
-    AuthReducer,
-    SocketReducer,
-    MessagesReducer,
-    DialogsReducer,
-  }),
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(
       thunkMiddleware,

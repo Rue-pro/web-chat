@@ -23,14 +23,20 @@ const DialogArrSchema = Array(DialogSchema)
 export type Dialog = Static<typeof DialogSchema>
 
 interface DialogData {
-  currentDialogId: DialogId
+  currentDialog: {
+    id: DialogId
+    isNew: boolean
+  }
   dialogs: Dialog[]
 }
 interface DialogState extends GenericState<DialogData> {}
 
 const initialState: DialogState = {
   data: {
-    currentDialogId: null,
+    currentDialog: {
+      id: null,
+      isNew: false,
+    },
     dialogs: [],
   },
   status: 'idle',
@@ -71,10 +77,12 @@ const dialogsSlice = createSlice({
       state,
       action: PayloadAction<{
         dialogId: DialogId
+        isNew?: boolean
       }>,
     ) => {
       console.log('SETTING_CURRENT_DIALOG', action)
-      state.data.currentDialogId = action.payload.dialogId
+      state.data.currentDialog.id = action.payload.dialogId
+      state.data.currentDialog.isNew = action.payload.isNew ?? false
     },
   },
 })

@@ -78,6 +78,8 @@ export class MessagesGateway implements OnGatewayConnection {
 
     let conversation = await this.dialogService.findOne(conversationId);
 
+    console.log('FINDED_CONVERSATION', conversation);
+
     if (!conversation) {
       conversation = await this.dialogService.createConversation(
         result.id,
@@ -86,10 +88,10 @@ export class MessagesGateway implements OnGatewayConnection {
       /**
        * Уведомляем сокет о создании связи
        */
-      socket.emit('receive_created_dialog', conversation);
+      socket.emit('receive_created_dialog', conversation.id);
     }
 
-    console.log('CONVERSATION', conversationId);
+    console.log('CONVERSATION', conversation);
 
     const message = await this.messageService.saveMessage({
       authorId: result.id,
@@ -98,7 +100,12 @@ export class MessagesGateway implements OnGatewayConnection {
     });
 
     const receivers = [socket.id];
-    const connection = await this.connectionService.findOne(receiverId);
+    const connection = await this.connectionService.findOne(
+      conversation.user1 === result.id
+        ? conversation.user2
+        : conversation.user1,
+    );
+    console.log('CONNECTION', connection);
     if (connection) receivers.push(connection.socketId);
 
     console.log('Получатели', receivers);

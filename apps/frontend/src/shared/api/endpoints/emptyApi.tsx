@@ -26,7 +26,7 @@ const CustomQuery =
       console.log('CustomQueryAxiosError', axiosError)
       const error = axiosError as AxiosError<HTTPError>
       if (!error.response) {
-        document.location = document.location.origin + PATHS.BadGatewayPage
+        //document.location = document.location.origin + PATHS.BadGatewayPage
       }
       return {
         error: { status: error.response?.status, data: error.response?.data },
