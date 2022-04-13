@@ -78,62 +78,51 @@ export class DialogsService {
   }
 
   async findAll(userId: UserId): Promise<DialogEntity[]> {
-    console.log('FINDING_DIALOGS_FOR_USER', userId);
-    const query2 = this.conversationRepository
-      .createQueryBuilder('conversation')
-      .select('conversation');
-    query2.innerJoinAndSelect(
-      (
-        qb: SelectQueryBuilder<MessageEntity>,
-      ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
-          .select('messages')
-          .from(MessageEntity, 'messages')
-          .orderBy({ 'messages.createdAt': 'DESC' })
-          .limit(1);
-        return r;
-      },
-      'message',
-      'conversation.id=message."messages_channelId"',
-    );
-    query2.leftJoinAndSelect(
+    const queryConversations =
+      this.conversationRepository.createQueryBuilder('conversation');
+    queryConversations.leftJoinAndSelect(
       UserEntity,
       'user1',
       'conversation.user1=user1.id ',
     );
-    query2.leftJoinAndSelect(
+    queryConversations.leftJoinAndSelect(
       UserEntity,
       'user2',
       'conversation.user2=user2.id ',
     );
-    query2.where('conversation.user1 = :id', { id: userId });
-    query2.orWhere('conversation.user2 = :id', { id: userId });
+    queryConversations.where('conversation.user1 = :id', { id: userId });
+    queryConversations.orWhere('conversation.user2 = :id', { id: userId });
 
-    const dialogs = await query2.getRawMany();
-    console.log('ALL_DIALOGS_FOR_THIS_USER', dialogs);
-    return dialogs.map((dialog): DialogEntity => {
-      const user =
-        dialog.user1_id === userId
-          ? {
-              id: dialog.user2_id,
-              name: dialog.user2_name,
-              avatar: dialog.user2_avatar,
-            }
-          : {
-              id: dialog.user1_id,
-              name: dialog.user1_name,
-              avatar: dialog.user1_avatar,
-            };
-      return {
-        id: dialog.conversation_id,
-        user: user,
-        message: {
-          id: dialog.messages_id,
-          content: dialog.messages_content,
-          createdAt: dialog.messages_createdAt,
-        },
-      };
-    });
+    const conversations = await queryConversations.getRawMany();
+
+    return Promise.all(
+      conversations.map(async (conversation) => {
+        const lastMessage = await this.messageRepository
+          .createQueryBuilder('message')
+          .where('message."channelId" = :conversationId', {
+            conversationId: conversation.conversation_id,
+          })
+          .orderBy('message."createdAt"', 'DESC')
+          .getOne();
+        const user =
+          conversation.user1_id === userId
+            ? {
+                id: conversation.user2_id,
+                name: conversation.user2_name,
+                avatar: conversation.user2_avatar,
+              }
+            : {
+                id: conversation.user1_id,
+                name: conversation.user1_name,
+                avatar: conversation.user1_avatar,
+              };
+        return {
+          id: conversation.conversation_id,
+          user,
+          message: lastMessage,
+        };
+      }),
+    );
   }
 
   async findOne(id: ConversationId): Promise<ConversationEntity> {
