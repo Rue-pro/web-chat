@@ -19,16 +19,18 @@ interface FilterByUsersProps {
 
 const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   const dispatch = useDispatch<TDispatch>()
-  const { currentDialog } = useSelector((state: TStore) => {
+  const { currentDialogId } = useSelector((state: TStore) => {
     return {
-      currentDialog: state.DialogsReducer.data.currentDialogId,
+      currentDialogId: state.DialogsReducer.data.currentDialog.id,
     }
   })
 
   const [query, setQuery] = useState<string>('')
-  const { data, isLoading } = useFindDialogsQuery(query, {
+  const { data: users, isLoading } = useFindDialogsQuery(query, {
     skip: !Boolean(query),
   })
+
+  console.log('USERS', users)
 
   const handleChangeSearchInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +41,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   )
 
   const handleOpenDialog = useCallback(
-    (id: number) => {
+    (id: number | null) => {
       dispatch(dialogsActions.setCurrentDialog({ dialogId: id }))
     },
     [dispatch],
@@ -59,7 +61,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
         />
       ) : (
         Boolean(query) &&
-        data?.map(dialog => (
+        users?.map(dialog => (
           <DialogRow
             key={dialog.id}
             id={dialog.user.id}
@@ -73,9 +75,9 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
             unreadedMessagesCount={0}
             onClick={() => {
-              handleOpenDialog(dialog.id)
+              handleOpenDialog(dialog?.id ?? null)
             }}
-            isCurrent={currentDialog === dialog.user.id}
+            isCurrent={currentDialogId === dialog.id}
           />
         ))
       )}

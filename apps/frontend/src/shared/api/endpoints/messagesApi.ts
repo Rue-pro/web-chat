@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client'
 import { API_URL } from 'shared/config/environment-variables'
 import { emptyApi } from './emptyApi'
 
-enum ChatEvent {
+enum ChatMessageEvent {
   SendMessage = 'send_message',
   RequestAllMessages = 'request_all_messages',
   SendAllMessages = 'send_all_messages',
@@ -48,9 +48,13 @@ export const extendedApi = emptyApi
           const socket = getSocket()
 
           return new Promise(resolve => {
-            socket.emit(ChatEvent.SendMessage, message, (message: Message) => {
-              resolve({ data: message })
-            })
+            socket.emit(
+              ChatMessageEvent.SendMessage,
+              message,
+              (message: Message) => {
+                resolve({ data: message })
+              },
+            )
           })
         },
       }),
@@ -63,7 +67,7 @@ export const extendedApi = emptyApi
             socket.on('connect', () => {
               console.log('ALL_MESSAGES')
               socket.emit(
-                ChatEvent.RequestAllMessages,
+                ChatMessageEvent.RequestAllMessages,
                 id,
                 (messages: Message[]) => {
                   console.log('FULFILLED', messages)
@@ -78,7 +82,7 @@ export const extendedApi = emptyApi
             return new Promise(resolve => {
               console.log('get messages')
               socket.emit(
-                ChatEvent.RequestAllMessages,
+                ChatMessageEvent.RequestAllMessages,
                 id,
                 (messages: Message[]) => {
                   console.log('FILFILLED', messages)
@@ -114,7 +118,7 @@ export const extendedApi = emptyApi
               console.log('ALL_MESSAGES')
               return new Promise(resolve => {
                 socket.emit(
-                  ChatEvent.RequestAllMessages,
+                  ChatMessageEvent.RequestAllMessages,
                   id,
                   (messages: Message[]) => {
                     resolve({ data: messages })
@@ -123,7 +127,7 @@ export const extendedApi = emptyApi
               })
             })
 
-            socket.on(ChatEvent.SendAllMessages, (messages: Message[]) => {
+            socket.on(ChatMessageEvent.SendAllMessages, (messages: Message[]) => {
               console.log('SEND ALL MESSAGES')
               const isMessagesArr = MessagesArrSchema.guard(messages)
               if (!isMessagesArr) {
@@ -137,7 +141,7 @@ export const extendedApi = emptyApi
               })
             })*/
 
-            socket.on(ChatEvent.ReceiveMessage, (message: Message) => {
+            socket.on(ChatMessageEvent.ReceiveMessage, (message: Message) => {
               console.log('RECEIVE MESSAFE')
               const isMessage = MessageSchema.guard(message)
               if (!isMessage) {
@@ -152,8 +156,8 @@ export const extendedApi = emptyApi
             await cacheEntryRemoved
 
             socket.off('connect')
-            socket.off(ChatEvent.SendAllMessages)
-            socket.off(ChatEvent.ReceiveMessage)
+            socket.off(ChatMessageEvent.SendAllMessages)
+            socket.off(ChatMessageEvent.ReceiveMessage)
           } catch {
             // if cacheEntryRemoved resolved before cacheDataLoaded,
             // cacheDataLoaded throws

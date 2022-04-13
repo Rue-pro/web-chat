@@ -13,9 +13,9 @@ interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
   const [showDialogs, setShowDialogs] = useState<boolean>(true)
-  const { currentDialog } = useSelector((state: TStore) => {
+  const { currentDialogId } = useSelector((state: TStore) => {
     return {
-      currentDialog: state.DialogsReducer.data.currentDialogId,
+      currentDialogId: state.DialogsReducer.data.currentDialog.id,
     }
   })
 
@@ -42,7 +42,7 @@ const Chat: React.FC<ChatProps> = () => {
         {showDialogs && <Dialogs />}
       </Grid>
       <Grid item xs={8} sx={{ height: '100%' }}>
-        {currentDialog ? (
+        {currentDialogId ? (
           <>
             <Dialog />
             <ChatInput />

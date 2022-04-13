@@ -14,13 +14,13 @@ interface DialogsProps {}
 
 const Dialogs: React.FC<DialogsProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { status, dialogs, userId, currentDialog } = useSelector(
+  const { status, dialogs, userId, currentDialogId } = useSelector(
     (state: TStore) => {
       return {
         status: state.DialogsReducer.status,
         dialogs: state.DialogsReducer.data.dialogs,
         userId: state.AuthReducer.data.userId,
-        currentDialog: state.DialogsReducer.data.currentDialogId,
+        currentDialogId: state.DialogsReducer.data.currentDialog.id,
       }
     },
   )
@@ -37,7 +37,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
     } else {
       dispatch(dialogsActions.setCurrentDialog({ dialogId: null }))
     }
-  }, [dialogs, currentDialog, dispatch])
+  }, [dialogs, currentDialogId, dispatch])
 
   const handleOpenDialog = useCallback(
     (id: number | null) => {
@@ -74,7 +74,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
           onClick={() => {
             handleOpenDialog(dialog.id)
           }}
-          isCurrent={currentDialog === dialog.id}
+          isCurrent={currentDialogId === dialog.id}
         />
       ))}
     </>

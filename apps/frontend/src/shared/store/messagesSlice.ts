@@ -72,14 +72,14 @@ const messagesSlice = createSlice({
         content: string
       }>,
     ) => {
-      console.log('SUBMIT_MESSAGE')
+      console.log('SUBMIT_MESSAGE', action)
       state.status = 'loading'
       return
     },
     getAllMessages: (
       state,
       action: PayloadAction<{
-        userId: string
+        dialogId: number
       }>,
     ) => {
       console.log('REQUEST_FOR_ALL_MESSAGES', action)

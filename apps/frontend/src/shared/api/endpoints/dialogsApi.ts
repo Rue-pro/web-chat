@@ -7,7 +7,7 @@ import {
 import { emptyApi } from './emptyApi'
 
 const SearchDialogResultSchema = Record({
-  id: Number,
+  id: Optional(Number),
   user: DialogUserSchema,
   message: Optional(DialogMessageSchema),
 })
@@ -24,11 +24,13 @@ export const extendedApi = emptyApi
           method: 'GET',
         }),
         transformResponse: (res): SearchDialogResult[] => {
+          console.log('USERS', res)
           const isDialogArr = SearchDialogResultArrSchema.guard(res)
-          if (isDialogArr) {
-            return res
+          if (!isDialogArr) {
+            console.error('Fetched dialogs format is wrong!')
+            return []
           }
-          return []
+          return res
         },
       }),
     }),
