@@ -8,46 +8,66 @@ import {
 } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
+
+export type UserId = string;
+export type UserName = string;
+export type UserCreatedAt = Date;
+export type UserUpdatedAt = Date;
+export type UserEmail = string;
+export type UserPhone = string;
+export type UserPassword = string;
+export type UserCurrentHashedRefreshToken = string;
+export type UserAvatar = string;
+export type UserRole = 'USER' | 'ADMIN';
 
 @Entity('user')
 export class UserEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: UserId;
 
   @ApiProperty()
   @Column()
-  name: string;
+  name: UserName;
 
   @ApiProperty()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: UserCreatedAt;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: UserUpdatedAt;
 
   @ApiProperty()
   @Column({ unique: true })
-  email: string;
+  email: UserEmail;
 
   @ApiProperty()
   @Column({ unique: true })
-  phone: string;
+  phone: UserPhone;
 
   @ApiProperty()
   @Column()
-  password: string;
+  @Exclude()
+  password: UserPassword;
+
+  @ApiProperty()
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  currentHashedRefreshToken?: UserCurrentHashedRefreshToken;
 
   @ApiProperty()
   @Column()
-  avatar: string;
+  avatar: UserAvatar;
 
   @ApiProperty()
-  role: 'USER' | 'ADMIN';
+  role: UserRole;
 
   @BeforeInsert()
-  async setPassword(password: string) {
+  async setPassword(password: UserPassword) {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(password || this.password, salt);
   }

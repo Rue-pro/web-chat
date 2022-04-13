@@ -1,16 +1,20 @@
 import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import { styled } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Input as BaseInput } from 'shared/ui'
-import { useDispatch } from 'react-redux'
-import { chatActions } from 'shared/store/messagesSlice'
+import { messagesActions } from 'shared/store/messagesSlice'
+import { TDispatch, TStore } from 'shared/store'
 
-interface MessageInputProps {
-  receiverId: string
-}
+interface MessageInputProps {}
 
-const ChatInput: React.FC<MessageInputProps> = ({ receiverId }) => {
-  const dispatch = useDispatch()
+const ChatInput: React.FC<MessageInputProps> = () => {
+  const dispatch = useDispatch<TDispatch>()
+  const { currentDialog } = useSelector((state: TStore) => {
+    return {
+      currentDialog: state.DialogsReducer.data.currentDialogId,
+    }
+  })
   const [message, setMessage] = useState<string>('')
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -20,8 +24,8 @@ const ChatInput: React.FC<MessageInputProps> = ({ receiverId }) => {
   const handleEnterClick = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       dispatch(
-        chatActions.submitMessage({
-          receiverId,
+        messagesActions.submitMessage({
+          dialogId: currentDialog,
           content: message,
         }),
       )

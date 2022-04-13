@@ -1,16 +1,10 @@
-import {
-  createSlice,
-  PayloadAction,
-  SliceCaseReducers,
-  ValidateSliceCaseReducers,
-} from '@reduxjs/toolkit'
-
 export interface GenericState<T> {
   data: T
   error?: string
-  status: 'loading' | 'finished' | 'error'
+  status: 'loading' | 'idle' | 'error'
 }
 
+/*
 const createGenericSlice = <
   T,
   Reducers extends SliceCaseReducers<GenericState<T>>,
@@ -39,4 +33,4 @@ const createGenericSlice = <
   })
 }
 
-export default createGenericSlice
+export default createGenericSlice*/

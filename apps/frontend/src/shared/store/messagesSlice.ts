@@ -1,31 +1,14 @@
 import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export enum ChatEvent {
+import { GenericState } from './genericSlice'
+
+export enum ChatMessageEvent {
   SendMessage = 'send_message',
   RequestAllMessages = 'request_all_messages',
   SendAllMessages = 'send_all_messages',
   ReceiveMessage = 'receive_message',
-  RequestAllDialogs = 'request_all_dialogs',
-  SendAllDialogs = 'send_all_dialogs',
 }
-
-const DialogUserSchema = Record({
-  id: String,
-  name: String,
-  avatar: String,
-})
-const DialogMessageSchema = Record({
-  id: Number,
-  content: String,
-  createdAt: String,
-})
-const DialogSchema = Record({
-  user: DialogUserSchema,
-  message: DialogMessageSchema,
-})
-const DialogArrSchema = Array(DialogSchema)
-export type Dialog = Static<typeof DialogSchema>
 
 const OwnerSchema = Union(Literal('own'), Literal('theirs'))
 const MessageSchema = Record({
@@ -33,56 +16,43 @@ const MessageSchema = Record({
   createdAt: String,
   content: String,
   authorId: String,
-  receiverId: String,
+  dialogId: Number,
 })
 const MessagesArrSchema = Array(MessageSchema)
 export type MessageOwner = Static<typeof OwnerSchema>
 export type Message = Static<typeof MessageSchema>
 
-interface ChatState {
-  isEstablishingConnection: boolean
-  isConnected: boolean
+interface MessageData {
   messages: Message[]
-  dialogs: Dialog[]
-  status: 'loading' | 'idle' | 'error'
-  error: string | null
 }
+interface MessageState extends GenericState<MessageData> {}
 
-const initialState: ChatState = {
-  isEstablishingConnection: false,
-  isConnected: false,
-  messages: [],
-  dialogs: [],
+const initialState: MessageState = {
+  data: {
+    messages: [],
+  },
   status: 'idle',
-  error: null,
 }
 
-const chatSlice = createSlice({
+const messagesSlice = createSlice({
   name: 'chat',
   initialState: initialState,
   reducers: {
-    startConnecting: state => {
-      state.isEstablishingConnection = true
-    },
-    connectionEstablished: state => {
-      state.isConnected = true
-      state.isEstablishingConnection = true
-    },
     receiveAllMessages: (
       state,
       action: PayloadAction<{
         messages: Message[]
       }>,
     ) => {
-      console.log('MESSAGES_SLICE_RECEIVE_ALL_MESSAGES', action)
+      console.log('RECEIVE_ALL_MESSAGES', action)
       const messages = action.payload.messages
       const isMessagesArr = MessagesArrSchema.guard(messages)
       if (!isMessagesArr) {
         console.error('Fetched through socket messages format is wrong!')
-        state.messages = []
+        state.data.messages = []
         return
       }
-      state.messages = messages
+      state.data.messages = messages
       state.status = 'idle'
     },
     receiveMessage: (
@@ -91,35 +61,19 @@ const chatSlice = createSlice({
         message: Message
       }>,
     ) => {
-      state.messages.push(action.payload.message)
-      state.status = 'idle'
-    },
-    receiveAllDialogs: (
-      state,
-      action: PayloadAction<{
-        dialogs: Dialog[]
-      }>,
-    ) => {
-      console.log('MESSAGES_SLICE_RECEIVE_ALL_DIALOGS', action)
-      const dialogs = action.payload.dialogs
-      const isDialogsArr = DialogArrSchema.guard(dialogs)
-      if (!isDialogsArr) {
-        console.error('Fetched through socket dialogs format is wrong!')
-        state.dialogs = []
-        return
-      }
-      state.dialogs = dialogs
+      console.log('RECEIVING_MESSAGE', action)
+      state.data.messages.push(action.payload.message)
       state.status = 'idle'
     },
     submitMessage: (
       state,
       action: PayloadAction<{
-        receiverId: string
+        dialogId: number
         content: string
       }>,
     ) => {
-      state.status = 'loading'
       console.log('SUBMIT_MESSAGE')
+      state.status = 'loading'
       return
     },
     getAllMessages: (
@@ -128,20 +82,12 @@ const chatSlice = createSlice({
         userId: string
       }>,
     ) => {
-      state.status = 'loading'
-      return
-    },
-    getAllDialogs: (
-      state,
-      action: PayloadAction<{
-        userId: string
-      }>,
-    ) => {
+      console.log('REQUEST_FOR_ALL_MESSAGES', action)
       state.status = 'loading'
       return
     },
   },
 })
 
-export const chatActions = chatSlice.actions
-export default chatSlice.reducer
+export const messagesActions = messagesSlice.actions
+export default messagesSlice.reducer

@@ -8,7 +8,6 @@ import { TStore } from 'shared/store'
 import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
-import { socketActions } from 'shared/store/socketSlice'
 
 interface FormProps {
   formName: string
@@ -17,9 +16,10 @@ interface FormProps {
 
 const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
   const dispatch = useDispatch()
-  const auth = useSelector((state: TStore) => ({
+  const { status, error, isAuth } = useSelector((state: TStore) => ({
     status: state.AuthReducer.status,
     error: state.AuthReducer.error,
+    isAuth: state.AuthReducer.data.isAuth,
   }))
   const navigate = useNavigate()
 
@@ -34,25 +34,25 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
   )
 
   useEffect(() => {
-    switch (auth.status) {
-      case 'finished':
-        navigate(pageToNavigate)
+    switch (status) {
+      case 'idle':
+        isAuth && navigate(pageToNavigate)
+        setSubmitting(false)
         break
       case 'error':
         setSubmitting(false)
         break
       default:
     }
-  }, [navigate, pageToNavigate, auth.status])
+  }, [navigate, pageToNavigate, status, isAuth])
 
   return (
     <>
-      {auth.status === 'error' && <Alert severity="error">{auth.error}</Alert>}
+      {status === 'error' && <Alert severity="error">{error}</Alert>}
       <Formik
         initialValues={{
-          email: 'Fae.Stokes@yahoo.com',
-          password:
-            '$2b$10$2n7swA4tfW7e.QfNaJAP7.35Qo9rx/kRLytYwMW9H3Z3qpzi1oV2S',
+          email: '',
+          password: '',
         }}
         validationSchema={Schema}
         onSubmit={handleSubmit}

@@ -12,3 +12,8 @@ export interface Avatar {
   extension: AvatarExtension
   alt: string
 }
+
+export type HTTPError = {
+  message: string
+  name: string
+}

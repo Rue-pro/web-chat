@@ -1,17 +1,28 @@
 import { Socket } from 'socket.io-client'
 
 import { TStore } from 'shared/store'
-import { chatActions, ChatEvent, Message } from 'shared/store/messagesSlice'
+import {
+  messagesActions,
+  ChatMessageEvent,
+  Message,
+} from 'shared/store/messagesSlice'
 
 export function messagesSocketListeners(socket: Socket, store: TStore) {
-  socket.on(ChatEvent.SendAllMessages, (messages: Message[]) => {
+  socket.on(ChatMessageEvent.SendAllMessages, (messages: Message[]) => {
     console.log('CHAT_MIDDLEWARE_SEND_ALL_MESSAGES', messages)
-    store.dispatch(chatActions.receiveAllMessages({ messages }))
+    store.dispatch(messagesActions.receiveAllMessages({ messages }))
   })
 
-  socket.on(ChatEvent.ReceiveMessage, (message: Message) => {
+  socket.on(ChatMessageEvent.ReceiveMessage, (message: Message) => {
     console.log('CHAT_MIDDLEWARE_RECEIVE_MESSAGE', message)
-    store.dispatch(chatActions.receiveMessage({ message }))
+    console.log(
+      'WANT MESSAGES FOR CAT WITH dialogId',
+      store.getState().DialogsReducer.data.currentDialogId,
+    )
+    if (
+      message.dialogId === store.getState().DialogsReducer.data.currentDialogId
+    )
+      store.dispatch(messagesActions.receiveMessage({ message }))
   })
 }
 
@@ -20,13 +31,13 @@ export function messagesSocketEmiters(
   action: any,
   isConnectionEstablished: boolean,
 ) {
-  if (chatActions.submitMessage.match(action) && isConnectionEstablished) {
-    console.log('SOCKET_EMIT')
-    socket.emit(ChatEvent.SendMessage, action.payload)
+  if (messagesActions.submitMessage.match(action) && isConnectionEstablished) {
+    console.log('CHAT_MIDDLEWARE_SUBMIT_MESSAGE')
+    socket.emit(ChatMessageEvent.SendMessage, action.payload)
   }
 
-  if (chatActions.getAllMessages.match(action) && isConnectionEstablished) {
+  if (messagesActions.getAllMessages.match(action) && isConnectionEstablished) {
     console.log('CHAT_MIDDLEWARE_GET_ALL_MESSAGES')
-    socket.emit(ChatEvent.RequestAllMessages, action.payload.userId)
+    socket.emit(ChatMessageEvent.RequestAllMessages, action.payload.userId)
   }
 }

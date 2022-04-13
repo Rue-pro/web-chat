@@ -26,5 +26,5 @@ export class MessageEntity {
 
   @ManyToOne(() => ConversationEntity)
   @JoinColumn({ name: 'channelId' })
-  channelId: string;
+  channelId: number;
 }

@@ -33,8 +33,8 @@ export class UsersController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ type: UserEntity })
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get('')
@@ -44,28 +44,28 @@ export class UsersController {
     description: 'Возвращает список всех пользователей',
     type: [UserEntity],
   })
-  async findAll(@Query() filter: SearchFilterUserDto) {
+  findAll(@Query() filter: SearchFilterUserDto) {
     return this.usersService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: UserEntity })
-  async findOne(@Param('id') id: string) {
-    return await this.usersService.findOne(id);
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ type: UserEntity })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: UserEntity })
-  async remove(@Param('id') id: string) {
+  remove(@Param('id') id: string) {
     return this.usersService.delete(id);
   }
 }

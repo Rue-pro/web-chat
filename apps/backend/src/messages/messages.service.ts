@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 
 import { AuthService } from 'src/auth/auth.service';
+import { ConversationEntity } from 'src/dialogs/entity';
 import { MessageEntity } from './entity';
 import { CreateMessageDto } from './dto';
 
@@ -12,6 +13,8 @@ export class MessagesService {
     private readonly authService: AuthService,
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
+    @InjectRepository(ConversationEntity)
+    private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
   saveMessage(createMessageDto: CreateMessageDto) {
@@ -20,45 +23,43 @@ export class MessagesService {
     });
   }
 
-  async getAllMessages(userId: string, dialogId: string) {
+  async getAllMessages(userId: string, conversationId: string) {
     /**
      * TODO
      * на фронте сделать нормальную обработку ошибок с бэка
      */
-    const query = this.messageRepository
-      .createQueryBuilder('message')
-      .addSelect(['id', 'content', '"createdAt"', '"channelId"', '"authorId"']);
-
-    query.setParameter('authorId', userId);
-    query.setParameter('receiverId', dialogId);
-    query.andWhere(
-      new Brackets((qb) =>
-        qb
-          .where('"authorId" = :authorId')
-          .andWhere('"channelId" = :receiverId'),
-      ),
+    console.log('USER_ID', userId);
+    console.log('CONVERSATION_ID', conversationId);
+    const query2 = this.conversationRepository
+      .createQueryBuilder('conversation')
+      .select('conversation');
+    query2.innerJoinAndSelect(
+      (
+        qb: SelectQueryBuilder<MessageEntity>,
+      ): SelectQueryBuilder<MessageEntity> => {
+        const r = qb
+          .select('messages')
+          .from(MessageEntity, 'messages')
+          .orderBy({ 'messages.createdAt': 'ASC' });
+        return r;
+      },
+      'message',
+      'conversation.id=message."messages_channelId"',
     );
-    query.orWhere(
-      new Brackets((qb) =>
-        qb
-          .where('"authorId" = :receiverId')
-          .andWhere('"channelId" = :authorId'),
-      ),
-    );
+    query2.setParameter('conversationId', conversationId);
+    query2.where('conversation.id = :conversationId');
 
-    query.orderBy({
-      'message."createdAt"': 'ASC',
-    });
+    const messages = await query2.getRawMany();
 
-    const messages = await query.getRawMany();
+    console.log('RESLT_OF_NEW_QUERY_GETTING MESSAGES OF _DIALOG', messages);
 
     return messages.map((message) => {
       return {
-        id: message.id,
-        content: message.content,
-        createdAt: new Date(message.createdAt).toISOString(),
-        authorId: message.authorId,
-        receiverId: message.channelId,
+        id: message.messages_id,
+        content: message.messages_content,
+        createdAt: new Date(message.messages_createdAt).toISOString(),
+        authorId: message.messages_authorId,
+        dialogId: conversationId,
       };
     });
   }

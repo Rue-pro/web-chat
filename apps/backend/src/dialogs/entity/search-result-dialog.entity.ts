@@ -1,4 +1,4 @@
-import { DialogMessage, DialogUser } from './types';
+import { DialogMessage, DialogUser } from '.';
 
 export class SearchResultDialogEntity {
   user: DialogUser;

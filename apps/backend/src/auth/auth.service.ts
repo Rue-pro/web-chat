@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,12 +10,12 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 import { Socket } from 'socket.io';
-import { WsException } from '@nestjs/websockets';
 import { parse } from 'cookie';
 
 import { UsersService } from 'src/users/users.service';
-import { UserEntity } from 'src/users/entity';
-import { AuthEntity, TokenPayloadEntity } from './entity';
+import { UserEntity, UserId } from 'src/users/entity';
+import { Token, TokenPayloadEntity } from './entity';
+import { IWSError } from 'src/error/ws.error.interface';
 
 @Injectable()
 export class AuthService {
@@ -22,11 +23,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
+
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async login(email: string, password: string): Promise<AuthEntity> {
+  async getUserForEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
@@ -45,34 +50,111 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
-    return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
-      userId: user.id,
-    };
+    return user;
   }
 
-  validateUser(userId: string) {
+  validateUser(userId: UserId) {
     return this.usersService.findOne(userId);
   }
 
-  public async getUserFromAuthenticationToken(token: string) {
-    const payload: TokenPayloadEntity = this.jwtService.verify(token, {
-      secret: this.configService.get<string>('JWT_SECRET'),
-    });
+  async getUserFromAuthenticationToken(
+    accessToken: string,
+  ): Promise<UserEntity> {
+    const decodedToken = this.jwtService.decode(accessToken);
+    console.log('DECODED TOKEN', decodedToken);
+    if (!decodedToken || typeof decodedToken === 'string') {
+      throw new UnauthorizedException('Invalid accessToken');
+    }
+
+    if (decodedToken.userId) {
+      return this.validateUser(decodedToken.userId);
+    }
+  }
+
+  async verifyToken(accessToken: string) {
+    try {
+      return this.jwtService.verify(accessToken, {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      });
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new ForbiddenException({
+          message: 'Refreshing token is required, then retry the query',
+          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
+        });
+      }
+    }
+  }
+
+  async getUserFromSocket(socket: Socket): Promise<UserEntity | IWSError> {
+    const cookie = socket.handshake.headers.cookie;
+    if (!cookie) {
+      return new IWSError({
+        code: 400,
+        message: 'Found no cookie.',
+        name: 'ERROR_FOUND_NO_COOKIE',
+      });
+    }
+
+    const { access_token: accessToken } = parse(cookie);
+    if (!accessToken) {
+      return new IWSError({
+        code: 400,
+        message: 'Found no access_token cookie',
+        name: 'ERROR_FOUNR_NO_ACCESS_TOKEN_COOKIE',
+      });
+    }
+
+    let payload: TokenPayloadEntity = { userId: null };
+    try {
+      payload = this.jwtService.verify(accessToken, {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      });
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        return new IWSError({
+          code: 403,
+          message: 'Refreshing token is required, then retry the query',
+          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
+        });
+      }
+    }
+
     if (payload.userId) {
       return this.validateUser(payload.userId);
     }
   }
 
-  public async getUserFromSocket(socket: Socket): Promise<UserEntity> {
-    const cookie = socket.handshake.headers.cookie;
-    const { access_token } = parse(cookie);
+  getJwtAccessToken(userId: UserId): Token {
+    const payload: TokenPayloadEntity = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+    return {
+      content: token,
+      expiresIn: new Date(
+        Date.now() + this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      ),
+    };
+  }
 
-    const user = await this.getUserFromAuthenticationToken(access_token);
-
-    if (!user) {
-      throw new WsException('Invalid credentials.');
-    }
-    return user;
+  getJwtRefreshToken(userId: UserId): Token {
+    const payload: TokenPayloadEntity = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+    return {
+      content: token,
+      expiresIn: new Date(
+        Date.now() +
+          this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+      ),
+    };
   }
 }

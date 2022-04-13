@@ -36,6 +36,7 @@ const extendedApi = emptyApi
           method: 'GET',
         }),
         transformResponse: (res, meta, arg): User => {
+          console.log('PROFILE_DATA_TRANSFORM_RESPONSE', res)
           const isUserSchema = UserSchema.guard(res)
           if (isUserSchema) {
             return res

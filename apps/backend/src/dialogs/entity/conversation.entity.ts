@@ -1,10 +1,12 @@
 import { UserEntity } from 'src/users/entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+export type ConversationId = number;
+
 @Entity('conversation')
 export class ConversationEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: ConversationId;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user1' })
