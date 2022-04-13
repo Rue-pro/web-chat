@@ -1,2 +1,2 @@
-export { AuthEntity } from './auth.entity';
-export { TokenPayloadEntity } from './tokenPayload.entity';
+export * from './auth.entity';
+export * from './tokenPayload.entity';

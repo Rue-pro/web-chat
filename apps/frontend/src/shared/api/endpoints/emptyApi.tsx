@@ -4,6 +4,7 @@ import { AxiosRequestConfig, AxiosError } from 'axios'
 import { API_URL } from 'shared/config/environment-variables'
 import { APIInstance } from 'shared/api/httpClient'
 import { PATHS } from 'shared/config/routes'
+import { HTTPError } from '../types'
 
 const CustomQuery =
   (
@@ -22,7 +23,8 @@ const CustomQuery =
       const result = await APIInstance({ url: baseUrl + url, method, data })
       return { data: result.data }
     } catch (axiosError) {
-      const error = axiosError as AxiosError
+      console.log('CustomQueryAxiosError', axiosError)
+      const error = axiosError as AxiosError<HTTPError>
       if (!error.response) {
         document.location = document.location.origin + PATHS.BadGatewayPage
       }

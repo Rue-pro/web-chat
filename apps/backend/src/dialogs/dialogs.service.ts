@@ -2,14 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Not, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { UserEntity } from 'src/users/entity';
+import { UserEntity, UserId } from 'src/users/entity';
 import { MessageEntity } from 'src/messages/entity';
 import {
   ConversationEntity,
+  ConversationId,
   DialogEntity,
+  DialogMessage,
+  DialogUser,
   SearchResultDialogEntity,
 } from './entity';
-import { DialogMessage, DialogUser } from './entity/types';
 import { SearchFilterDialogDto } from './dto';
 
 @Injectable()
@@ -75,65 +77,72 @@ export class DialogsService {
     });
   }
 
-  async findAll(userId: string): Promise<DialogEntity[]> {
-    /**
-     * TODO
-     * Переписать за более эффективное решение
-     */
-    const query2 = this.messageRepository
-      .createQueryBuilder('message')
-      .select('message');
+  async findAll(userId: UserId): Promise<DialogEntity[]> {
+    console.log('FINDING_DIALOGS_FOR_USER', userId);
+    const query2 = this.conversationRepository
+      .createQueryBuilder('conversation')
+      .select('conversation');
     query2.innerJoinAndSelect(
-      ConversationEntity,
-      'conversation',
-      'message."channelId"=conversation.id',
+      (
+        qb: SelectQueryBuilder<MessageEntity>,
+      ): SelectQueryBuilder<MessageEntity> => {
+        const r = qb
+          .select('messages')
+          .from(MessageEntity, 'messages')
+          .orderBy({ 'messages.createdAt': 'DESC' })
+          .limit(1);
+        return r;
+      },
+      'message',
+      'conversation.id=message."messages_channelId"',
     );
-    query2.orderBy('message.createdAt', 'DESC');
+    query2.leftJoinAndSelect(
+      UserEntity,
+      'user1',
+      'conversation.user1=user1.id ',
+    );
+    query2.leftJoinAndSelect(
+      UserEntity,
+      'user2',
+      'conversation.user2=user2.id ',
+    );
     query2.where('conversation.user1 = :id', { id: userId });
     query2.orWhere('conversation.user2 = :id', { id: userId });
 
-    const messages = await query2.getRawMany();
-    console.log('MESSAGES', messages);
-    const result: DialogEntity[] = [];
-    for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
-      const lastAddedDialog = result[result.length - 1];
-
-      const user: DialogUser =
-        message.author_id === userId
+    const dialogs = await query2.getRawMany();
+    console.log('ALL_DIALOGS_FOR_THIS_USER', dialogs);
+    return dialogs.map((dialog): DialogEntity => {
+      const user =
+        dialog.user1_id === userId
           ? {
-              id: message.receiver_id,
-              name: message.receiver_name,
-              avatar: message.receiver_avatar,
+              id: dialog.user2_id,
+              name: dialog.user2_name,
+              avatar: dialog.user2_avatar,
             }
           : {
-              id: message.author_id,
-              name: message.author_name,
-              avatar: message.author_avatar,
+              id: dialog.user1_id,
+              name: dialog.user1_name,
+              avatar: dialog.user1_avatar,
             };
-      const lastMessage: DialogMessage = {
-        id: message.message_id,
-        content: message.message_content,
-        createdAt: message.message_createdAt,
+      return {
+        id: dialog.conversation_id,
+        user: user,
+        message: {
+          id: dialog.messages_id,
+          content: dialog.messages_content,
+          createdAt: dialog.messages_createdAt,
+        },
       };
+    });
+  }
 
-      const dialog = new DialogEntity(user, lastMessage);
-      if (i == 0) {
-        result.push(dialog);
-        continue;
-      }
-      if (dialog.user.id === lastAddedDialog.user.id) {
-        continue;
-      }
-      result.push(dialog);
-    }
-
-    return result;
+  findOne(id: ConversationId): Promise<ConversationEntity> {
+    return this.conversationRepository.findOne({ where: { id } });
   }
 
   async createConversation(
-    authorId: string,
-    receiverId: string,
+    authorId: UserId,
+    receiverId: UserId,
   ): Promise<ConversationEntity> {
     const query = await this.conversationRepository.createQueryBuilder(
       'conversation',
@@ -152,7 +161,10 @@ export class DialogsService {
     );
 
     const conversation = await query.getOne();
-    console.log(conversation);
+    console.log(
+      `CONVERSATION_BETWEEN authorId=${authorId} AND receiverId=${receiverId} ALREADY EXISTS`,
+      conversation,
+    );
 
     if (!conversation) {
       return await this.conversationRepository.save({

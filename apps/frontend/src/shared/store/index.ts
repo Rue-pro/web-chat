@@ -6,6 +6,7 @@ import { emptyApi as api } from 'shared/api/endpoints/emptyApi'
 import AuthReducer from 'shared/store/authSlice'
 import SocketReducer from 'shared/store/socketSlice'
 import MessagesReducer from 'shared/store/messagesSlice'
+import DialogsReducer from 'shared/store/dialogsSlice'
 import { myLogger } from './middleware/log'
 import socketMiddleware from './middleware/socketMiddleware'
 
@@ -15,6 +16,7 @@ const store = configureStore({
     AuthReducer,
     SocketReducer,
     MessagesReducer,
+    DialogsReducer,
   }),
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(
@@ -27,3 +29,4 @@ const store = configureStore({
 
 export default store
 export type TStore = ReturnType<typeof store.getState>
+export type TDispatch = typeof store.dispatch

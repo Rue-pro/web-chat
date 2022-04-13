@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import bcrypt from 'bcrypt';
 
 import { ConnectionArgsDto } from 'src/page/dto';
 import { CreateUserDto, SearchFilterUserDto, UpdateUserDto } from './dto';
-import { UserEntity } from './entity';
+import { UserEntity, UserId } from './entity';
 
 @Injectable()
 export class UsersService {
@@ -13,11 +14,11 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.userRepository.save(createUserDto);
   }
 
-  async findAll(filter: SearchFilterUserDto): Promise<UserEntity[]> {
+  findAll(filter: SearchFilterUserDto): Promise<UserEntity[]> {
     const { name, phone } = filter;
 
     const query = this.userRepository.createQueryBuilder('user');
@@ -34,24 +35,71 @@ export class UsersService {
         .andWhere((qb) => qb.where('LOWER(user.phone) LIKE LOWER(:phone)'));
     }
 
-    const users = await query.getMany();
-    return users;
+    return query.getMany();
   }
 
   async findPage(connectionArgs: ConnectionArgsDto) {}
 
-  findOne(id: string) {
-    return this.userRepository.findOne({ where: { id: id } });
+  async findOne(id: UserId): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`No user found for id: ${id}`);
+    }
+    return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    let toUpdate = await this.userRepository.findOneBy({ id: id });
+  async update(id: UserId, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    let toUpdate = await this.userRepository.findOneBy({ id });
+    if (!toUpdate) {
+      throw new NotFoundException(`No user found for id: ${id}`);
+    }
     Object.assign(toUpdate, updateUserDto);
-    const article = await this.userRepository.save(toUpdate);
-    return { article };
+    return this.userRepository.save(toUpdate);
   }
 
-  delete(id: string): Promise<DeleteResult> {
-    return this.userRepository.delete({ id: id });
+  delete(id: UserId): Promise<DeleteResult> {
+    return this.userRepository.delete({ id });
+  }
+
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    id: UserId,
+  ): Promise<UserEntity> {
+    let toUpdate = await this.userRepository.findOneBy({ id });
+    if (!toUpdate) {
+      throw new NotFoundException(`No user found for id: ${id}`);
+    }
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    Object.assign(toUpdate, { currentHashedRefreshToken });
+    return this.userRepository.save(toUpdate);
+  }
+
+  async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    id: UserId,
+  ): Promise<UserEntity> {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException(`No user found for id: ${id}`);
+    }
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefeshToken(id: UserId): Promise<UserEntity> {
+    let toUpdate = await this.userRepository.findOneBy({ id });
+    if (!toUpdate) {
+      throw new NotFoundException(`No user found for id: ${id}`);
+    }
+    Object.assign(toUpdate, { currentHashedRefreshToken: null });
+    return this.userRepository.save(toUpdate);
   }
 }

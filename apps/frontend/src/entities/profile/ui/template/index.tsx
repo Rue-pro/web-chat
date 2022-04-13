@@ -1,10 +1,11 @@
 import React, { ReactElement, useCallback } from 'react'
 import { Stack, Box, styled } from '@mui/material'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+
 import { ActionButton } from 'shared/ui'
 import { PATHS } from 'shared/config/routes'
 import { logout } from 'shared/store/authSlice'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 
 interface TemplateProps {
   avatar: ReactElement

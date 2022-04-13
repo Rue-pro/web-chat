@@ -2,6 +2,7 @@ import { Middleware } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
 import { API_URL } from 'shared/config/environment-variables'
+import { authActions } from 'shared/store/authSlice'
 import { socketActions } from 'shared/store/socketSlice'
 import {
   messagesSocketEmiters,
@@ -25,8 +26,20 @@ const socketMiddleware: Middleware = store => {
       })
 
       socket.on('connect', () => {
+        console.log('SOCKET_MIDDLEWARE_CONNECTED')
         store.dispatch(socketActions.connectionEstablished())
       })
+
+      socket.on('error', (error: any) => {
+        console.log('SOCKET_MIDDLEWARE_ERROR_HAPPEND', error)
+        if (
+          error.code === 403 &&
+          error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED'
+        ) {
+          store.dispatch(authActions.setNeedRefresh(true))
+        }
+      })
+
       messagesSocketListeners(socket, store)
       dialogsSocketListeners(socket, store)
     }

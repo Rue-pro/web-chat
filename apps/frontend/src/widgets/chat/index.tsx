@@ -1,36 +1,31 @@
 import React, { KeyboardEvent, useState, ChangeEvent, useCallback } from 'react'
+import { useSelector } from 'react-redux'
+
 import { Grid } from '@mui/material'
 
 import { ChatInput } from 'entities/chatMessage/ui'
 import { Dialog, Dialogs, FilterByDialogs } from 'features/chat'
 import { InfoTemplate } from 'shared/ui/template'
+import { TStore } from 'shared/store'
+import { dialogsActions } from 'shared/store/dialogsSlice'
 
 interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
   const [showDialogs, setShowDialogs] = useState<boolean>(true)
-  const [currentDialog, setCurrentDialog] = useState<string | null>(null)
-  const [isDialogsLoaded, setDialogsLoaded] = useState<boolean>(false)
+  const { currentDialog } = useSelector((state: TStore) => {
+    return {
+      currentDialog: state.DialogsReducer.data.currentDialogId,
+    }
+  })
 
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setShowDialogs(!Boolean(e.target.value))
   }
 
-  const handleOpenDialog = useCallback((dialogId: string) => {
-    setCurrentDialog(dialogId)
-  }, [])
-
-  const handleOnLoadDialogs = useCallback((dialogId: string | null) => {
-    if (dialogId) {
-      setCurrentDialog(dialogId)
-    } else {
-      setDialogsLoaded(true)
-    }
-  }, [])
-
   const keyDownHandler = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
-      setCurrentDialog(null)
+      dialogsActions.setCurrentDialog({ dialogId: null })
     }
   }, [])
 
@@ -42,25 +37,15 @@ const Chat: React.FC<ChatProps> = () => {
       spacing={2}
       sx={{ outline: 'none', height: '100%' }}>
       <Grid item xs={4} sx={{ height: '100%', overflowY: 'auto' }}>
-        <FilterByDialogs
-          onSearch={handleOnSearch}
-          onOpenDialog={handleOpenDialog}
-          currentDialog={currentDialog}
-        />
+        <FilterByDialogs onSearch={handleOnSearch} />
 
-        {showDialogs && (
-          <Dialogs
-            onOpenDialog={handleOpenDialog}
-            onLoadDialogs={handleOnLoadDialogs}
-            currentDialog={currentDialog}
-          />
-        )}
+        {showDialogs && <Dialogs />}
       </Grid>
       <Grid item xs={8} sx={{ height: '100%' }}>
         {currentDialog ? (
           <>
-            <Dialog id={currentDialog} />
-            <ChatInput receiverId={currentDialog} />
+            <Dialog />
+            <ChatInput />
           </>
         ) : (
           <InfoTemplate>Select a chat to start messaging</InfoTemplate>

@@ -6,14 +6,17 @@ import {
   OnGatewayConnection,
   MessageBody,
   ConnectedSocket,
+  WsResponse,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
 import { ConnectionsService } from 'src/connections/connections.service';
 import { DialogsService } from 'src/dialogs/dialogs.service';
 import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto';
+import { CreateMessageDto, NewMessageDto } from './dto';
+import { IWSError } from 'src/error/ws.error.interface';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @WebSocketGateway({
   path: '/messages',
@@ -30,7 +33,6 @@ export class MessagesGateway implements OnGatewayConnection {
   ) {}
 
   private logger: Logger = new Logger('AppGateway');
-  private connections = [];
 
   handleDisconnect(socket: Socket) {
     this.connectionService.delete(socket.id);
@@ -44,10 +46,13 @@ export class MessagesGateway implements OnGatewayConnection {
     this.logger.log(`Client connected: ${socket.id}`);
     console.log(`Client connected: ${socket.id}`);
 
-    const user = await this.authService.getUserFromSocket(socket);
+    const result = await this.authService.getUserFromSocket(socket);
+    if (result instanceof IWSError) {
+      return;
+    }
 
     await this.connectionService.create({
-      userId: user.id,
+      userId: result.id,
       socketId: socket.id,
     });
 
@@ -58,27 +63,42 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('send_message')
   async listenForMessages(
-    @MessageBody() newMessage: CreateMessageDto,
+    @MessageBody() newMessage: NewMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
-    const user = await this.authService.getUserFromSocket(socket);
-    const channelId = newMessage.channelId;
+    const receiverId = '6b538db0-e48c-4ee0-a2ee-8fe59e7840ce';
+    const result = await this.authService.getUserFromSocket(socket);
 
-    const conversation = await this.dialogService.createConversation(
-      user.id,
-      channelId,
-    );
+    if (result instanceof IWSError) {
+      socket.emit('error', result);
+      return;
+    }
+    console.log('NEW_MESSAGE', newMessage);
+    const conversationId = newMessage.dialogId;
 
-    console.log('CONVERSATION', conversation);
+    let conversation = await this.dialogService.findOne(conversationId);
+
+    if (!conversation) {
+      conversation = await this.dialogService.createConversation(
+        result.id,
+        receiverId,
+      );
+      /**
+       * Уведомляем сокет о создании связи
+       */
+      socket.emit('receive_created_dialog', conversation);
+    }
+
+    console.log('CONVERSATION', conversationId);
 
     const message = await this.messageService.saveMessage({
-      authorId: user.id,
-      channelId: conversation.id,
+      authorId: result.id,
+      channelId: conversationId,
       content: newMessage.content,
     });
 
-    const connection = await this.connectionService.findOne(channelId);
     const receivers = [socket.id];
+    const connection = await this.connectionService.findOne(receiverId);
     if (connection) receivers.push(connection.socketId);
 
     console.log('Получатели', receivers);
@@ -87,13 +107,9 @@ export class MessagesGateway implements OnGatewayConnection {
       id: message.id,
       content: newMessage.content,
       createdAt: message.createdAt,
-      authorId: user.id,
-      receiverId: channelId,
+      authorId: result.id,
+      dialogId: conversation.id,
     });
-
-    const dialogs = [];
-
-    this.server.sockets.to(receivers).emit('send_all_dialogs', dialogs);
   }
 
   @SubscribeMessage('request_all_messages')
@@ -101,9 +117,15 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() dialogId: string,
     @ConnectedSocket() socket: Socket,
   ) {
-    const user = await this.authService.getUserFromSocket(socket);
+    const result = await this.authService.getUserFromSocket(socket);
+
+    if (result instanceof IWSError) {
+      socket.emit('error', result);
+      return;
+    }
+
     const messages = await this.messageService.getAllMessages(
-      user.id,
+      result.id,
       dialogId,
     );
 
@@ -111,13 +133,17 @@ export class MessagesGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('request_all_dialogs')
-  async requestAllDialogs(
-    @MessageBody() dialogId: string,
-    @ConnectedSocket() socket: Socket,
-  ) {
-    const user = await this.authService.getUserFromSocket(socket);
-    const dialogs = await this.dialogService.findAll(user.id);
+  async requestAllDialogs(@ConnectedSocket() socket: Socket) {
+    const result = await this.authService.getUserFromSocket(socket);
 
+    if (result instanceof IWSError) {
+      console.log('ERROR');
+      socket.emit('error', result);
+      return;
+    }
+
+    const dialogs = await this.dialogService.findAll(result.id);
+    console.log('REQUEST_ALL_DIALOGS', dialogs);
     socket.emit('send_all_dialogs', dialogs);
   }
 }

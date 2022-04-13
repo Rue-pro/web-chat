@@ -1,7 +1,7 @@
 export class CreateMessageDto {
   authorId: string;
 
-  channelId: string;
+  channelId: number;
 
   content: string;
 }

@@ -28,6 +28,7 @@ export class ConnectionsService {
   }
 
   findOne(userId: string) {
+    console.log('SEARCHING_FOR_SOCKET_ID_FOR_USER', userId);
     return this.connectionRepository
       .createQueryBuilder('connection')
       .innerJoinAndSelect(UserEntity, 'user', 'connection.userId=user.id')

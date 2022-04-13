@@ -5,22 +5,26 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage/ui'
 import { throttle, timeStampToRuDate } from 'shared/lib'
-import { chatActions, Message } from 'shared/store/messagesSlice'
+import { messagesActions, Message } from 'shared/store/messagesSlice'
 import { TStore } from 'shared/store'
 
-interface DialogProps {
-  id: string
-}
+interface DialogProps {}
 
-const Dialog: React.FC<DialogProps> = ({ id }) => {
+const Dialog: React.FC<DialogProps> = () => {
   const dispatch = useDispatch()
-  const { status, messages, userId } = useSelector((state: TStore) => {
-    return {
-      status: state.MessagesReducer.status,
-      messages: state.MessagesReducer.messages,
-      userId: state.AuthReducer.data.userId,
-    }
-  })
+  const { status, messages, userId, currentDialog } = useSelector(
+    (state: TStore) => {
+      return {
+        status: state.MessagesReducer.status,
+        messages: state.MessagesReducer.data.messages,
+        userId: state.AuthReducer.data.userId,
+        currentDialog: state.DialogsReducer.data.currentDialogId,
+      }
+    },
+  )
+
+  console.log('MESSAGES', messages)
+  console.log('CURRENT_DIALOG_RECEIVER_ID', currentDialog)
 
   const containerRef = useRef<HTMLDivElement>()
   const [scrolledUpByUser, setScrolledUpByUser] = useState<boolean>(false)
@@ -62,8 +66,8 @@ const Dialog: React.FC<DialogProps> = ({ id }) => {
   }, [messages, scrolledUpByUser])
 
   useEffect(() => {
-    dispatch(chatActions.getAllMessages({ userId: id }))
-  }, [dispatch, id])
+    dispatch(messagesActions.getAllMessages({ userId: currentDialog }))
+  }, [dispatch, currentDialog])
 
   if (status === 'loading') {
     return (

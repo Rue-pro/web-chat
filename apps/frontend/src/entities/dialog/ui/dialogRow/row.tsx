@@ -51,7 +51,7 @@ const Row: React.FC<RowProps> = ({
                 {getMessagesCount(unreadedMessagesCount)}
               </MessagesCount>
             ) : (
-              <DoneAllIcon color="primary" />
+              <DoneAllIcon color={isCurrent ? 'inherit' : 'primary'} />
             )}
           </>
         }
@@ -67,13 +67,14 @@ const getMessagesCount = (messagesCount: number) => {
 }
 
 const Container = styled((props: ButtonBaseProps) => <ButtonBase {...props} />)`
+  width: 100%;
   padding: 10px 24px;
   &[data-current='true'] {
     background-color: #1976d2;
   }
 
   &[data-current='false'] {
-    background-color: #999999;
+    background-color: transparent;
   }
 `
 

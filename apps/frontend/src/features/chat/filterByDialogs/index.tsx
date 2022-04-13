@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useCallback, useState } from 'react'
 import { Box } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { SearchInput } from 'shared/ui'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
@@ -9,18 +10,21 @@ import {
   DialogRowSketeton,
 } from 'entities/dialog'
 import { timeStampToRuDate } from 'shared/lib'
+import { TDispatch, TStore } from 'shared/store'
+import { dialogsActions } from 'shared/store/dialogsSlice'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
-  onOpenDialog: (dialogId: string) => void
-  currentDialog: string | null
 }
 
-const FilterByDialogs: React.FC<FilterByUsersProps> = ({
-  onSearch,
-  onOpenDialog,
-  currentDialog,
-}) => {
+const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
+  const dispatch = useDispatch<TDispatch>()
+  const { currentDialog } = useSelector((state: TStore) => {
+    return {
+      currentDialog: state.DialogsReducer.data.currentDialogId,
+    }
+  })
+
   const [query, setQuery] = useState<string>('')
   const { data, isLoading } = useFindDialogsQuery(query, {
     skip: !Boolean(query),
@@ -32,6 +36,13 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
       onSearch(e)
     },
     [onSearch],
+  )
+
+  const handleOpenDialog = useCallback(
+    (id: number) => {
+      dispatch(dialogsActions.setCurrentDialog({ dialogId: id }))
+    },
+    [dispatch],
   )
 
   return (
@@ -50,7 +61,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
         Boolean(query) &&
         data?.map(dialog => (
           <DialogRow
-            key={dialog.user.id}
+            key={dialog.id}
             id={dialog.user.id}
             avatar={{
               src: dialog.user.avatar,
@@ -62,7 +73,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({
             sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
             unreadedMessagesCount={0}
             onClick={() => {
-              onOpenDialog(dialog.user.id)
+              handleOpenDialog(dialog.id)
             }}
             isCurrent={currentDialog === dialog.user.id}
           />
