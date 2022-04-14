@@ -1,12 +1,11 @@
 import React from 'react'
 
-import { PATHS } from 'shared/config/routes'
+import { PAGES } from 'shared/config'
 import { AuthByEmailForm } from 'features/auth/authByEmail'
 
 const LoginPage: React.FC = () => (
   <div>
-    Unprotected page
-    <AuthByEmailForm formName="auth-form" pageToNavigate={PATHS.HomePage} />
+    <AuthByEmailForm formName="auth-form" pageToNavigate={PAGES.HomePage} />
   </div>
 )
 

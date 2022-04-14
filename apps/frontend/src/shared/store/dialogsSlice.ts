@@ -4,6 +4,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { GenericState } from './genericSlice'
 
 export type DialogId = number | null
+export type ReceiverId = string | null
+
 export const DialogUserSchema = Record({
   id: String,
   name: String,
@@ -22,10 +24,14 @@ const DialogSchema = Record({
 const DialogArrSchema = Array(DialogSchema)
 export type Dialog = Static<typeof DialogSchema>
 
+export interface CurrentDialogPayload {
+  dialogId: DialogId
+  receiverId?: ReceiverId
+}
 interface DialogData {
   currentDialog: {
     id: DialogId
-    isNew: boolean
+    receiverId: ReceiverId
   }
   dialogs: Dialog[]
 }
@@ -35,7 +41,7 @@ const initialState: DialogState = {
   data: {
     currentDialog: {
       id: null,
-      isNew: false,
+      receiverId: null,
     },
     dialogs: [],
   },
@@ -73,16 +79,10 @@ const dialogsSlice = createSlice({
       state.status = 'loading'
       return
     },
-    setCurrentDialog: (
-      state,
-      action: PayloadAction<{
-        dialogId: DialogId
-        isNew?: boolean
-      }>,
-    ) => {
+    setCurrentDialog: (state, action: PayloadAction<CurrentDialogPayload>) => {
       console.log('SETTING_CURRENT_DIALOG', action)
       state.data.currentDialog.id = action.payload.dialogId
-      state.data.currentDialog.isNew = action.payload.isNew ?? false
+      state.data.currentDialog.receiverId = action.payload.receiverId ?? null
     },
   },
 })

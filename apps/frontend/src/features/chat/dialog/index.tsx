@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Stack, Box, styled, IconButton } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage/ui'
+import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage'
 import { throttle, timeStampToRuDate } from 'shared/lib'
-import { messagesActions, Message } from 'shared/store/messagesSlice'
 import { TStore } from 'shared/store'
+import { messagesActions, Message } from 'shared/store/messagesSlice'
 
 interface DialogProps {}
 
@@ -22,9 +22,6 @@ const Dialog: React.FC<DialogProps> = () => {
       }
     },
   )
-
-  console.log('MESSAGES', messages)
-  console.log('CURRENT_DIALOG_RECEIVER_ID', currentDialogId)
 
   const containerRef = useRef<HTMLDivElement>()
   const [scrolledUpByUser, setScrolledUpByUser] = useState<boolean>(false)

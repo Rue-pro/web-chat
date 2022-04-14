@@ -2,8 +2,6 @@ import React, { ChangeEvent, useCallback, useState } from 'react'
 import { Box } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { SearchInput } from 'shared/ui'
-import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import {
   DialogRow,
   DialogLoadingTemplate,
@@ -11,7 +9,14 @@ import {
 } from 'entities/dialog'
 import { timeStampToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
-import { dialogsActions } from 'shared/store/dialogsSlice'
+import {
+  DialogId,
+  dialogsActions,
+  ReceiverId,
+  CurrentDialogPayload,
+} from 'shared/store/dialogsSlice'
+import { SearchInput } from 'shared/ui'
+import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
@@ -30,8 +35,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
     skip: !Boolean(query),
   })
 
-  console.log('USERS', users)
-
   const handleChangeSearchInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setQuery(e.target.value)
@@ -41,8 +44,20 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   )
 
   const handleOpenDialog = useCallback(
-    (id: number | null) => {
-      dispatch(dialogsActions.setCurrentDialog({ dialogId: id }))
+    ({
+      dialogId,
+      receiverId,
+    }: {
+      dialogId: DialogId
+      receiverId: ReceiverId
+    }) => {
+      let payload: CurrentDialogPayload = {
+        dialogId: dialogId,
+      }
+      if (!dialogId) {
+        payload.receiverId = receiverId
+      }
+      dispatch(dialogsActions.setCurrentDialog(payload))
     },
     [dispatch],
   )
@@ -63,8 +78,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
         Boolean(query) &&
         users?.map(dialog => (
           <DialogRow
-            key={dialog.id}
-            id={dialog.user.id}
+            key={dialog.user.id}
             avatar={{
               src: dialog.user.avatar,
               alt: dialog.user.name,
@@ -75,7 +89,10 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
             unreadedMessagesCount={0}
             onClick={() => {
-              handleOpenDialog(dialog?.id ?? null)
+              handleOpenDialog({
+                dialogId: dialog?.id ?? null,
+                receiverId: dialog.user.id,
+              })
             }}
             isCurrent={currentDialogId === dialog.id}
           />

@@ -1,7 +1,7 @@
 import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
-import { io, Socket } from 'socket.io-client'
 
-import { API_URL } from 'shared/config/environment-variables'
+import { Socket } from 'shared/api'
+import { API_URL } from 'shared/config'
 import { emptyApi } from './emptyApi'
 
 enum ChatMessageEvent {
@@ -27,25 +27,13 @@ interface NewMessage {
   content: string
 }
 
-let socket: Socket
-function getSocket() {
-  if (!socket) {
-    socket = io(`${API_URL}`, {
-      withCredentials: true,
-      path: '/messages',
-      transports: ['websocket', 'polling', 'flashsocket'],
-    })
-  }
-  return socket
-}
-
 export const extendedApi = emptyApi
   .enhanceEndpoints({ addTagTypes: ['messages'] })
   .injectEndpoints({
     endpoints: build => ({
       sendMessage: build.mutation<Message, NewMessage>({
         queryFn: (message: NewMessage) => {
-          const socket = getSocket()
+          const socket = Socket.instance
 
           return new Promise(resolve => {
             socket.emit(
@@ -62,7 +50,7 @@ export const extendedApi = emptyApi
         queryFn: (id: string) => {
           return new Promise(resolve => {
             console.log('queryFN')
-            const socket = getSocket()
+            const socket = Socket.instance
 
             socket.on('connect', () => {
               console.log('ALL_MESSAGES')
@@ -112,7 +100,7 @@ export const extendedApi = emptyApi
             console.log('onCacheEntryAdded')
             await cacheDataLoaded
 
-            const socket = getSocket()
+            const socket = Socket.instance
 
             /* socket.on('connect', () => {
               console.log('ALL_MESSAGES')

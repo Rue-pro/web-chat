@@ -1,7 +1,7 @@
 import { Middleware } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
-import { API_URL } from 'shared/config/environment-variables'
+import { API_URL } from 'shared/config'
 import { authActions } from 'shared/store/authSlice'
 import { socketActions } from 'shared/store/socketSlice'
 import {
@@ -10,7 +10,7 @@ import {
 } from './messagesSocket'
 import { dialogsSocketEmiters, dialogsSocketListeners } from './dialogsSocket'
 
-const socketMiddleware: Middleware = store => {
+export const socketMiddleware: Middleware = store => {
   let socket: Socket
 
   return next => action => {
@@ -50,5 +50,3 @@ const socketMiddleware: Middleware = store => {
     return next(action)
   }
 }
-
-export default socketMiddleware

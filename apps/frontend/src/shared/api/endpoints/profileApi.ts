@@ -35,7 +35,7 @@ const extendedApi = emptyApi
           url: `/users/${id}`,
           method: 'GET',
         }),
-        transformResponse: (res, meta, arg): User => {
+        transformResponse: (res): User => {
           console.log('PROFILE_DATA_TRANSFORM_RESPONSE', res)
           const isUserSchema = UserSchema.guard(res)
           if (isUserSchema) {

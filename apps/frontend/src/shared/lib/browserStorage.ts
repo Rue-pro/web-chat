@@ -14,3 +14,9 @@ export const saveState = <T>(KEY: string, state: T) => {
     localStorage.setItem(KEY, serializedState)
   } catch (e) {}
 }
+
+export const removeState = (KEY: string) => {
+  try {
+    localStorage.removeItem(KEY)
+  } catch (e) {}
+}

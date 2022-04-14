@@ -69,6 +69,7 @@ const messagesSlice = createSlice({
       state,
       action: PayloadAction<{
         dialogId: number
+        receiverId: string
         content: string
       }>,
     ) => {

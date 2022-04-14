@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { APIInstance } from 'shared/api/httpClient'
-import { loadState, saveState } from 'shared/lib'
+import { APIInstance } from 'shared/api'
+import { loadState, removeState, saveState } from 'shared/lib'
 import { GenericState } from './genericSlice'
 
 const KEY = 'auth'
@@ -80,10 +80,7 @@ const authSlice = createSlice({
     builder.addCase(logout.fulfilled, (state: AuthState, action) => {
       console.log('LOGOUT_FULFILLED', action)
       state.status = 'idle'
-      state.data.isAuth = false
-      state.data.userId = ''
-      state.data.needRefresh = false
-      saveState<AuthData>(KEY, state.data)
+      removeState(KEY)
     })
     builder.addCase(logout.rejected, (state: AuthState, action) => {
       console.log('LOGOUT_REJECTED', action)

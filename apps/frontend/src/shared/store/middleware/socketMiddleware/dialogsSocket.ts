@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io-client'
 import { AnyAction, Dispatch, MiddlewareAPI } from 'redux'
 
-import { dialogsActions, Dialog } from 'shared/store/dialogsSlice'
 import { TStore } from 'shared/store'
+import { dialogsActions, Dialog } from 'shared/store/dialogsSlice'
 
 export enum ChatDialogEvent {
   RequestAllDialogs = 'request_all_dialogs',
@@ -21,13 +21,12 @@ export function dialogsSocketListeners(
 
   socket.on(ChatDialogEvent.ReceiveCreatedDialog, (conversaion: any) => {
     console.log('CHAT_DIALOGS_MIDDLEWARE_RECEIVE_CONVERSATION', conversaion)
-    /**
-     * TODO
-     * проверка установлен ли текущий другой диалог и мы общаемся с пользователем
-     * если нет
-     * устанавливаем текущий диалог conversation.id
-     *
-     */
+    const currentDialogId =
+      store.getState().DialogsReducer.data.currentDialog.id
+    if (currentDialogId) {
+      return
+    }
+    dialogsActions.setCurrentDialog({ dialogId: conversaion, receiverId: null })
   })
 }
 

@@ -4,8 +4,8 @@ import { Typography } from '@mui/material'
 
 import { TStore } from 'shared/store'
 import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
-import { ProfileSkeleton, ProfileTemplate } from '..'
 import { AvatarBadge } from 'shared/ui'
+import { ProfileSkeleton, ProfileTemplate } from '.'
 
 interface ProfileProps {}
 
