@@ -155,10 +155,6 @@ export class DialogsService {
     );
 
     const conversation = await query.getOne();
-    console.log(
-      `CONVERSATION_BETWEEN authorId=${authorId} AND receiverId=${receiverId} ALREADY EXISTS`,
-      conversation,
-    );
 
     if (!conversation) {
       return await this.conversationRepository.save({

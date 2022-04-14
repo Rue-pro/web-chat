@@ -36,8 +36,6 @@ APIInstance.interceptors.request.use(
     return request
   },
   function (error) {
-    console.log('resuqest error', error.payload)
-    // Do something with request error
     return Promise.reject(error)
   },
 )
@@ -47,7 +45,6 @@ APIInstance.interceptors.response.use(
     return response
   },
   function (error) {
-    console.log('RESPOSE INTERCEPTOR', error.response)
     if (!error.response) {
       //document.location = document.location.origin + PAGES.BadGatewayPage
     }

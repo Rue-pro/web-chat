@@ -23,7 +23,6 @@ const CustomQuery =
       const result = await APIInstance({ url: baseUrl + url, method, data })
       return { data: result.data }
     } catch (axiosError) {
-      console.log('CustomQueryAxiosError', axiosError)
       const error = axiosError as AxiosError<HTTPError>
       if (!error.response) {
         //document.location = document.location.origin + PAGES.BadGatewayPage

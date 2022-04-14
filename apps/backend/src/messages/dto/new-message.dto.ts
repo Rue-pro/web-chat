@@ -1,5 +1,5 @@
 export class NewMessageDto {
-  authorId: string;
+  receiverId: string;
 
   dialogId: number;
 
