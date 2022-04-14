@@ -7,22 +7,15 @@ import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { ConnectionsModule } from './connections/connections.module';
+import * as typeOrmConfig from './database/config/typeorm.config';
 
-const environment = process.env.NODE_END || 'development';
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.env`,
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      migrationsRun: false,
-      autoLoadEntities: true,
-      synchronize: true,
-      ssl: false,
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     AuthModule,
     UsersModule,
     DialogsModule,

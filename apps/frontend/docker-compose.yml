@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  frontend:
+    build: .
+    container_name: chat-frontend
+    ports:
+      - '4300:3000'
+    volumes:
+      - ./src:/app/src
+      - ./public/assets:/app/public/assets
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env

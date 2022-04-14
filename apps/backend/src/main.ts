@@ -1,5 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -10,6 +10,9 @@ import fastifyMultipart from 'fastify-multipart';
 import { AppModule } from './app.module';
 import { setupSwagger } from './api-docs.swagger';
 import { GlobalExceptionFilter } from './error/global.exception.filter';
+
+const whitelist = ['http://localhost:4300', undefined, 'http://localhost:3000'];
+const port = process.env.APP_PORT || 3000;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -22,13 +25,21 @@ async function bootstrap() {
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     ],
-    origin: 'http://localhost:3000',
+    origin: function (origin, callback) {
+      console.log('ORIGIN', origin);
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 
   app.register(fastifyCookie);
   app.register(fastifyMultipart);
 
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -40,6 +51,6 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(3005);
+  await app.listen(3000);
 }
 bootstrap();
