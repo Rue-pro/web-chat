@@ -43,9 +43,6 @@ export class MessagesGateway implements OnGatewayConnection {
   }
 
   async handleConnection(socket: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${socket.id}`);
-    console.log(`Client connected: ${socket.id}`);
-
     const result = await this.authService.getUserFromSocket(socket);
     if (result instanceof IWSError) {
       return;
@@ -66,19 +63,16 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() newMessage: NewMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
-    const receiverId = '6b538db0-e48c-4ee0-a2ee-8fe59e7840ce';
+    const receiverId = newMessage.receiverId;
     const result = await this.authService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
       socket.emit('error', result);
       return;
     }
-    console.log('NEW_MESSAGE', newMessage);
     const conversationId = newMessage.dialogId;
 
     let conversation = await this.dialogService.findOne(conversationId);
-
-    console.log('FINDED_CONVERSATION', conversation);
 
     if (!conversation) {
       conversation = await this.dialogService.createConversation(
@@ -91,11 +85,9 @@ export class MessagesGateway implements OnGatewayConnection {
       socket.emit('receive_created_dialog', conversation.id);
     }
 
-    console.log('CONVERSATION', conversation);
-
     const message = await this.messageService.saveMessage({
       authorId: result.id,
-      channelId: conversationId,
+      channelId: conversation.id,
       content: newMessage.content,
     });
 
@@ -105,10 +97,7 @@ export class MessagesGateway implements OnGatewayConnection {
         ? conversation.user2
         : conversation.user1,
     );
-    console.log('CONNECTION', connection);
     if (connection) receivers.push(connection.socketId);
-
-    console.log('Получатели', receivers);
 
     this.server.sockets.to(receivers).emit('receive_message', {
       id: message.id,
@@ -144,13 +133,11 @@ export class MessagesGateway implements OnGatewayConnection {
     const result = await this.authService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
-      console.log('ERROR');
       socket.emit('error', result);
       return;
     }
 
     const dialogs = await this.dialogService.findAll(result.id);
-    console.log('REQUEST_ALL_DIALOGS', dialogs);
     socket.emit('send_all_dialogs', dialogs);
   }
 }

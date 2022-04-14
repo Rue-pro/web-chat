@@ -28,8 +28,6 @@ export class MessagesService {
      * TODO
      * на фронте сделать нормальную обработку ошибок с бэка
      */
-    console.log('USER_ID', userId);
-    console.log('CONVERSATION_ID', conversationId);
     const query2 = this.conversationRepository
       .createQueryBuilder('conversation')
       .select('conversation');
@@ -50,8 +48,6 @@ export class MessagesService {
     query2.where('conversation.id = :conversationId');
 
     const messages = await query2.getRawMany();
-
-    console.log('RESLT_OF_NEW_QUERY_GETTING MESSAGES OF _DIALOG', messages);
 
     return messages.map((message) => {
       return {

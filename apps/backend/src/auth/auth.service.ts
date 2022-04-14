@@ -61,7 +61,6 @@ export class AuthService {
     accessToken: string,
   ): Promise<UserEntity> {
     const decodedToken = this.jwtService.decode(accessToken);
-    console.log('DECODED TOKEN', decodedToken);
     if (!decodedToken || typeof decodedToken === 'string') {
       throw new UnauthorizedException('Invalid accessToken');
     }

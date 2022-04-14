@@ -43,8 +43,6 @@ export class AuthController {
       refreshToken.content,
       user.id,
     );
-
-    console.log('REQUEST', request);
     /**
      * TODO
      * сделать установку кук на тот домен, с которого пришел запрос
@@ -78,7 +76,6 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
-    console.log('AUTH REFRESH');
     const user = await this.authService.getUserFromAuthenticationToken(
       request.cookies.access_token,
     );
