@@ -4,7 +4,11 @@ import { DeleteResult, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
 import { ConnectionArgsDto } from 'src/page/dto';
-import { CreateUserDto, SearchFilterUserDto, UpdateUserDto } from './dto';
+import {
+  CreateUserRequestDto,
+  SearchFilterUserRequestDto,
+  UpdateUserRequestDto,
+} from './dto';
 import { UserEntity, UserId } from './entity';
 
 @Injectable()
@@ -14,11 +18,11 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<UserEntity> {
+  create(createUserDto: CreateUserRequestDto): Promise<UserEntity> {
     return this.userRepository.save(createUserDto);
   }
 
-  findAll(filter: SearchFilterUserDto): Promise<UserEntity[]> {
+  findAll(filter: SearchFilterUserRequestDto): Promise<UserEntity[]> {
     const { name, phone } = filter;
 
     const query = this.userRepository.createQueryBuilder('user');
@@ -48,7 +52,10 @@ export class UsersService {
     return user;
   }
 
-  async update(id: UserId, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+  async update(
+    id: UserId,
+    updateUserDto: UpdateUserRequestDto,
+  ): Promise<UserEntity> {
     let toUpdate = await this.userRepository.findOneBy({ id });
     if (!toUpdate) {
       throw new NotFoundException(`No user found for id: ${id}`);

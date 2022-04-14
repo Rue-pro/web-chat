@@ -1,3 +1,4 @@
-export { CreateUserDto } from './create-user.dto';
-export { UpdateUserDto } from './update-user.dto';
-export { SearchFilterUserDto } from './search-filter-user.dto';
+export { CreateUserRequestDto } from './create-user-request.dto';
+export { DeleteUserResponseDto } from './delete-user-response.dto';
+export { UpdateUserRequestDto } from './update-user-request.dto';
+export { SearchFilterUserRequestDto } from './search-filter-user-request.dto';

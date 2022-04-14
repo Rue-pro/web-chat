@@ -3,8 +3,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 export function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle('NestJS Api Boilerplate')
-    .setDescription('The Boilerplate API description')
+    .setTitle('Chat REST API')
+    .setDescription('This is chat REST API documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

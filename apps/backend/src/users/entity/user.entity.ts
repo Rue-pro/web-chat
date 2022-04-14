@@ -9,6 +9,7 @@ import {
 import bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import { Optional } from '@nestjs/common';
 
 export type UserId = string;
 export type UserName = string;
@@ -19,7 +20,6 @@ export type UserPhone = string;
 export type UserPassword = string;
 export type UserCurrentHashedRefreshToken = string;
 export type UserAvatar = string;
-export type UserRole = 'USER' | 'ADMIN';
 
 @Entity('user')
 export class UserEntity {
@@ -60,11 +60,8 @@ export class UserEntity {
   currentHashedRefreshToken?: UserCurrentHashedRefreshToken;
 
   @ApiProperty()
-  @Column()
-  avatar: UserAvatar;
-
-  @ApiProperty()
-  role: UserRole;
+  @Column({ default: null })
+  avatar?: UserAvatar;
 
   @BeforeInsert()
   async setPassword(password: UserPassword) {
