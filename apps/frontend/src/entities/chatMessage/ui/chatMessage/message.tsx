@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, styled, Typography } from '@mui/material'
 
-import { MessageOwner } from 'shared/api/endpoints/messagesApi'
+import { MessageOwner } from 'shared/store/messagesSlice'
 
 interface ChatMessageProps {
   type: MessageOwner

@@ -13,7 +13,6 @@ import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
 import Template from './template'
 
 export interface RowProps {
-  id: string
   avatar: AvatarBadgeProps
   title: string
   message: string
@@ -24,7 +23,6 @@ export interface RowProps {
 }
 
 const Row: React.FC<RowProps> = ({
-  id,
   avatar,
   title,
   message,

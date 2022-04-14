@@ -1,5 +1,6 @@
 import React from 'react'
 import { FormikProps } from 'formik'
+
 import { ActionButton, Input } from 'shared/ui'
 
 export type FormValues = {
@@ -18,7 +19,6 @@ const FormView = ({
   errors,
   submitForm,
   isSubmitting,
-  ...rest
 }: FormViewProps): React.ReactElement => {
   return (
     <>

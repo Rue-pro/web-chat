@@ -1,7 +1,6 @@
-type Props = any
-// [req, res, next]
+import { Middleware } from 'redux'
 
-export const myLogger = (store: Props) => (next: Props) => (action: Props) => {
+export const myLogger: Middleware = store => next => action => {
   console.groupCollapsed(`Request ${action?.type}`)
   console.log('store', store)
   console.log(' [f(action)]', next)

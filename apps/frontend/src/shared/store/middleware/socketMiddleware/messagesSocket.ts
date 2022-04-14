@@ -1,12 +1,12 @@
 import { Socket } from 'socket.io-client'
 import { MiddlewareAPI, Dispatch, AnyAction } from 'redux'
 
+import { TStore } from 'shared/store'
 import {
   messagesActions,
   ChatMessageEvent,
   Message,
 } from 'shared/store/messagesSlice'
-import { TStore } from 'shared/store'
 
 export function messagesSocketListeners(
   socket: Socket,

@@ -1,9 +1,9 @@
 import { Record, Static, Number, Array, Optional } from 'runtypes'
+
 import {
   DialogUserSchema,
   DialogMessageSchema,
 } from 'shared/store/dialogsSlice'
-
 import { emptyApi } from './emptyApi'
 
 const SearchDialogResultSchema = Record({

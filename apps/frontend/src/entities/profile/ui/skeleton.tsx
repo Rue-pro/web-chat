@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Skeleton as MuiSkeleton, styled } from '@mui/material'
-import { ProfileTemplate } from '..'
+import { Skeleton as MuiSkeleton } from '@mui/material'
+
+import { ProfileTemplate } from '.'
 
 type SkeletonProps = {}
 

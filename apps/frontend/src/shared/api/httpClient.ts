@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-import { API_URL } from 'shared/config/environment-variables'
-import { PATHS } from 'shared/config/routes'
+import { API_URL } from 'shared/config'
+import { PAGES } from 'shared/config'
 import { sleep } from 'shared/lib'
 import store from 'shared/store'
 import { authActions } from 'shared/store/authSlice'
@@ -49,7 +49,7 @@ APIInstance.interceptors.response.use(
   function (error) {
     console.log('RESPOSE INTERCEPTOR', error.response)
     if (!error.response) {
-      //document.location = document.location.origin + PATHS.BadGatewayPage
+      //document.location = document.location.origin + PAGES.BadGatewayPage
     }
     if (
       error.response.data.message ===

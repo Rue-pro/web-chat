@@ -25,15 +25,14 @@ const Dialogs: React.FC<DialogsProps> = () => {
     },
   )
 
-  console.log(status)
-  console.log('DIALOGS_COMPONENT', dialogs)
   useEffect(() => {
     dispatch(dialogsActions.getAllDialogs({ userId: userId }))
   }, [dispatch, userId])
 
   useEffect(() => {
     if (dialogs?.length) {
-      dispatch(dialogsActions.setCurrentDialog({ dialogId: dialogs[0].id }))
+      if (!currentDialogId)
+        dispatch(dialogsActions.setCurrentDialog({ dialogId: dialogs[0].id }))
     } else {
       dispatch(dialogsActions.setCurrentDialog({ dialogId: null }))
     }
@@ -61,7 +60,6 @@ const Dialogs: React.FC<DialogsProps> = () => {
       {dialogs?.map((dialog: Dialog) => (
         <DialogRow
           key={dialog.id}
-          id={dialog.user.id}
           avatar={{
             src: dialog.user.avatar,
             alt: dialog.user.name,

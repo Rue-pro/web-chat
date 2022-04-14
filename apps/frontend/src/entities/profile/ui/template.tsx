@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 import { ActionButton } from 'shared/ui'
-import { PATHS } from 'shared/config/routes'
+import { PAGES } from 'shared/config'
 import { logout } from 'shared/store/authSlice'
 
 interface TemplateProps {
@@ -19,7 +19,7 @@ const Template: React.FC<TemplateProps> = ({ avatar, name, phone }) => {
 
   const handleClick = useCallback(() => {
     dispatch(logout())
-    navigate(PATHS.LoginPage)
+    navigate(PAGES.LoginPage)
   }, [dispatch, navigate])
 
   return (

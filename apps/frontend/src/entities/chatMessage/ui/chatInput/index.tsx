@@ -3,18 +3,22 @@ import { styled } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Input as BaseInput } from 'shared/ui'
-import { messagesActions } from 'shared/store/messagesSlice'
 import { TDispatch, TStore } from 'shared/store'
+import { messagesActions } from 'shared/store/messagesSlice'
 
 interface MessageInputProps {}
 
 const ChatInput: React.FC<MessageInputProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { currentDialogId } = useSelector((state: TStore) => {
-    return {
-      currentDialogId: state.DialogsReducer.data.currentDialog.id,
-    }
-  })
+  const { currentDialogId, currentDialogReceiverId } = useSelector(
+    (state: TStore) => {
+      return {
+        currentDialogId: state.DialogsReducer.data.currentDialog.id,
+        currentDialogReceiverId:
+          state.DialogsReducer.data.currentDialog.receiverId,
+      }
+    },
+  )
   const [message, setMessage] = useState<string>('')
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -26,13 +30,14 @@ const ChatInput: React.FC<MessageInputProps> = () => {
       dispatch(
         messagesActions.submitMessage({
           dialogId: currentDialogId || 0,
+          receiverId: currentDialogReceiverId || '',
           content: message,
         }),
       )
       setMessage('')
     }
   }
-  console.log('MEssage', message)
+
   return (
     <div>
       <Input

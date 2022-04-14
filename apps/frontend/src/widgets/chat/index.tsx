@@ -1,10 +1,9 @@
 import React, { KeyboardEvent, useState, ChangeEvent, useCallback } from 'react'
 import { useSelector } from 'react-redux'
-
 import { Grid } from '@mui/material'
 
-import { ChatInput } from 'entities/chatMessage/ui'
 import { Dialog, Dialogs, FilterByDialogs } from 'features/chat'
+import { ChatInput } from 'entities/chatMessage'
 import { InfoTemplate } from 'shared/ui/template'
 import { TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogsSlice'
@@ -13,11 +12,15 @@ interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
   const [showDialogs, setShowDialogs] = useState<boolean>(true)
-  const { currentDialogId } = useSelector((state: TStore) => {
-    return {
-      currentDialogId: state.DialogsReducer.data.currentDialog.id,
-    }
-  })
+  const { currentDialogId, currentDialogReceiverId } = useSelector(
+    (state: TStore) => {
+      return {
+        currentDialogId: state.DialogsReducer.data.currentDialog.id,
+        currentDialogReceiverId:
+          state.DialogsReducer.data.currentDialog.receiverId,
+      }
+    },
+  )
 
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setShowDialogs(!Boolean(e.target.value))
@@ -42,7 +45,7 @@ const Chat: React.FC<ChatProps> = () => {
         {showDialogs && <Dialogs />}
       </Grid>
       <Grid item xs={8} sx={{ height: '100%' }}>
-        {currentDialogId ? (
+        {currentDialogId || currentDialogReceiverId ? (
           <>
             <Dialog />
             <ChatInput />

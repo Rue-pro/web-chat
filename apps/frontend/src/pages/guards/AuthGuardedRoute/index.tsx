@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
-import { PATHS } from 'shared/config/routes'
+import { PAGES } from 'shared/config'
 import { TStore } from 'shared/store'
 
 interface AuthGuardedRouteProps {
@@ -12,7 +12,7 @@ interface AuthGuardedRouteProps {
 const AuthGuardedRoute: React.FC<AuthGuardedRouteProps> = ({ children }) => {
   const isAuth = useSelector((state: TStore) => state.AuthReducer.data.isAuth)
 
-  return isAuth ? <>{children}</> : <Navigate to={PATHS.LoginPage} />
+  return isAuth ? <>{children}</> : <Navigate to={PAGES.LoginPage} />
 }
 
 export default AuthGuardedRoute
