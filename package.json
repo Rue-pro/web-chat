@@ -17,9 +17,5 @@
   "bugs": {
     "url": "https://github.com/Rue-pro/web-chat/issues"
   },
-  "homepage": "https://github.com/Rue-pro/web-chat#readme",
-  "workspaces": [
-    "apps/backend",
-    "apps/frontend"
-  ]
+  "homepage": "https://github.com/Rue-pro/web-chat#readme"
 }
