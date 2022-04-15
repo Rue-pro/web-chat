@@ -9,8 +9,8 @@ const db = process.env.POSTGRES_DB;
 
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  url: `postgres://${user}:${password}@postgres:${port}/${db}`,
-  //entities: [join('**/*.entity{.ts,.js}')],
+  url: `postgres://${user}:${password}@localhost:${port}/${db}`,
+  entities: [join('**/*.entity{.ts,.js}')],
   migrationsRun: false,
   logging: true,
   autoLoadEntities: true,
