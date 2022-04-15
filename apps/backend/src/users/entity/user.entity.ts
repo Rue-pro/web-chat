@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Optional } from '@nestjs/common';
@@ -62,10 +61,4 @@ export class UserEntity {
   @ApiProperty()
   @Column({ default: null })
   avatar?: UserAvatar;
-
-  @BeforeInsert()
-  async setPassword(password: UserPassword) {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(password || this.password, salt);
-  }
 }

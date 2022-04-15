@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import bcrypt from 'bcrypt';
 
 import { ConnectionArgsDto } from 'src/page/dto';
 import {
@@ -76,7 +75,7 @@ export class UsersService {
     if (!toUpdate) {
       throw new NotFoundException(`No user found for id: ${id}`);
     }
-    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const currentHashedRefreshToken = refreshToken;
     Object.assign(toUpdate, { currentHashedRefreshToken });
     return this.userRepository.save(toUpdate);
   }
@@ -91,10 +90,8 @@ export class UsersService {
       throw new NotFoundException(`No user found for id: ${id}`);
     }
 
-    const isRefreshTokenMatching = await bcrypt.compare(
-      refreshToken,
-      user.currentHashedRefreshToken,
-    );
+    const isRefreshTokenMatching =
+      refreshToken === user.currentHashedRefreshToken;
 
     if (isRefreshTokenMatching) {
       return user;
