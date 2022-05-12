@@ -1,11 +1,24 @@
-# Monorepo Template
+# Monorepo boilerplate with Nest.js and React
 
-Nest + React + Postgres -> Docker
+- This app was created to simplify developing other apps;
+- I mastered:
+  - Docker
+  - Docker-compose
+  - Heroku
+  - TypeORM
 
-NestJS repo in apps/backend
-React repo in apps/frontend
-Shared library example in libs/common
+## Demo
 
-Install dependencies for all with `npm install`
+https://still-basin-01257.herokuapp.com/api
 
-run on docker with `docker-compose up`
+https://chat-swart.vercel.app/
+
+## Developing
+
+```
+docker-compose up --build "$@"
+```
+
+## Deployment
+
+Run deploy github action manually

@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./apps/api
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./apps/api/.env.development
+    depends_on:
+      - postgres
+    volumes:
+      - ./apps/api/src:/apps/api/src
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./apps/api/.env.development
+
+  adminer:
+    image: adminer
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - 8080:8080
+
+  web:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./apps/web
+    ports:
+      - 3000:3000
+    env_file:
+      - ./apps/web/.env.development
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web/src:/apps/web/src
+    command: npm run start

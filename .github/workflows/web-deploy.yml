@@ -1,0 +1,97 @@
+name: Web deploy
+
+defaults:
+  run:
+    working-directory: ./apps/web
+
+on: workflow_dispatch
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      deployment_web_id: ${{ steps.web_setup.outputs.deployment_id }}
+    steps:
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub Web deployment
+        id: web_setup
+        with:
+          token: "${{ github.token }}"
+          target_url: https://chat-swart.vercel.app/
+          initial_status: "pending"
+          environment: Web Production
+
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: npm-${{ hashFiles('yarn-lock.json') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    container: node:17
+    needs: [setup, install]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: npm-${{ hashFiles('yarn-lock.json') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build app
+        run: yarn build
+
+      - name: Deploy to Vercel
+        run: npx vercel --token ${VERCEL_TOKEN} --cwd .
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Deploy to Vercel
+        run: npx vercel --token ${VERCEL_TOKEN} --prod
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Update Web deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: https://chat-swart.vercel.app/
+          state: "success"
+          deployment_id: ${{ needs.setup.outputs.deployment_web_id }}
+
+      - name: Update Web deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: https://chat-swart.vercel.app/
+          state: "failure"
+          deployment_id: ${{ needs.setup.outputs.deployment_web_id }}

@@ -1,14 +1,7 @@
 {
   "name": "web_chat",
-  "version": "1.0.0",
   "description": "Web chat application",
-  "scripts": {
-    "install:backend": "cd apps/backend && npm install",
-    "install:frontend": "cd apps/frontend && npm install",
-    "postinstall": "npm run install:backend && npm run install:frontend",
-    "run:b": "cd apps/backend && npm run start",
-    "run:f": "cd apps/frontend && npm run start"
-  },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rue-pro/web-chat.git"
@@ -18,8 +11,16 @@
     "url": "https://github.com/Rue-pro/web-chat/issues"
   },
   "homepage": "https://github.com/Rue-pro/web-chat#readme",
-  "workspaces": [
-    "apps/backend",
-    "apps/frontend"
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "cacheDirectories": [
+    "apps/api/node_modules",
+    "apps/web/node_modules"
   ]
 }
