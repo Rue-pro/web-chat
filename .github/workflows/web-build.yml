@@ -1,0 +1,127 @@
+name: Web build
+
+defaults:
+  run:
+    working-directory: ./apps/web
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: nodemodules-web-${{ hashFiles('yarn.lock') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+  eslint:
+    name: ESLint
+    needs: install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: nodemodules-web-${{ hashFiles('yarn.lock') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint source code with ESLint
+        run: yarn lint
+
+  prettier:
+    name: Prettier
+    needs: install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: nodemodules-web-${{ hashFiles('yarn.lock') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Prettify source code with Prettier
+        run: yarn check-format
+
+  build:
+    name: Build
+    needs: install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: nodemodules-web-${{ hashFiles('yarn.lock') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
+      - name: Build web
+        run: yarn build
+
+  tests:
+    name: Test
+    needs: install
+    runs-on: ubuntu-latest
+    container: node:17
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: nodemodules-web-${{ hashFiles('yarn.lock') }}
+        with:
+          path: "**/node_modules"
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Test web
+        run: yarn test
