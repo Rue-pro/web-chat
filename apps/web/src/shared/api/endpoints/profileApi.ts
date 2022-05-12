@@ -1,4 +1,4 @@
-import { Record, String, Static } from 'runtypes'
+import { Record, String, Static, Null } from 'runtypes'
 
 import { emptyApi } from './emptyApi'
 
@@ -10,7 +10,8 @@ const UserSchema = Record({
   updatedAt: String,
   phone: String,
   password: String,
-  avatar: String,
+  avatar: String.Or(Null),
+  currentHashedRefreshToken: String,
 })
 
 type User = Static<typeof UserSchema>
@@ -23,7 +24,8 @@ const defaultUser = {
   updatedAt: '',
   phone: '',
   password: '',
-  avatar: '',
+  avatar: null,
+  currentHashedRefreshToken: '',
 }
 
 const extendedApi = emptyApi
