@@ -80,7 +80,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
           <DialogRow
             key={dialog.user.id}
             avatar={{
-              src: dialog.user.avatar,
+              src: dialog.user.avatar ?? '',
               alt: dialog.user.name,
               isOnline: true,
             }}

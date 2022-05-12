@@ -9,7 +9,7 @@ export type ReceiverId = string | null
 export const DialogUserSchema = Record({
   id: String,
   name: String,
-  avatar: String,
+  avatar: String.Or(Null),
 })
 export const DialogMessageSchema = Record({
   id: Number,

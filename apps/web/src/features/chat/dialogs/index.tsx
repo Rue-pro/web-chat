@@ -61,7 +61,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
         <DialogRow
           key={dialog.id}
           avatar={{
-            src: dialog.user.avatar,
+            src: dialog.user.avatar ?? '',
             alt: dialog.user.name,
             isOnline: true,
           }}

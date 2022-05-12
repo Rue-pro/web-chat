@@ -14,12 +14,12 @@ const Profile: React.FC<ProfileProps> = () => {
   const { data, isLoading } = useGetProfileQuery(userId, {
     skip: !Boolean(userId),
   })
-
+  console.log('PROFILE', data)
   if (isLoading || !data) return <ProfileSkeleton />
 
   return (
     <ProfileTemplate
-      avatar={<AvatarBadge src={data.avatar} alt={data.name} />}
+      avatar={<AvatarBadge src={data.avatar ?? ''} alt={data.name} />}
       name={
         <Typography variant="subtitle1" component="p" color="#FFFFFF">
           {data.name}
