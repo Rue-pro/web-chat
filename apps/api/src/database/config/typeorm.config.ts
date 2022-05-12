@@ -14,7 +14,7 @@ const DATABASE_URL = isProd
   ? process.env.DATABASE_URL
   : `postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}`;
 
-export const typeormConfig = {
+export const typeormConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   url: DATABASE_URL,
   entities: [UserEntity],
@@ -26,6 +26,5 @@ export const typeormConfig = {
         rejectUnauthorized: false,
       }
     : false,
-  seeds: ['src/database/seeds/initialSeed.ts'],
 };
 module.exports = typeormConfig;
