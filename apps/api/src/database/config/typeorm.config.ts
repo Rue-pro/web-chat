@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import 'dotenv/config';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { UserEntity } from 'src/users/entity';
 
 const isProd = process.env.DATABASE_URL;
 
@@ -17,7 +17,7 @@ const DATABASE_URL = isProd
 export const typeormConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   url: DATABASE_URL,
-  entities: ['dist/**/*.entity{.ts,.js}'],
+  entities: [UserEntity],
   synchronize: false,
   migrationsTableName: 'migration',
   migrations: ['src/database/migrations/*.js'],
@@ -27,5 +27,4 @@ export const typeormConfig: TypeOrmModuleOptions = {
       }
     : false,
 };
-const dataSource = new DataSource(typeormConfig as DataSourceOptions);
-export default dataSource;
+module.exports = typeormConfig;
