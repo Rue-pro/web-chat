@@ -1,33 +1,24 @@
-# NestJS Prisma Docker
+# Monorepo boilerplate with Nest.js and React
 
-> DON'T commit .env files into version control, add `.env` to `.gitignore`. `.env` files are added here as an example.
+- This app was created to simplify developing other apps;
+- I mastered:
+  - Docker
+  - Docker-compose
+  - Heroku
+  - TypeORM
 
-Develop the Nest application
+## Demo
 
-```bash
-npm install
+https://still-basin-01257.herokuapp.com/api
 
-cp .env.example .env
+https://chat-swart.vercel.app/
 
-npx prisma generate
+## Developing
 
-npm run start:dev
+```
+docker-compose up --build "$@"
 ```
 
-## Docker File
+## Deployment
 
-Get started by running
-
-```bash
-docker build -t nest-api .
-
-docker run -p 3000:3000 --env-file .env -d nest-api
-```
-
-## Docker Compose
-
-```bash
-docker-compose up
-# or detached
-docker-compose up -d
-```
+Run deploy github action manually

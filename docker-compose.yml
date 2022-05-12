@@ -1,20 +1,44 @@
-version: '3.8'
+version: "3.8"
 services:
-  postgres:
-    image: postgres:13
-    container_name: postgresprisma
-    restart: always
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./apps/api
     ports:
-      - 5432:5432
+      - "5000:5000"
     env_file:
-      - .env
+      - ./apps/api/.env.development
+    depends_on:
+      - postgres
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ./apps/api/src:/apps/api/src
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./apps/api/.env.development
+
   adminer:
     image: adminer
+    depends_on:
+      - postgres
     restart: always
     ports:
-      - 3002:8080
-volumes:
-  postgres:
-    name: nest-prisma-docker-db
+      - 8080:8080
+
+  web:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./apps/web
+    ports:
+      - 3000:3000
+    env_file:
+      - ./apps/web/.env.development
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web/src:/apps/web/src
+    command: npm run start
