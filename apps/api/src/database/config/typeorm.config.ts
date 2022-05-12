@@ -17,7 +17,7 @@ const DATABASE_URL = isProd
 export const typeormConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   url: DATABASE_URL,
-  entities: [UserEntity],
+  entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsTableName: 'migration',
   migrations: ['src/database/migrations/*.js'],
