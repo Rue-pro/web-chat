@@ -47,12 +47,16 @@ export class AuthController {
         path: '/',
         httpOnly: true,
         expires: accessToken.expiresIn,
+        secure: true,
+        sameSite: 'none',
       })
       .setCookie('refresh_token', refreshToken.content, {
         domain: domain,
         path: '/',
         httpOnly: true,
         expires: refreshToken.expiresIn,
+        secure: true,
+        sameSite: 'none',
       });
   }
 
