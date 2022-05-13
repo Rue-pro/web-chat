@@ -17,7 +17,7 @@ const whitelist = isProd
   ? [
       'https://chat-swart.vercel.app',
       undefined,
-      'https://still-basin-01257.herokuapp.com/',
+      'https://still-basin-01257.herokuapp.com',
     ]
   : ['http://localhost:5000', undefined, 'http://localhost:3000'];
 const port = process.env.PORT ?? 5000;
