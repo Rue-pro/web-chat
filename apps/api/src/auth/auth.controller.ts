@@ -15,6 +15,7 @@ import { UserId } from 'src/users/entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
+import { Token } from './entity';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
@@ -25,6 +26,29 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly configService: ConfigService,
   ) {}
+
+  private setupAuthTokensCookie(
+    reply: FastifyReply,
+    request: FastifyRequest,
+    accessToken: Token,
+    refreshToken: Token,
+  ): FastifyReply {
+    let domain = request.hostname.slice(0, request.hostname.indexOf(':'));
+
+    return reply
+      .setCookie('access_token', accessToken.content, {
+        domain: domain,
+        path: '/',
+        httpOnly: true,
+        expires: accessToken.expiresIn,
+      })
+      .setCookie('refresh_token', refreshToken.content, {
+        domain: domain,
+        path: '/',
+        httpOnly: true,
+        expires: refreshToken.expiresIn,
+      });
+  }
 
   @Post('login')
   async login(
@@ -44,20 +68,9 @@ export class AuthController {
       user.id,
     );
 
-    reply
-      .setCookie('access_token', accessToken.content, {
-        domain: request.headers.origin,
-        path: '/',
-        httpOnly: true,
-        expires: accessToken.expiresIn,
-      })
-      .setCookie('refresh_token', refreshToken.content, {
-        domain: request.headers.origin,
-        path: '/',
-        httpOnly: true,
-        expires: refreshToken.expiresIn,
-      })
-      .send(user);
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send(
+      user,
+    );
   }
 
   @Get('logout')
@@ -84,19 +97,8 @@ export class AuthController {
       user.id,
     );
 
-    reply
-      .setCookie('access_token', accessToken.content, {
-        domain: request.headers.origin,
-        path: '/',
-        httpOnly: true,
-        expires: accessToken.expiresIn,
-      })
-      .setCookie('refresh_token', refreshToken.content, {
-        domain: request.headers.origin,
-        path: '/',
-        httpOnly: true,
-        expires: refreshToken.expiresIn,
-      })
-      .send(user);
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send(
+      user,
+    );
   }
 }

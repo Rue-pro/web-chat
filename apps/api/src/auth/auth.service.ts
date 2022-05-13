@@ -40,10 +40,6 @@ export class AuthService {
       throw new NotFoundException(`No user found for email: ${email}`);
     }
 
-    /**
-     * TODO
-     * Add encription by bcrypt
-     */
     const passwordValid = user.password === password;
 
     if (!passwordValid) {
@@ -132,11 +128,16 @@ export class AuthService {
         'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
       )}s`,
     });
+
+    let expiresIn = new Date();
+    expiresIn.setSeconds(
+      expiresIn.getSeconds() +
+        this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+    );
+
     return {
       content: token,
-      expiresIn: new Date(
-        Date.now() + this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
-      ),
+      expiresIn: expiresIn,
     };
   }
 
@@ -148,12 +149,16 @@ export class AuthService {
         'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
       )}s`,
     });
+
+    let expiresIn = new Date();
+    expiresIn.setSeconds(
+      expiresIn.getSeconds() +
+        this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+    );
+
     return {
       content: token,
-      expiresIn: new Date(
-        Date.now() +
-          this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
-      ),
+      expiresIn: expiresIn,
     };
   }
 }
