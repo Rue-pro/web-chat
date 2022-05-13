@@ -36,12 +36,11 @@ export class AuthController {
     const origin = request.headers.origin;
 
     const indexOfDomain = origin.indexOf(':') + 3;
-    const domainWithPort = origin.slice(indexOfDomain);
-    const indexOfPort = domainWithPort.lastIndexOf(':');
+    const indexOfPort = origin.slice(indexOfDomain).lastIndexOf(':');
     let domain =
       indexOfPort === -1
-        ? domainWithPort
-        : domainWithPort.slice(0, indexOfPort);
+        ? origin
+        : origin.slice(0, indexOfPort + indexOfDomain);
 
     console.log('REQUEST', request);
     console.log('DOMAIN', domain);
