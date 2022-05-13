@@ -43,19 +43,16 @@ export class AuthController {
       refreshToken.content,
       user.id,
     );
-    /**
-     * TODO
-     * сделать установку кук на тот домен, с которого пришел запрос
-     */
+
     reply
       .setCookie('access_token', accessToken.content, {
-        domain: 'localhost',
+        domain: request.headers.origin,
         path: '/',
         httpOnly: true,
         expires: accessToken.expiresIn,
       })
       .setCookie('refresh_token', refreshToken.content, {
-        domain: 'localhost',
+        domain: request.headers.origin,
         path: '/',
         httpOnly: true,
         expires: refreshToken.expiresIn,
@@ -87,20 +84,15 @@ export class AuthController {
       user.id,
     );
 
-    /**
-     * TODO
-     * сделать установку кук на тот домен, с которого пришел запрос
-     */
-
     reply
       .setCookie('access_token', accessToken.content, {
-        domain: 'localhost',
+        domain: request.headers.origin,
         path: '/',
         httpOnly: true,
         expires: accessToken.expiresIn,
       })
       .setCookie('refresh_token', refreshToken.content, {
-        domain: 'localhost',
+        domain: request.headers.origin,
         path: '/',
         httpOnly: true,
         expires: refreshToken.expiresIn,
