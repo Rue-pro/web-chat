@@ -33,7 +33,7 @@ export class AuthController {
     accessToken: Token,
     refreshToken: Token,
   ): FastifyReply {
-    const indexOfPort = request.hostname.indexOf(':');
+    const indexOfPort = request.headers.origin.indexOf(':');
     let domain =
       indexOfPort === -1
         ? request.hostname
