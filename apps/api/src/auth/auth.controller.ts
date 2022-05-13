@@ -37,10 +37,7 @@ export class AuthController {
 
     const indexOfDomain = origin.indexOf(':') + 3;
     const indexOfPort = origin.slice(indexOfDomain).lastIndexOf(':');
-    let domain =
-      indexOfPort === -1
-        ? origin
-        : origin.slice(0, indexOfPort + indexOfDomain);
+    let domain = origin.includes('localhost') ? 'localhost' : origin;
 
     console.log('REQUEST', request);
     console.log('DOMAIN', domain);
@@ -77,12 +74,14 @@ export class AuthController {
       user.id,
     );
 
-    console.log(
-      this.setupAuthTokensCookie(reply, request, accessToken, refreshToken),
+    const newReply = this.setupAuthTokensCookie(
+      reply,
+      request,
+      accessToken,
+      refreshToken,
     );
-    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send(
-      user,
-    );
+    console.log(newReply);
+    newReply.send(user);
   }
 
   @Get('logout')
