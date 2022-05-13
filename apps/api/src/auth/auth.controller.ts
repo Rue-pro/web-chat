@@ -77,6 +77,9 @@ export class AuthController {
       user.id,
     );
 
+    console.log(
+      this.setupAuthTokensCookie(reply, request, accessToken, refreshToken),
+    );
     this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send(
       user,
     );
