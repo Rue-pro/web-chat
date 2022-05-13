@@ -49,11 +49,6 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
 
-      - name: Run migrations
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku run yarn migrate:run -a ${{ secrets.HEROKU_APP_NAME }}
-
       - name: Update API deployment status (success)
         if: success()
         uses: chrnorm/deployment-status@releases/v1
