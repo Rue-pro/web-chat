@@ -45,7 +45,7 @@ export class AuthController {
       .setCookie('access_token', accessToken.content, {
         domain: domain,
         path: '/',
-        httpOnly: true,
+        httpOnly: false,
         expires: accessToken.expiresIn,
         secure: true,
         sameSite: 'none',
@@ -53,7 +53,7 @@ export class AuthController {
       .setCookie('refresh_token', refreshToken.content, {
         domain: domain,
         path: '/',
-        httpOnly: true,
+        httpOnly: false,
         expires: refreshToken.expiresIn,
         secure: true,
         sameSite: 'none',
