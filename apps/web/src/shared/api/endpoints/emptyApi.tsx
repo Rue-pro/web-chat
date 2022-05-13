@@ -3,7 +3,6 @@ import { AxiosRequestConfig, AxiosError } from 'axios'
 
 import { API_URL } from 'shared/config'
 import { APIInstance } from 'shared/api'
-import { PAGES } from 'shared/config'
 import { HTTPError } from '../types'
 
 const CustomQuery =

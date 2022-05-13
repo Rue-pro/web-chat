@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import { API_URL } from 'shared/config'
-import { PAGES } from 'shared/config'
 import { sleep } from 'shared/lib'
 import store from 'shared/store'
 import { authActions } from 'shared/store/authSlice'
