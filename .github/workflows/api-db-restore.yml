@@ -1,0 +1,58 @@
+name: API db run restoring from file
+
+defaults:
+  run:
+    working-directory: ./apps/api
+
+on: workflow_dispatch
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      deployment_api_id: ${{ steps.api_setup.outputs.deployment_id }}
+    steps:
+      - id: api_setup
+        uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub API deployment
+        with:
+          token: "${{ github.token }}"
+          target_url: https://still-basin-01257.herokuapp.com/
+          initial_status: "pending"
+          environment: API Production
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Heroku Container registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      - name: Run restoring from file
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku pg:psql DATABASE_URL  -a ${{ secrets.HEROKU_APP_NAME }}  -f ./seed.sql
+
+      - name: Update API deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: https://still-basin-01257.herokuapp.com/
+          state: "success"
+          deployment_id: ${{ needs.setup.outputs.deployment_api_id }}
+
+      - name: Update API deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: https://still-basin-01257.herokuapp.com/
+          state: "failure"
+          deployment_id: ${{ needs.setup.outputs.deployment_api_id }}
