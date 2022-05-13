@@ -33,7 +33,11 @@ export class AuthController {
     accessToken: Token,
     refreshToken: Token,
   ): FastifyReply {
-    let domain = request.hostname.slice(0, request.hostname.indexOf(':'));
+    const indexOfPort = request.hostname.indexOf(':');
+    let domain =
+      indexOfPort === -1
+        ? request.hostname
+        : request.hostname.slice(0, request.hostname.indexOf(':'));
 
     console.log('REQUEST', request);
     console.log('DOMAIN', domain);
