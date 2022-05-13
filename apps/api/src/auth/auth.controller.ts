@@ -35,6 +35,8 @@ export class AuthController {
   ): FastifyReply {
     let domain = request.hostname.slice(0, request.hostname.indexOf(':'));
 
+    console.log('REQUEST', request);
+    console.log('DOMAIN', domain);
     return reply
       .setCookie('access_token', accessToken.content, {
         domain: domain,
