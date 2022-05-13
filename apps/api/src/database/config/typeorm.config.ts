@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import 'dotenv/config';
-import { UserEntity } from 'src/users/entity';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
 const isProd = process.env.DATABASE_URL;
 
@@ -27,4 +27,5 @@ export const typeormConfig: TypeOrmModuleOptions = {
       }
     : false,
 };
-module.exports = typeormConfig;
+const dataSource = new DataSource(typeormConfig as DataSourceOptions);
+export default dataSource;

@@ -19,11 +19,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "pretypeorm": "(rimraf ormconfig.json || :) && ts-node -r tsconfig-paths/register scripts/write-type-orm-config.ts",
     "migrate:create": "ts-node ./node_modules/typeorm/cli.js migration:create",
     "migrate:generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -d src/database/config/typeorm.config.ts",
     "migrate:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d src/database/config/typeorm.config.ts",
-    "seed:config": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config -r src/database/config -n typeorm.config.ts",
-    "seed:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -r src/database/config -n typeorm.config.ts"
+    "seed:config": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config -n ormconfig.json",
+    "seed:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -n ormconfig.json"
   },
   "dependencies": {
     "@fastify/cookie": "^6.0.0",

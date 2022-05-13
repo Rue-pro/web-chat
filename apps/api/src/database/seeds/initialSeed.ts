@@ -1,6 +1,6 @@
 import { Factory, Seeder } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
-import { UserEntity } from 'src/users/entity/user.entity';
+import { UserEntity } from '../../users/entity';
 
 export default class InitialSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -8,13 +8,14 @@ export default class InitialSeeder implements Seeder {
     const users = await connection.getRepository(UserEntity).find();
 
     if (!users.length) {
-      await factory(UserEntity)().makeMany(usersCount);
+      await factory(UserEntity)().createMany(usersCount);
+      return;
     }
 
     for (let i = 0; i < usersCount; i++) {
       const user = await factory(UserEntity)().make();
       const em = connection.createEntityManager();
-      em.save(restoreOldFieldsInNewObject(user, users[i]));
+      em.save(restoreOldFieldsInNewObject(user, users[i] ?? {}));
     }
 
     function restoreOldFieldsInNewObject(newObj, oldObj) {

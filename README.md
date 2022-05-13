@@ -22,3 +22,17 @@ docker-compose up --build "$@"
 ## Deployment
 
 Run deploy github action manually
+
+# Run migrations
+
+```
+yarn migrate:run
+```
+
+# Seeding
+
+```
+yarn pretypeorm
+yarn seed:config
+yarn seed:run
+```
