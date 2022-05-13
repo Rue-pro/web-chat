@@ -34,8 +34,13 @@ export class AuthController {
     refreshToken: Token,
   ): FastifyReply {
     const origin = request.headers.origin;
-    const indexOfPort = origin.indexOf(':');
-    let domain = indexOfPort === -1 ? origin : origin.slice(0, indexOfPort);
+
+    const indexOfDomain = origin.indexOf(':') + 3;
+    const indexOfPort = origin.slice(indexOfDomain).lastIndexOf(':');
+    let domain =
+      indexOfPort === -1
+        ? origin
+        : origin.slice(0, indexOfPort + indexOfDomain);
 
     console.log('REQUEST', request);
     console.log('DOMAIN', domain);
