@@ -1,5 +1,6 @@
 import { Record, String, Static, Null } from 'runtypes'
 
+import { UserId } from 'shared/config'
 import { emptyApi } from './emptyApi'
 
 const UserSchema = Record({
@@ -32,7 +33,7 @@ const extendedApi = emptyApi
   .enhanceEndpoints({ addTagTypes: ['profile'] })
   .injectEndpoints({
     endpoints: build => ({
-      getProfile: build.query<User, string>({
+      getProfile: build.query<User, UserId>({
         query: id => ({
           url: `/users/${id}`,
           method: 'GET',

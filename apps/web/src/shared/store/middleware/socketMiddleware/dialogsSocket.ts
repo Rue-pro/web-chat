@@ -26,7 +26,10 @@ export function dialogsSocketListeners(
     if (currentDialogId) {
       return
     }
-    dialogsActions.setCurrentDialog({ dialogId: conversaion, receiverId: null })
+    dialogsActions.setCurrentDialog({
+      type: 'EXISTING_DIALOG',
+      id: conversaion,
+    })
   })
 }
 

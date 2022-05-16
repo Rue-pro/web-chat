@@ -12,15 +12,11 @@ interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
   const [showDialogs, setShowDialogs] = useState<boolean>(true)
-  const { currentDialogId, currentDialogReceiverId } = useSelector(
-    (state: TStore) => {
-      return {
-        currentDialogId: state.DialogsReducer.data.currentDialog.id,
-        currentDialogReceiverId:
-          state.DialogsReducer.data.currentDialog.receiverId,
-      }
-    },
-  )
+  const { currentDialog } = useSelector((state: TStore) => {
+    return {
+      currentDialog: state.DialogsReducer.data.currentDialog,
+    }
+  })
 
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setShowDialogs(!Boolean(e.target.value))
@@ -28,7 +24,7 @@ const Chat: React.FC<ChatProps> = () => {
 
   const keyDownHandler = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
-      dialogsActions.setCurrentDialog({ dialogId: null })
+      dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null })
     }
   }, [])
 
@@ -45,13 +41,13 @@ const Chat: React.FC<ChatProps> = () => {
         {showDialogs && <Dialogs />}
       </Grid>
       <Grid item xs={8} sx={{ height: '100%' }}>
-        {currentDialogId || currentDialogReceiverId ? (
+        {currentDialog.type === 'NO_DIALOG' ? (
+          <InfoTemplate>Select a chat to start messaging</InfoTemplate>
+        ) : (
           <>
             <Dialog />
             <ChatInput />
           </>
-        ) : (
-          <InfoTemplate>Select a chat to start messaging</InfoTemplate>
         )}
       </Grid>
     </Grid>

@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api'
+import { UserId } from 'shared/config'
 import { loadState, removeState, saveState } from 'shared/lib'
 import { GenericState } from './genericSlice'
 
 const KEY = 'auth'
 interface AuthData {
   isAuth: boolean
-  userId: string
+  userId: UserId
   needRefresh: boolean
 }
+
 interface AuthState extends GenericState<AuthData> {}
 
 type LoginData = {

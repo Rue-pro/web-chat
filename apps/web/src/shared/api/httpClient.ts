@@ -1,10 +1,9 @@
 import axios from 'axios'
 
-import { API_URL } from 'shared/config'
+import { API_URL, ServerError } from 'shared/config'
 import { sleep } from 'shared/lib'
 import store from 'shared/store'
 import { authActions } from 'shared/store/authSlice'
-import { HTTPError } from './types'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,
@@ -53,7 +52,7 @@ APIInstance.interceptors.response.use(
     ) {
       store.dispatch(authActions.setNeedRefresh(true))
     }
-    return Promise.reject<HTTPError>({
+    return Promise.reject<ServerError>({
       message: error.response.data.message,
       name: `Error: ${error.response.status} ${error.response.statusText}`,
     })

@@ -2,6 +2,8 @@ import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { GenericState } from './genericSlice'
+import { CurrentDialogExisting, CurrentDialogNew } from './dialogsSlice'
+import { ClientError, DialogId } from 'shared/config'
 
 export enum ChatMessageEvent {
   SendMessage = 'send_message',
@@ -48,7 +50,22 @@ const messagesSlice = createSlice({
       const messages = action.payload.messages
       const isMessagesArr = MessagesArrSchema.guard(messages)
       if (!isMessagesArr) {
-        console.error('Fetched through socket messages format is wrong!')
+        const error: ClientError = {
+          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
+          date: new Date(),
+          message: '[Receive all messages] Fetched messages format is wrong',
+          details:
+            'Array of ' +
+            JSON.stringify({
+              id: 'Number',
+              createdAt: 'String',
+              content: 'String',
+              authorId: 'String',
+              dialogId: 'Number',
+            }),
+        }
+
+        console.error(error)
         state.data.messages = []
         return
       }
@@ -68,8 +85,7 @@ const messagesSlice = createSlice({
     submitMessage: (
       state,
       action: PayloadAction<{
-        dialogId: number
-        receiverId: string
+        currentDialog: CurrentDialogExisting | CurrentDialogNew
         content: string
       }>,
     ) => {
@@ -80,7 +96,7 @@ const messagesSlice = createSlice({
     getAllMessages: (
       state,
       action: PayloadAction<{
-        dialogId: number
+        dialogId: DialogId
       }>,
     ) => {
       console.log('REQUEST_FOR_ALL_MESSAGES', action)

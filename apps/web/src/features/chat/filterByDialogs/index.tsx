@@ -10,13 +10,13 @@ import {
 import { timeStampToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import {
-  DialogId,
   dialogsActions,
-  ReceiverId,
+  NewDialogId,
   CurrentDialogPayload,
 } from 'shared/store/dialogsSlice'
 import { SearchInput } from 'shared/ui'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
+import { DialogId } from 'shared/config'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
@@ -37,6 +37,8 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
 
   const handleChangeSearchInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      console.log('handleChangeSearchInput')
+      console.log(e)
       setQuery(e.target.value)
       onSearch(e)
     },
@@ -46,18 +48,22 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   const handleOpenDialog = useCallback(
     ({
       dialogId,
-      receiverId,
+      newDialogId,
     }: {
-      dialogId: DialogId
-      receiverId: ReceiverId
+      dialogId?: DialogId
+      newDialogId: NewDialogId
     }) => {
-      let payload: CurrentDialogPayload = {
-        dialogId: dialogId,
-      }
-      if (!dialogId) {
-        payload.receiverId = receiverId
-      }
+      let payload: CurrentDialogPayload = dialogId
+        ? {
+            type: 'EXISTING_DIALOG',
+            id: dialogId,
+          }
+        : {
+            type: 'NEW_DIALOG',
+            id: newDialogId,
+          }
       dispatch(dialogsActions.setCurrentDialog(payload))
+      setQuery('')
     },
     [dispatch],
   )
@@ -68,6 +74,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
         placeholder="Find or start conversation"
         onChange={handleChangeSearchInput}
         debounceTimeout={100}
+        defaultValue={query}
       />
       {isLoading ? (
         <DialogLoadingTemplate
@@ -90,8 +97,8 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             unreadedMessagesCount={0}
             onClick={() => {
               handleOpenDialog({
-                dialogId: dialog?.id ?? null,
-                receiverId: dialog.user.id,
+                dialogId: dialog.id,
+                newDialogId: dialog.user.id,
               })
             }}
             isCurrent={currentDialogId === dialog.id}

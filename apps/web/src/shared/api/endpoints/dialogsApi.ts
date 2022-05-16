@@ -1,11 +1,9 @@
 import { Record, Static, Number, Array, Optional } from 'runtypes'
 
-import {
-  DialogUserSchema,
-  DialogMessageSchema,
-} from 'shared/store/dialogsSlice'
+import { DialogMessageSchema, DialogUserSchema } from 'shared/config'
 import { emptyApi } from './emptyApi'
 
+export type Query = string
 const SearchDialogResultSchema = Record({
   id: Optional(Number),
   user: DialogUserSchema,
@@ -18,7 +16,7 @@ export const extendedApi = emptyApi
   .enhanceEndpoints({ addTagTypes: ['dialogs'] })
   .injectEndpoints({
     endpoints: build => ({
-      findDialogs: build.query<SearchDialogResult[], string>({
+      findDialogs: build.query<SearchDialogResult[], Query>({
         query: query => ({
           url: `/dialogs/search?query=${query}`,
           method: 'GET',

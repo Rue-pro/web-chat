@@ -12,13 +12,13 @@ interface DialogProps {}
 
 const Dialog: React.FC<DialogProps> = () => {
   const dispatch = useDispatch()
-  const { status, messages, userId, currentDialogId } = useSelector(
+  const { status, messages, userId, currentDialog } = useSelector(
     (state: TStore) => {
       return {
         status: state.MessagesReducer.status,
         messages: state.MessagesReducer.data.messages,
         userId: state.AuthReducer.data.userId,
-        currentDialogId: state.DialogsReducer.data.currentDialog.id,
+        currentDialog: state.DialogsReducer.data.currentDialog,
       }
     },
   )
@@ -63,8 +63,9 @@ const Dialog: React.FC<DialogProps> = () => {
   }, [messages, scrolledUpByUser])
 
   useEffect(() => {
-    dispatch(messagesActions.getAllMessages({ dialogId: currentDialogId || 0 }))
-  }, [dispatch, currentDialogId])
+    if (currentDialog.type === 'EXISTING_DIALOG')
+      dispatch(messagesActions.getAllMessages({ dialogId: currentDialog.id }))
+  }, [dispatch, currentDialog])
 
   if (status === 'loading') {
     return (

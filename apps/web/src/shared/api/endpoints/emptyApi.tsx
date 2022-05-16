@@ -1,9 +1,8 @@
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
 import { AxiosRequestConfig, AxiosError } from 'axios'
 
-import { API_URL } from 'shared/config'
+import { API_URL, ServerError } from 'shared/config'
 import { APIInstance } from 'shared/api'
-import { HTTPError } from '../types'
 
 const CustomQuery =
   (
@@ -22,7 +21,7 @@ const CustomQuery =
       const result = await APIInstance({ url: baseUrl + url, method, data })
       return { data: result.data }
     } catch (axiosError) {
-      const error = axiosError as AxiosError<HTTPError>
+      const error = axiosError as AxiosError<ServerError>
       if (!error.response) {
         //document.location = document.location.origin + PAGES.BadGatewayPage
       }

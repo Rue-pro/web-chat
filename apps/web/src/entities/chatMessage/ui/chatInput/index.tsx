@@ -10,15 +10,12 @@ interface MessageInputProps {}
 
 const ChatInput: React.FC<MessageInputProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { currentDialogId, currentDialogReceiverId } = useSelector(
-    (state: TStore) => {
-      return {
-        currentDialogId: state.DialogsReducer.data.currentDialog.id,
-        currentDialogReceiverId:
-          state.DialogsReducer.data.currentDialog.receiverId,
-      }
-    },
-  )
+  const { currentDialog } = useSelector((state: TStore) => {
+    return {
+      currentDialog: state.DialogsReducer.data.currentDialog,
+    }
+  })
+
   const [message, setMessage] = useState<string>('')
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -27,15 +24,20 @@ const ChatInput: React.FC<MessageInputProps> = () => {
 
   const handleEnterClick = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      dispatch(
-        messagesActions.submitMessage({
-          dialogId: currentDialogId || 0,
-          receiverId: currentDialogReceiverId || '',
-          content: message,
-        }),
-      )
+      if (currentDialog.type === 'NO_DIALOG') {
+        return
+      }
+      const dialogMessage = {
+        content: message,
+        currentDialog,
+      }
+      dispatch(messagesActions.submitMessage(dialogMessage))
       setMessage('')
     }
+  }
+
+  if (currentDialog.type === 'NO_DIALOG') {
+    return <></>
   }
 
   return (

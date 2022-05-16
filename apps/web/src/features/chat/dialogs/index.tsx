@@ -9,6 +9,7 @@ import {
 import { timeStampToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import { dialogsActions, Dialog } from 'shared/store/dialogsSlice'
+import { DialogId } from 'shared/config'
 
 interface DialogsProps {}
 
@@ -35,15 +36,20 @@ const Dialogs: React.FC<DialogsProps> = () => {
   useEffect(() => {
     if (dialogs?.length) {
       if (!currentDialogId)
-        dispatch(dialogsActions.setCurrentDialog({ dialogId: dialogs[0].id }))
+        dispatch(
+          dialogsActions.setCurrentDialog({
+            type: 'EXISTING_DIALOG',
+            id: dialogs[0].id,
+          }),
+        )
     } else {
-      dispatch(dialogsActions.setCurrentDialog({ dialogId: null }))
+      dispatch(dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null }))
     }
   }, [dialogs, currentDialogId, dispatch])
 
   const handleOpenDialog = useCallback(
-    (id: number | null) => {
-      dispatch(dialogsActions.setCurrentDialog({ dialogId: id }))
+    (id: DialogId) => {
+      dispatch(dialogsActions.setCurrentDialog({ type: 'EXISTING_DIALOG', id }))
     },
     [dispatch],
   )
