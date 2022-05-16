@@ -2,24 +2,24 @@ FROM node:14
 
 WORKDIR /apps/web
 
-COPY package.json ./
-COPY yarn.lock ./
+COPY apps/web/package.json ./
+COPY apps/web/yarn.lock ./
 
 RUN yarn install
 
-COPY . .
+COPY apps/web .
 
 RUN yarn build
 
 
 WORKDIR /apps/api
 
-COPY package.json ./
-COPY yarn.lock ./
+COPY apps/api/package.json ./
+COPY apps/api/yarn.lock ./
 
 RUN yarn install
 
-COPY . .
+COPY apps/api .
 
 RUN yarn build
 
