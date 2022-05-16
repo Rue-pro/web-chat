@@ -6,3 +6,4 @@ const checkedEnvVariable = (envVariable: string): string => {
 }
 
 export const API_URL = checkedEnvVariable('API_URL')
+export const SOCKET_URL = checkedEnvVariable('SOCKET_URL')

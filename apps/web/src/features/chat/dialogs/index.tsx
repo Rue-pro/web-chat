@@ -14,20 +14,23 @@ interface DialogsProps {}
 
 const Dialogs: React.FC<DialogsProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { status, dialogs, userId, currentDialogId } = useSelector(
+  const { status, dialogs, userId, currentDialogId, isConnected } = useSelector(
     (state: TStore) => {
       return {
         status: state.DialogsReducer.status,
         dialogs: state.DialogsReducer.data.dialogs,
         userId: state.AuthReducer.data.userId,
         currentDialogId: state.DialogsReducer.data.currentDialog.id,
+        isConnected: state.SocketReducer.isConnectionEstablished,
       }
     },
   )
 
   useEffect(() => {
-    dispatch(dialogsActions.getAllDialogs({ userId: userId }))
-  }, [dispatch, userId])
+    if (isConnected) {
+      dispatch(dialogsActions.getAllDialogs({ userId: userId }))
+    }
+  }, [dispatch, userId, isConnected])
 
   useEffect(() => {
     if (dialogs?.length) {
@@ -45,6 +48,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
     [dispatch],
   )
 
+  console.log('DIALOGS', dialogs)
   if (status === 'loading') {
     return (
       <DialogLoadingTemplate

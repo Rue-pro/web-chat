@@ -7,7 +7,6 @@ import { DialogsModule } from 'src/dialogs/dialogs.module';
 import { ConversationEntity } from 'src/dialogs/entity';
 import { ConnectionsModule } from 'src/connections/connections.module';
 import { MessagesService } from './messages.service';
-import { MessagesGateway } from './messages.gateway';
 import { MessageEntity } from './entity';
 
 @Module({
@@ -17,6 +16,6 @@ import { MessageEntity } from './entity';
     AuthModule,
     DialogsModule,
   ],
-  providers: [MessagesService, MessagesGateway],
+  providers: [MessagesService],
 })
 export class MessagesModule {}

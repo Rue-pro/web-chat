@@ -10,6 +10,7 @@ import { MessagesModule } from './messages/messages.module';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { ConnectionsModule } from './connections/connections.module';
 import { typeormConfig } from './database/config/typeorm.config';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { typeormConfig } from './database/config/typeorm.config';
     }),
     TypeOrmModule.forRoot(typeormConfig),
     AuthModule,
+    SocketModule,
     UsersModule,
     DialogsModule,
     MessagesModule,

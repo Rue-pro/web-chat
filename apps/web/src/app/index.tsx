@@ -9,9 +9,10 @@ import { refreshToken } from 'shared/store/authSlice'
 
 const App: React.FC = () => {
   const dispatch = useDispatch()
-  const { isAuth, needRefresh } = useSelector((state: TStore) => ({
+  const { isAuth, needRefresh, isConnected } = useSelector((state: TStore) => ({
     isAuth: state.AuthReducer.data.isAuth,
     needRefresh: state.AuthReducer.data.needRefresh,
+    isConnected: state.SocketReducer.isConnectionEstablished,
   }))
 
   useEffect(() => {
@@ -23,6 +24,9 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isAuth) dispatch(socketActions.startConnecting())
   }, [dispatch, isAuth])
+
+  console.log('IS_AUTH', isAuth)
+  console.log('IS_CONNECTED', isConnected)
 
   return <Pages />
 }

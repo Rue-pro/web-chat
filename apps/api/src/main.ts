@@ -12,6 +12,7 @@ import { setupSwagger } from './api-docs.swagger';
 import { GlobalExceptionFilter } from './error/global.exception.filter';
 
 const isProd = process.env.DATABASE_URL;
+const PREFIX = process.env.GLOBAL_PREFIX ?? '';
 
 const whitelist = isProd
   ? [
@@ -29,13 +30,14 @@ async function bootstrap() {
     new FastifyAdapter({ logger: true }),
   );
 
+  app.setGlobalPrefix(PREFIX);
+
   app.enableCors({
     allowedHeaders: [
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     ],
     origin: function (origin, callback) {
-      console.log('ORIGIN', origin);
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
@@ -57,8 +59,6 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-
-  app.setGlobalPrefix('api');
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 

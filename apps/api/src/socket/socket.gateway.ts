@@ -1,4 +1,3 @@
-import { AuthService } from 'src/auth/auth.service';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -11,17 +10,18 @@ import {
 import { Logger, UseFilters, UseGuards } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-import { ConnectionsService } from 'src/connections/connections.service';
-import { DialogsService } from 'src/dialogs/dialogs.service';
-import { MessagesService } from './messages.service';
-import { CreateMessageDto, NewMessageDto } from './dto';
-import { IWSError } from 'src/error/ws.error.interface';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { ConnectionsService } from '../connections/connections.service';
+import { DialogsService } from '../dialogs/dialogs.service';
+import { IWSError } from '../error/ws.error.interface';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { MessagesService } from '../messages/messages.service';
+import { NewMessageDto } from '../messages/dto';
 
 @WebSocketGateway({
-  path: '/messages',
+  path: `/socket`,
 })
-export class MessagesGateway implements OnGatewayConnection {
+export class SocketGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
 
@@ -32,7 +32,7 @@ export class MessagesGateway implements OnGatewayConnection {
     private readonly authService: AuthService,
   ) {}
 
-  private logger: Logger = new Logger('AppGateway');
+  private logger: Logger = new Logger('SocketGateway');
 
   handleDisconnect(socket: Socket) {
     this.connectionService.delete(socket.id);
@@ -43,6 +43,7 @@ export class MessagesGateway implements OnGatewayConnection {
   }
 
   async handleConnection(socket: Socket, ...args: any[]) {
+    console.log('HANDLE_CONNECTION');
     const result = await this.authService.getUserFromSocket(socket);
     if (result instanceof IWSError) {
       return;
@@ -63,6 +64,7 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() newMessage: NewMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
+    console.log('LISTENING_FOR_MESSAGES');
     const receiverId = newMessage.receiverId;
     const result = await this.authService.getUserFromSocket(socket);
 
@@ -113,6 +115,7 @@ export class MessagesGateway implements OnGatewayConnection {
     @MessageBody() dialogId: string,
     @ConnectedSocket() socket: Socket,
   ) {
+    console.log('REQUEST_FOR_ALL_MESSAGES');
     const result = await this.authService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
@@ -130,14 +133,16 @@ export class MessagesGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_dialogs')
   async requestAllDialogs(@ConnectedSocket() socket: Socket) {
+    console.log('REQUEST_ALL_DIALOGS');
     const result = await this.authService.getUserFromSocket(socket);
-
+    console.log('RESULT', result);
     if (result instanceof IWSError) {
       socket.emit('error', result);
       return;
     }
 
     const dialogs = await this.dialogService.findAll(result.id);
+    console.log('DIALOGS', dialogs);
     socket.emit('send_all_dialogs', dialogs);
   }
 }

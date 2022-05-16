@@ -2,12 +2,12 @@ import { createSlice } from '@reduxjs/toolkit'
 
 interface SocketState {
   isEstablishingConnection: boolean
-  isConnected: boolean
+  isConnectionEstablished: boolean
 }
 
 const initialState: SocketState = {
   isEstablishingConnection: false,
-  isConnected: false,
+  isConnectionEstablished: false,
 }
 
 const socketSlice = createSlice({
@@ -15,11 +15,13 @@ const socketSlice = createSlice({
   initialState: initialState,
   reducers: {
     startConnecting: state => {
+      console.log('START_CINNECTING')
       state.isEstablishingConnection = true
     },
     connectionEstablished: state => {
-      state.isConnected = true
-      state.isEstablishingConnection = true
+      console.log('CONNECTION_ESTABLISHED')
+      state.isConnectionEstablished = true
+      state.isEstablishingConnection = false
     },
   },
 })

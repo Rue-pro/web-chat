@@ -1,7 +1,7 @@
 import { Middleware } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
-import { API_URL } from 'shared/config'
+import { SOCKET_URL } from 'shared/config'
 import { authActions } from 'shared/store/authSlice'
 import { socketActions } from 'shared/store/socketSlice'
 import {
@@ -15,19 +15,25 @@ export const socketMiddleware: Middleware = store => {
 
   return next => action => {
     const isConnectionEstablished =
-      socket && store.getState().SocketReducer.isConnected
-
+      socket && store.getState().SocketReducer.isConnectionEstablished
+    console.log('IS_CONNECTION_ESTABLISHED', isConnectionEstablished)
     if (socketActions.startConnecting.match(action)) {
-      console.log('SOCKET_MIDDLEWARE_START_CONNECTING')
-      socket = io(`${API_URL}`, {
+      console.log('SOCKET_MIDDLEWARE_START_CONNECTING', SOCKET_URL)
+      socket = io(SOCKET_URL, {
         withCredentials: true,
-        path: '/messages',
+        path: '/socket',
         transports: ['websocket', 'polling', 'flashsocket'],
       })
+
+      console.log('SOCKET', socket)
 
       socket.on('connect', () => {
         console.log('SOCKET_MIDDLEWARE_CONNECTED')
         store.dispatch(socketActions.connectionEstablished())
+      })
+
+      socket.on('connect_error', err => {
+        console.log(`connect_error due to ${err.message}`)
       })
 
       socket.on('error', (error: any) => {
