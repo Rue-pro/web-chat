@@ -58,6 +58,8 @@ async function bootstrap() {
     }),
   );
 
+  app.setGlobalPrefix('api');
+
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   setupSwagger(app);

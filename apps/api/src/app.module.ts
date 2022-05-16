@@ -15,6 +15,7 @@ import { typeormConfig } from './database/config/typeorm.config';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../../web', 'build'),
+      exclude: ['/api*'],
     }),
     ConfigModule.forRoot({
       envFilePath: `.env`,
