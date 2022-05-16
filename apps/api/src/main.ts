@@ -38,6 +38,7 @@ async function bootstrap() {
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     ],
     origin: function (origin, callback) {
+      console.log('ORIGIN', origin);
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
