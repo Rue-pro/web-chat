@@ -1,6 +1,6 @@
 FROM node:14
 
-WORKDIR /app
+WORKDIR /apps/web
 
 COPY package.json ./
 COPY yarn.lock ./
@@ -10,6 +10,19 @@ RUN yarn install
 COPY . .
 
 RUN yarn build
+
+
+WORKDIR /apps/api
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
 
 EXPOSE 3000
 
