@@ -34,14 +34,13 @@ const Dialogs: React.FC<DialogsProps> = () => {
   }, [dispatch, userId, isConnected])
 
   useEffect(() => {
-    if (dialogs?.length) {
-      if (!currentDialogId)
-        dispatch(
-          dialogsActions.setCurrentDialog({
-            type: 'EXISTING_DIALOG',
-            id: dialogs[0].id,
-          }),
-        )
+    if (dialogs?.length && !currentDialogId) {
+      dispatch(
+        dialogsActions.setCurrentDialog({
+          type: 'EXISTING_DIALOG',
+          id: dialogs[0].id,
+        }),
+      )
     } else {
       dispatch(dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null }))
     }
@@ -55,6 +54,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
   )
 
   console.log('DIALOGS', dialogs)
+  console.log('DIALOGS_LOADING_STATUS', status)
   if (status === 'loading') {
     return (
       <DialogLoadingTemplate
