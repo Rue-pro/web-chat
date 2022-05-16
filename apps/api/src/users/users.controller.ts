@@ -30,11 +30,11 @@ import { UserEntity } from './entity';
 @Controller('users')
 @ApiTags('users')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Создание пользователя' })
   @ApiCreatedResponse({
     description: 'Возвращает созданного пользователя',
@@ -45,7 +45,6 @@ export class UsersController {
   }
 
   @Get('')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Запрос списка всех пользователей' })
   @ApiOkResponse({
     description: 'Возвращает список всех пользователей',
@@ -56,7 +55,6 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Поиск пользователя по id' })
   @ApiOkResponse({
     description: 'Возвращает найденного пользователя',
@@ -67,7 +65,6 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Обновление данных пользователя по id' })
   @ApiCreatedResponse({
     description: 'Возвращает обновленного пользователя',
@@ -78,7 +75,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Удаление пользователя по id' })
   @ApiOkResponse({
     description: 'Возвращает количество удаленных пользователей',
