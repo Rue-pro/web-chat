@@ -2,73 +2,12 @@
 
 \connect "d2cpmlfrhcraju";
 
-CREATE TABLE "public"."connection" (
-    "id" uuid DEFAULT uuid_generate_v4() NOT NULL,
-    "socketId" character varying NOT NULL,
-    "userId" uuid,
-    CONSTRAINT "PK_be611ce8b8cf439091c82a334b2" PRIMARY KEY ("id"),
-    CONSTRAINT "REL_3b35155c2968acced66fc326ae" UNIQUE ("userId")
-) WITH (oids = false);
 
 
-CREATE SEQUENCE conversation_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
-
-CREATE TABLE "public"."conversation" (
-    "id" integer DEFAULT nextval('conversation_id_seq') NOT NULL,
-    "user1" uuid,
-    "user2" uuid,
-    CONSTRAINT "PK_864528ec4274360a40f66c29845" PRIMARY KEY ("id")
-) WITH (oids = false);
-
-
-CREATE SEQUENCE message_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
-
-CREATE TABLE "public"."message" (
-    "id" integer DEFAULT nextval('message_id_seq') NOT NULL,
-    "content" character varying NOT NULL,
-    "createdAt" timestamp DEFAULT now() NOT NULL,
-    "authorId" uuid,
-    "channelId" integer,
-    CONSTRAINT "PK_ba01f0a3e0123651915008bc578" PRIMARY KEY ("id")
-) WITH (oids = false);
-
-
-CREATE SEQUENCE migration_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
-
-CREATE TABLE "public"."migration" (
-    "id" integer DEFAULT nextval('migration_id_seq') NOT NULL,
-    "timestamp" bigint NOT NULL,
-    "name" character varying NOT NULL,
-    CONSTRAINT "PK_3043fc6b8af7c99b8b98830094f" PRIMARY KEY ("id")
-) WITH (oids = false);
 
 INSERT INTO "migration" ("id", "timestamp", "name") VALUES
 (1,	1652352031096,	'CommonTables1652352031096');
 
-CREATE TABLE "public"."typeorm_metadata" (
-    "type" character varying NOT NULL,
-    "database" character varying,
-    "schema" character varying,
-    "table" character varying,
-    "name" character varying,
-    "value" text
-) WITH (oids = false);
-
-
-CREATE TABLE "public"."user" (
-    "id" uuid DEFAULT uuid_generate_v4() NOT NULL,
-    "name" character varying NOT NULL,
-    "createdAt" timestamp DEFAULT now() NOT NULL,
-    "updatedAt" timestamp DEFAULT now() NOT NULL,
-    "email" character varying NOT NULL,
-    "phone" character varying NOT NULL,
-    "password" character varying NOT NULL,
-    "currentHashedRefreshToken" character varying,
-    "avatar" character varying,
-    CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"),
-    CONSTRAINT "UQ_8e1f623798118e629b46a9e6299" UNIQUE ("phone"),
-    CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email")
-) WITH (oids = false);
 
 INSERT INTO "user" ("id", "name", "createdAt", "updatedAt", "email", "phone", "password", "currentHashedRefreshToken", "avatar") VALUES
 ('7147be27-4eed-4865-a97f-e13a71f087fb',	'Trever Wyman',	'2022-05-13 12:29:03.8',	'2022-05-13 12:29:03.8',	'Armani60@hotmail.com',	'037.240.1074 x0322',	'$2b$10$e0T3HVQ6FKmUofr1LU3fM.llpa0YXxGPQ1E.t79lTujMkGmeLLgsi',	NULL,	NULL),
@@ -90,4 +29,4 @@ ALTER TABLE ONLY "public"."conversation" ADD CONSTRAINT "FK_c8e5269cb23afd99c676
 ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_5fdbbcb32afcea663c2bea2954f" FOREIGN KEY ("channelId") REFERENCES conversation(id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_c72d82fa0e8699a141ed6cc41b3" FOREIGN KEY ("authorId") REFERENCES "user"(id) NOT DEFERRABLE;
 
--- 2022-05-17 06:20:02.215516+00
+-- 2022-05-17 06:20:46.454589+00
