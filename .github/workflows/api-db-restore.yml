@@ -1,4 +1,4 @@
-name: API db run restoring from file
+name: Restore db from dump
 
 defaults:
   run:
@@ -37,7 +37,7 @@ jobs:
       - name: Run restoring from file
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku pg:psql DATABASE_URL  -a ${{ secrets.HEROKU_APP_NAME }}  -f ./seed.sql
+        run: heroku pg:psql DATABASE_URL  -a ${{ secrets.HEROKU_APP_NAME }}  -f ./src/database/dumb/seed.sql
 
       - name: Update API deployment status (success)
         if: success()
