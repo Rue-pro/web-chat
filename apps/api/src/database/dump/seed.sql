@@ -2,13 +2,6 @@
 
 \connect "d2cpmlfrhcraju";
 
-
-
-
-INSERT INTO "migration" ("id", "timestamp", "name") VALUES
-(1,	1652352031096,	'CommonTables1652352031096');
-
-
 INSERT INTO "user" ("id", "name", "createdAt", "updatedAt", "email", "phone", "password", "currentHashedRefreshToken", "avatar") VALUES
 ('7147be27-4eed-4865-a97f-e13a71f087fb',	'Trever Wyman',	'2022-05-13 12:29:03.8',	'2022-05-13 12:29:03.8',	'Armani60@hotmail.com',	'037.240.1074 x0322',	'$2b$10$e0T3HVQ6FKmUofr1LU3fM.llpa0YXxGPQ1E.t79lTujMkGmeLLgsi',	NULL,	NULL),
 ('aeec03e6-6740-4a84-a909-281489ab68f4',	'Shaina Ziemann',	'2022-05-13 12:29:03.861',	'2022-05-13 12:29:03.861',	'Aisha_Hickle63@hotmail.com',	'765-536-0278 x60414',	'$2b$10$PVxpiAT0RKgNAJuOxMyzi.IB/DHbEHUAZ6L159gOCUJUrYenz4pae',	NULL,	'https://s3.amazonaws.com/uifaces/faces/twitter/quailandquasar/128.jpg'),
@@ -21,12 +14,5 @@ INSERT INTO "user" ("id", "name", "createdAt", "updatedAt", "email", "phone", "p
 ('efe205d5-8142-4dae-9376-75cadc508f46',	'Anderson Feeney',	'2022-05-13 12:29:03.663',	'2022-05-16 12:46:49.982152',	'Garrick_Nitzsche@yahoo.com',	'1-735-951-2985 x3273',	'$2b$10$K8YXtb9G/keNjDB6dWeXZ.2rWO8rsdxlamGp5SM75lL073efE2tgi',	NULL,	NULL),
 ('bc07428f-62ff-4dc8-a0cc-b4bf4cc64a0c',	'Deshawn Leannon',	'2022-05-13 12:29:03.739',	'2022-05-16 12:49:13.010388',	'Macy_Kshlerin65@yahoo.com',	'450.187.3484',	'$2b$10$DIDeCWTWQN8sGiRxeT3Wbe9ulMMvRHFEgK5PkZcIiKf0G1x3jngLe',	'$2b$10$0cwX4voO9c9XVNhChXHpXuKBPPgSTHtCLk6bSqQCSR34YDqzo3IFq',	NULL);
 
-ALTER TABLE ONLY "public"."connection" ADD CONSTRAINT "FK_3b35155c2968acced66fc326aea" FOREIGN KEY ("userId") REFERENCES "user"(id) NOT DEFERRABLE;
 
-ALTER TABLE ONLY "public"."conversation" ADD CONSTRAINT "FK_58655a79896e1ae23173b90ee82" FOREIGN KEY (user1) REFERENCES "user"(id) NOT DEFERRABLE;
-ALTER TABLE ONLY "public"."conversation" ADD CONSTRAINT "FK_c8e5269cb23afd99c6763383108" FOREIGN KEY (user2) REFERENCES "user"(id) NOT DEFERRABLE;
-
-ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_5fdbbcb32afcea663c2bea2954f" FOREIGN KEY ("channelId") REFERENCES conversation(id) NOT DEFERRABLE;
-ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_c72d82fa0e8699a141ed6cc41b3" FOREIGN KEY ("authorId") REFERENCES "user"(id) NOT DEFERRABLE;
-
--- 2022-05-17 06:20:46.454589+00
+-- 2022-05-17 06:21:27.159703+00
