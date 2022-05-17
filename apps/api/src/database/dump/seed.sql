@@ -1,7 +1,5 @@
 -- Adminer 4.8.1 PostgreSQL 14.2 (Debian 14.2-1.pgdg110+1) dump
 
-\connect "db";
-
 CREATE TABLE "public"."connection" (
     "id" uuid DEFAULT uuid_generate_v4() NOT NULL,
     "socketId" character varying NOT NULL,
@@ -90,4 +88,4 @@ ALTER TABLE ONLY "public"."conversation" ADD CONSTRAINT "FK_c8e5269cb23afd99c676
 ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_5fdbbcb32afcea663c2bea2954f" FOREIGN KEY ("channelId") REFERENCES conversation(id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."message" ADD CONSTRAINT "FK_c72d82fa0e8699a141ed6cc41b3" FOREIGN KEY ("authorId") REFERENCES "user"(id) NOT DEFERRABLE;
 
--- 2022-05-17 06:06:51.782034+00
+-- 2022-05-17 06:08:38.955491+00
