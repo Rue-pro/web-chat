@@ -32,6 +32,8 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<UserEntity> {
+    const users = await this.userRepository.find();
+    console.log('USERS', users);
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
@@ -83,6 +85,7 @@ export class AuthService {
 
   async getUserFromSocket(socket: Socket): Promise<UserEntity | IWSError> {
     const cookie = socket.handshake.headers.cookie;
+    console.log('SOCKET COOKIE', socket.handshake.headers.cookie);
     if (!cookie) {
       return new IWSError({
         code: 400,
@@ -130,6 +133,11 @@ export class AuthService {
     });
 
     let expiresIn = new Date();
+    console.log('ACCESS_TOKEN start seconds', expiresIn.getSeconds());
+    console.log(
+      'ACCESS_TOKEN expiration time',
+      this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+    );
     expiresIn.setSeconds(
       expiresIn.getSeconds() +
         this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
