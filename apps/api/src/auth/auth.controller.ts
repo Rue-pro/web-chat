@@ -43,7 +43,7 @@ export class AuthController {
     console.log('DOMAIN', domain);
     return reply
       .setCookie('access_token', accessToken.content, {
-        domain: domain,
+        domain: 'https://still-basin-01257.herokuapp.com/',
         path: '/',
         httpOnly: false,
         expires: accessToken.expiresIn,
@@ -51,7 +51,7 @@ export class AuthController {
         sameSite: 'none',
       })
       .setCookie('refresh_token', refreshToken.content, {
-        domain: domain,
+        domain: 'still-basin-01257.herokuapp.com',
         path: '/',
         httpOnly: false,
         expires: refreshToken.expiresIn,
@@ -84,8 +84,17 @@ export class AuthController {
       accessToken,
       refreshToken,
     );
-    console.log(newReply);
-    newReply.send(user);
+    console.log('ACCESS_TOKEN', accessToken);
+    console.log('REFRESH_TOKEN', refreshToken);
+    console.log(new Date());
+    newReply.send({
+      accessToken: {
+        expiresIn: accessToken.expiresIn,
+      },
+      refreshToken: {
+        expiresIn: refreshToken.expiresIn,
+      },
+    });
   }
 
   @Get('logout')
