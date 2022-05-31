@@ -33,7 +33,7 @@ export class DialogsController {
     @Query() filter: SearchFilterDialogDto,
     @Req() request: FastifyRequest,
   ) {
-    const user = await this.authService.getUserFromAuthenticationToken(
+    const user = await this.authService.getUserFromToken(
       request.cookies.access_token,
     );
     return this.dialogsService.searchAll(filter, user.id);
@@ -49,7 +49,7 @@ export class DialogsController {
     type: [UserEntity],
   })
   async findAll(@Req() request: FastifyRequest) {
-    const user = await this.authService.getUserFromAuthenticationToken(
+    const user = await this.authService.getUserFromToken(
       request.cookies.access_token,
     );
 

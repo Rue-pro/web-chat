@@ -36,14 +36,15 @@ export class AuthController {
     const origin = request.headers.origin;
 
     const indexOfDomain = origin.indexOf(':') + 3;
-    const indexOfPort = origin.slice(indexOfDomain).lastIndexOf(':');
-    let domain = origin.includes('localhost') ? 'localhost' : origin;
+    let domain = origin.includes('localhost')
+      ? 'localhost'
+      : origin.slice(indexOfDomain);
 
-    console.log('REQUEST', request);
     console.log('DOMAIN', domain);
+
     return reply
       .setCookie('access_token', accessToken.content, {
-        domain: 'https://still-basin-01257.herokuapp.com/',
+        domain: domain,
         path: '/',
         httpOnly: false,
         expires: accessToken.expiresIn,
@@ -51,7 +52,7 @@ export class AuthController {
         sameSite: 'none',
       })
       .setCookie('refresh_token', refreshToken.content, {
-        domain: 'still-basin-01257.herokuapp.com',
+        domain: domain,
         path: '/',
         httpOnly: false,
         expires: refreshToken.expiresIn,
@@ -99,7 +100,7 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
-    const user = await this.authService.getUserFromAuthenticationToken(
+    const user = await this.authService.getUserFromToken(
       request.cookies.access_token,
     );
     await this.userService.removeRefeshToken(user.id);
@@ -110,8 +111,9 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
-    const user = await this.authService.getUserFromAuthenticationToken(
-      request.cookies.access_token,
+    console.log('REFRESH_COOKIES', request.cookies);
+    const user = await this.authService.getUserFromToken(
+      request.cookies.refresh_token,
     );
     const accessToken = this.authService.getJwtAccessToken(user.id);
     const refreshToken = this.authService.getJwtRefreshToken(user.id);
@@ -121,8 +123,13 @@ export class AuthController {
       user.id,
     );
 
-    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send(
-      user,
-    );
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send({
+      accessToken: {
+        expiresIn: accessToken.expiresIn,
+      },
+      refreshToken: {
+        expiresIn: refreshToken.expiresIn,
+      },
+    });
   }
 }

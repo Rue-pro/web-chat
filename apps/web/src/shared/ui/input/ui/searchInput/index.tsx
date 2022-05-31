@@ -12,7 +12,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   onChange,
   ...rest
 }) => {
-  console.log('Seatch input', rest)
+  console.log('Search input', rest)
   const timer = useRef<any>()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

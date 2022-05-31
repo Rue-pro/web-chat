@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { ActionButton } from 'shared/ui'
 import { PAGES } from 'shared/config'
-import { logout } from 'shared/store/authSlice'
+import { authActions } from 'shared/store/authSlice'
 
 interface TemplateProps {
   avatar: ReactElement
@@ -18,7 +18,7 @@ const Template: React.FC<TemplateProps> = ({ avatar, name, phone }) => {
   const navigate = useNavigate()
 
   const handleClick = useCallback(() => {
-    dispatch(logout())
+    dispatch(authActions.logout())
     navigate(PAGES.LoginPage)
   }, [dispatch, navigate])
 

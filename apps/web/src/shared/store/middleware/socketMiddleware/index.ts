@@ -42,7 +42,7 @@ export const socketMiddleware: Middleware = store => {
           error.code === 403 &&
           error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED'
         ) {
-          store.dispatch(authActions.setNeedRefresh(true))
+          console.log('ERROR_ACCESS_TOKEN_EXPIRED')
         }
       })
 

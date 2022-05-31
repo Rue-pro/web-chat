@@ -1,15 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api'
 import { UserId } from 'shared/config'
-import { loadState, removeState, saveState } from 'shared/lib'
+import { TokenService } from 'shared/services'
 import { GenericState } from './genericSlice'
 
-const KEY = 'auth'
 interface AuthData {
   isAuth: boolean
   userId: UserId
-  needRefresh: boolean
 }
 
 interface AuthState extends GenericState<AuthData> {}
@@ -20,34 +18,23 @@ type LoginData = {
 }
 
 const defaultData: AuthData = {
-  isAuth: false,
+  isAuth: TokenService.isTokensValid(),
   userId: '',
-  needRefresh: false,
 }
 
 export const login = createAsyncThunk(
   'auth/login',
   async (loginData: LoginData) => {
+    console.groupCollapsed('[AUTH_SLICE] login')
     const response = await APIInstance.post('/auth/login', loginData)
-    console.log('LOGIN_RESULT', response)
+    console.log(response)
+    console.groupEnd()
     return response.data
   },
 )
 
-export const logout = createAsyncThunk('auth/logout', async () => {
-  const response = await APIInstance.get('/auth/logout')
-  console.log('LOGOUT_RESULT', response)
-  return response.data
-})
-
-export const refreshToken = createAsyncThunk('auth/refresh', async () => {
-  const response = await APIInstance.get('/auth/refresh')
-  console.log('REFRESH_RESULT', response)
-  return response.data
-})
-
 const initialState: AuthState = {
-  data: loadState<AuthData>(KEY, defaultData),
+  data: defaultData,
   status: 'loading',
 }
 
@@ -55,8 +42,13 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    setNeedRefresh(state, action: PayloadAction<boolean>) {
-      state.data.needRefresh = action.payload
+    logout(state) {
+      state.data.isAuth = false
+      state.data.userId = ''
+      TokenService.removeTokensExpirationTime()
+    },
+    setAuth(state) {
+      state.data.isAuth = true
     },
   },
   extraReducers: builder => {
@@ -68,41 +60,14 @@ const authSlice = createSlice({
       state.status = 'idle'
       state.data.isAuth = true
       state.data.userId = action.payload.id
-      saveState<AuthData>(KEY, state.data)
+
+      TokenService.setTokensExpirationTime(
+        action.payload.accessToken.expiresIn,
+        action.payload.refreshToken.expiresIn,
+      )
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
       console.log('LOGIN_REJECTED', action)
-      state.status = 'error'
-      state.error = action.error.message
-    })
-
-    builder.addCase(logout.pending, (state: AuthState) => {
-      state.status = 'loading'
-    })
-    builder.addCase(logout.fulfilled, (state: AuthState, action) => {
-      console.log('LOGOUT_FULFILLED', action)
-      state.status = 'idle'
-      removeState(KEY)
-    })
-    builder.addCase(logout.rejected, (state: AuthState, action) => {
-      console.log('LOGOUT_REJECTED', action)
-      state.status = 'error'
-      state.error = action.error.message
-    })
-
-    builder.addCase(refreshToken.pending, (state: AuthState) => {
-      state.status = 'loading'
-    })
-    builder.addCase(refreshToken.fulfilled, (state: AuthState, action) => {
-      console.log('REFRESH_TOKEN_FULFILLED', action)
-      state.status = 'idle'
-      state.data.isAuth = true
-      state.data.userId = action.payload.id
-      state.data.needRefresh = false
-      saveState<AuthData>(KEY, state.data)
-    })
-    builder.addCase(refreshToken.rejected, (state: AuthState, action) => {
-      console.log('REFRESH_TOKEN_REJECTED', action)
       state.status = 'error'
       state.error = action.error.message
     })

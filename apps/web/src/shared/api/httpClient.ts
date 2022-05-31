@@ -2,8 +2,7 @@ import axios from 'axios'
 
 import { API_URL, ServerError } from 'shared/config'
 import { sleep } from 'shared/lib'
-import store from 'shared/store'
-import { authActions } from 'shared/store/authSlice'
+import { TokenService } from 'shared/services'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,
@@ -11,11 +10,15 @@ export const APIInstance = axios.create({
   withCredentials: true,
 })
 
-APIInstance.interceptors.request.use(({ ...config }) => {
+APIInstance.interceptors.request.use(async ({ ...config }) => {
   // X-Authorization
   const accessToken = '2131231' // getToken from the store
   if (!accessToken) return config
 
+  if (config.url !== '/auth/login/') {
+    const refreshTokenStatus = await TokenService.refreshTokens()
+    console.log('REFRSH_TOKEN_STATUS', refreshTokenStatus)
+  }
   return {
     ...config,
     headers: {
@@ -50,7 +53,7 @@ APIInstance.interceptors.response.use(
       error.response.data.message ===
       'Refreshing token is required, then retry the query'
     ) {
-      store.dispatch(authActions.setNeedRefresh(true))
+      console.error('Refreshing token is required, then retry the query')
     }
     return Promise.reject<ServerError>({
       message: error.response.data.message,

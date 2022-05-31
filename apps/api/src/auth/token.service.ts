@@ -18,7 +18,7 @@ import { Token, TokenPayloadEntity } from './entity';
 import { IWSError } from 'src/error/ws.error.interface';
 
 @Injectable()
-export class AuthService {
+export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -28,59 +28,17 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getUserForEmailAndPassword(
-    email: string,
-    password: string,
-  ): Promise<UserEntity> {
-    const users = await this.userRepository.find();
-    console.log('USERS', users);
-    const user = await this.userRepository.findOne({
-      where: { email: email },
-    });
-
-    if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`);
-    }
-
-    const passwordValid = user.password === password;
-
-    if (!passwordValid) {
-      throw new UnauthorizedException('Invalid password');
-    }
-
-    return user;
-  }
-
-  validateUser(userId: UserId) {
+  private validateUser(userId: UserId) {
     return this.usersService.findOne(userId);
   }
 
-  async getUserFromToken(token: string): Promise<UserEntity> {
-    console.log('TOKEN', token);
-    const decodedToken = this.jwtService.decode(token);
-    console.log('getUserFromAuthenticationToken TOKEN', decodedToken);
+  async getUserIdFromToken(accessToken: string): Promise<UserEntity> {
+    const decodedToken = this.jwtService.decode(accessToken);
     if (!decodedToken || typeof decodedToken === 'string') {
       throw new UnauthorizedException('Invalid accessToken');
     }
 
-    if (decodedToken.userId) {
-      return this.validateUser(decodedToken.userId);
-    }
-  }
-
-  async verifyToken(accessToken: string) {
-    try {
-      return this.jwtService.verify(accessToken, {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      });
-    } catch (e) {
-      if (e.name === 'TokenExpiredError') {
-        throw new ForbiddenException({
-          message: 'Refreshing token is required, then retry the query',
-          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
-        });
-      }
-    }
+    return await this.validateUser(decodedToken.userId);
   }
 
   async getUserFromSocket(socket: Socket): Promise<UserEntity | IWSError> {
@@ -118,26 +76,34 @@ export class AuthService {
       }
     }
 
-    if (payload.userId) {
-      return this.validateUser(payload.userId);
+    return this.validateUser(payload.userId);
+  }
+
+  async verifyToken(accessToken: string) {
+    try {
+      return this.jwtService.verify(accessToken, {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      });
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new ForbiddenException({
+          message: 'Refreshing token is required, then retry the query',
+          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
+        });
+      }
     }
   }
 
-  getJwtAccessToken(userId: UserId): Token {
+  generateAccessToken(userId: UserId): Token {
     const payload: TokenPayloadEntity = { userId };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
         'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-      )}`,
+      )}s`,
     });
 
     let expiresIn = new Date();
-    console.log('ACCESS_TOKEN start seconds', expiresIn.getSeconds());
-    console.log(
-      'ACCESS_TOKEN expiration time',
-      this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
-    );
     expiresIn.setSeconds(
       expiresIn.getSeconds() +
         this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
@@ -149,7 +115,7 @@ export class AuthService {
     };
   }
 
-  getJwtRefreshToken(userId: UserId): Token {
+  generateRefreshToken(userId: UserId): Token {
     const payload: TokenPayloadEntity = { userId };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),

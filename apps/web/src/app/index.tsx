@@ -1,33 +1,47 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Pages from 'pages'
 import { withProviders } from './providers'
 import { TStore } from 'shared/store'
 import { socketActions } from 'shared/store/socketSlice'
-import { refreshToken } from 'shared/store/authSlice'
+import { TokenService } from 'shared/services'
+import { authActions } from 'shared/store/authSlice'
 
 const App: React.FC = () => {
+  const [refresingTokens, setRefreshingTokens] = useState(false)
   const dispatch = useDispatch()
-  const { isAuth, needRefresh, isConnected } = useSelector((state: TStore) => ({
+  const { isAuth, isConnected } = useSelector((state: TStore) => ({
     isAuth: state.AuthReducer.data.isAuth,
-    needRefresh: state.AuthReducer.data.needRefresh,
     isConnected: state.SocketReducer.isConnectionEstablished,
   }))
 
+  const setAuth = useCallback(() => {
+    dispatch(authActions.setAuth)
+  }, [dispatch])
+
   useEffect(() => {
-    if (needRefresh) {
-      dispatch(refreshToken())
+    async function refreshTokens() {
+      setRefreshingTokens(true)
+      const response = await TokenService.refreshTokens(setAuth)
+      console.log('APP_REFRESH_TOKEN:', response)
+      setRefreshingTokens(false)
     }
-  }, [needRefresh, dispatch])
+    refreshTokens()
+  }, [isAuth, setAuth])
 
   useEffect(() => {
     if (isAuth) dispatch(socketActions.startConnecting())
   }, [dispatch, isAuth])
 
+  console.group('[APP_INDEX]')
   console.log('IS_AUTH', isAuth)
   console.log('IS_CONNECTED', isConnected)
+  console.groupEnd()
 
+  if (refresingTokens) {
+    return <h1>ОБНОВЛЯЮ ТОКЕНЫ</h1>
+  }
   return <Pages />
 }
 
