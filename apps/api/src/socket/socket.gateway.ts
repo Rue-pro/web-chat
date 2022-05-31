@@ -5,16 +5,14 @@ import {
   OnGatewayConnection,
   MessageBody,
   ConnectedSocket,
-  WsResponse,
 } from '@nestjs/websockets';
-import { Logger, UseFilters, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
 import { AuthService } from '../auth/auth.service';
 import { ConnectionsService } from '../connections/connections.service';
 import { DialogsService } from '../dialogs/dialogs.service';
 import { IWSError } from '../error/ws.error.interface';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MessagesService } from '../messages/messages.service';
 import { NewMessageDto } from '../messages/dto';
 
@@ -46,6 +44,7 @@ export class SocketGateway implements OnGatewayConnection {
     console.log('HANDLE_CONNECTION');
     const result = await this.authService.getUserFromSocket(socket);
     if (result instanceof IWSError) {
+      result.event = 'connect';
       return;
     }
 
@@ -69,6 +68,8 @@ export class SocketGateway implements OnGatewayConnection {
     const result = await this.authService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
+      result.event = 'send_message';
+      result.payload = newMessage;
       socket.emit('error', result);
       return;
     }
@@ -119,6 +120,8 @@ export class SocketGateway implements OnGatewayConnection {
     const result = await this.authService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
+      result.event = 'request_all_messages';
+      result.payload = dialogId;
       socket.emit('error', result);
       return;
     }
@@ -134,9 +137,11 @@ export class SocketGateway implements OnGatewayConnection {
   @SubscribeMessage('request_all_dialogs')
   async requestAllDialogs(@ConnectedSocket() socket: Socket) {
     console.log('REQUEST_ALL_DIALOGS');
+    console.log(socket);
     const result = await this.authService.getUserFromSocket(socket);
     console.log('RESULT', result);
     if (result instanceof IWSError) {
+      result.event = 'request_all_dialogs';
       socket.emit('error', result);
       return;
     }

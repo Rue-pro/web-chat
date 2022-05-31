@@ -105,6 +105,15 @@ export class AuthService {
 
     let payload: TokenPayloadEntity = { userId: null };
     try {
+      console.log('VERIFICATION');
+      console.log(this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'));
+      console.log(accessToken);
+      console.log(
+        this.jwtService.verify(accessToken, {
+          secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+        }),
+      );
+      const someResult = this.jwtService.verify;
       payload = this.jwtService.verify(accessToken, {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
       });

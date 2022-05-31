@@ -1,6 +1,6 @@
 -- Adminer 4.8.1 PostgreSQL 14.2 (Debian 14.2-1.pgdg110+1) dump
 
-TRUNCATE "user";
+select * from "user";
 INSERT INTO "user" ("id", "name", "createdAt", "updatedAt", "email", "phone", "password", "currentHashedRefreshToken", "avatar") VALUES
 ('7147be27-4eed-4865-a97f-e13a71f087fb',	'Trever Wyman',	'2022-05-13 12:29:03.8',	'2022-05-13 12:29:03.8',	'Armani60@hotmail.com',	'037.240.1074 x0322',	'$2b$10$e0T3HVQ6FKmUofr1LU3fM.llpa0YXxGPQ1E.t79lTujMkGmeLLgsi',	NULL,	NULL),
 ('aeec03e6-6740-4a84-a909-281489ab68f4',	'Shaina Ziemann',	'2022-05-13 12:29:03.861',	'2022-05-13 12:29:03.861',	'Aisha_Hickle63@hotmail.com',	'765-536-0278 x60414',	'$2b$10$PVxpiAT0RKgNAJuOxMyzi.IB/DHbEHUAZ6L159gOCUJUrYenz4pae',	NULL,	'https://s3.amazonaws.com/uifaces/faces/twitter/quailandquasar/128.jpg'),

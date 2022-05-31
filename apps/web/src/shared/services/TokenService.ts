@@ -46,17 +46,24 @@ class TokenService {
     console.groupCollapsed('[TOKEN_SERVICE] refreshTokens')
     if (this.isAccessTokenExpired()) {
       console.log('Access token expired')
-      const response = await fetch(`${API_URL}/auth/refresh`, {
-        credentials: 'include',
-      })
+      try {
+        const response = await fetch(`${API_URL}/auth/refresh`, {
+          credentials: 'include',
+        })
 
-      const data = await response.json()
-      console.log(data)
-      if (onRefresh) onRefresh()
-      this.setTokensExpirationTime(
-        data.accessToken.expiresIn,
-        data.refreshToken.expiresIn,
-      )
+        const data = await response.json()
+        console.log(data)
+        if (data.statusCode !== 200) {
+          throw Error(data.message.content)
+        }
+        if (onRefresh) onRefresh()
+        this.setTokensExpirationTime(
+          data.accessToken.expiresIn,
+          data.refreshToken.expiresIn,
+        )
+      } catch (e) {
+        console.error('ERROR', e)
+      }
     }
     console.groupEnd()
   }

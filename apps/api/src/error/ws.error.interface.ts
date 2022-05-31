@@ -1,5 +1,3 @@
-import { Socket } from 'dgram';
-
 export class IWSError {
   message: {
     name: string;
@@ -8,6 +6,8 @@ export class IWSError {
   code: number;
   timestamp: string;
   method: string;
+  payload?: any;
+  event?: string;
 
   constructor({
     code,

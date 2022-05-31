@@ -48,7 +48,7 @@ jobs:
       - name: Remove docker image
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: docker rmi ${docker images -a -q}
+        run: docker rmi $(docker images -a -q)
 
       - name: Release
         env:

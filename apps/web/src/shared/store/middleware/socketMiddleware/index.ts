@@ -9,6 +9,7 @@ import {
   messagesSocketListeners,
 } from './messagesSocket'
 import { dialogsSocketEmiters, dialogsSocketListeners } from './dialogsSocket'
+import { TokenService } from 'shared/services'
 
 export const socketMiddleware: Middleware = store => {
   let socket: Socket
@@ -36,14 +37,22 @@ export const socketMiddleware: Middleware = store => {
         console.log(`connect_error due to ${err.message}`)
       })
 
-      socket.on('error', (error: any) => {
+      socket.on('error', async (error: any) => {
         console.log('SOCKET_MIDDLEWARE_ERROR_HAPPEND', error)
         if (
           error.code === 403 &&
           error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED'
         ) {
           console.log('ERROR_ACCESS_TOKEN_EXPIRED')
+          const response = await TokenService.refreshTokens()
+          console.log('SOCKET_MIDDLEWARE: ', response)
         }
+      })
+
+      socket.onAny((eventName, ...args) => {
+        console.log('ON_ANY')
+        console.log(eventName)
+        console.log(args)
       })
 
       messagesSocketListeners(socket, store)
