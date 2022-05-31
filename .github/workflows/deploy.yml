@@ -30,20 +30,30 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login
 
+      - name: Remove docker image
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: docker rmi ${docker images -a -q}
+
       - name: Build docker image
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: docker image build . -f Dockerfile.prod --tag registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+        run: docker image build . -f Dockerfile.prod --tag registry.heroku.com/still-basin-01257/web
 
       - name: Push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: docker push registry.heroku.com/still-basin-01257/web
 
+      - name: Remove docker image
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: docker rmi ${docker images -a -q}
+
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
+        run: heroku container:release -a still-basin-01257 web
 
       - name: Update deployment status (success)
         if: success()
