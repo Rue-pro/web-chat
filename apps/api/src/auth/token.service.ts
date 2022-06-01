@@ -3,10 +3,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { plainToClass } from 'class-transformer';
 
 import { Socket } from 'socket.io';
 import { parse } from 'cookie';
@@ -22,22 +21,19 @@ export class TokenService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
-
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async validateUser(userId: UserId): Promise<UserEntity> {
-    return this.usersService.findOne(userId);
+    return plainToClass(UserEntity, this.usersService.findOne(userId));
   }
 
-  async verifyAccessToken(accessToken: string) {
+  async verifyAccessToken(accessToken: string): Promise<TokenPayloadEntity> {
     try {
       return this.jwtService.verifyAsync(accessToken);
     } catch (e) {
       if (e.name === 'TokenExpiredError') {
         throw new ForbiddenException({
-          message: 'Access token is required, then retry the query',
+          message: 'Access token is expired, refresh it, then retry the query',
           name: 'ERROR_ACCESS_TOKEN_EXPIRED',
         });
       }
@@ -46,19 +42,24 @@ export class TokenService {
 
   async getUserFromToken(accessToken: string): Promise<UserEntity> {
     const decodedToken = this.jwtService.decode(accessToken);
+
     if (!decodedToken || typeof decodedToken === 'string') {
-      throw new UnauthorizedException('Invalid accessToken');
+      throw new UnauthorizedException({
+        message: 'Invalid accessToken',
+        name: 'ERROR_INVALID_ACCESS_TOKEN',
+      });
     }
 
-    return await this.validateUser(decodedToken.userId);
+    return this.validateUser(decodedToken.userId);
   }
 
   async getUserFromSocket(socket: Socket): Promise<UserEntity> {
     const cookie = socket.handshake.headers.cookie;
+
     if (!cookie) {
       throw new IWSError({
         code: 400,
-        message: 'Found no cookie.',
+        message: 'Found no cookie',
         name: 'ERROR_FOUND_NO_COOKIE',
       });
     }
@@ -68,32 +69,27 @@ export class TokenService {
       throw new IWSError({
         code: 400,
         message: 'Found no access_token cookie',
-        name: 'ERROR_FOUNR_NO_ACCESS_TOKEN_COOKIE',
+        name: 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE',
       });
     }
 
-    const result = await this.verifyAccessToken(accessToken);
-
-    console.log('GET_USER_FROM_SOCKET', result);
-
-    return this.validateUser(result.userId);
+    const user = await this.verifyAccessToken(accessToken);
+    return this.validateUser(user.userId);
   }
 
   async generateAccessToken(userId: UserId): Promise<Token> {
     const payload: TokenPayloadEntity = { userId };
+    const expirationTime = this.configService.get(
+      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+    );
 
-    let expiresIn = new Date();
     const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-      )}m`,
+      expiresIn: `${expirationTime}m`,
     });
 
-    expiresIn.setMinutes(
-      expiresIn.getMinutes() +
-        +this.configService.get<number>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
-    );
+    let expiresIn = new Date();
+    expiresIn.setMinutes(expiresIn.getMinutes() + +expirationTime);
 
     return {
       content: token,
@@ -103,18 +99,17 @@ export class TokenService {
 
   async generateRefreshToken(userId: UserId): Promise<Token> {
     const payload: TokenPayloadEntity = { userId };
+    const expirationTime = this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+    );
+
     const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-      )}m`,
+      expiresIn: `${expirationTime}m`,
     });
 
     let expiresIn = new Date();
-    expiresIn.setMinutes(
-      expiresIn.getMinutes() +
-        +this.configService.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
-    );
+    expiresIn.setMinutes(expiresIn.getMinutes() + +expirationTime);
 
     return {
       content: token,

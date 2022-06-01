@@ -1,4 +1,11 @@
+import { UserEntity } from 'src/users/entity';
+
 export class AuthEntity {
-  accessToken: string;
-  userId: string;
+  accessToken: {
+    expiresIn: Date;
+  };
+  refreshToken: {
+    expiresIn: Date;
+  };
+  user: UserEntity;
 }

@@ -5,7 +5,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
-import { Token } from './entity';
+import { AuthEntity, Token } from './entity';
 import { TokenService } from './token.service';
 
 @Controller('auth')
@@ -36,18 +36,16 @@ export class AuthController {
       .setCookie('access_token', accessToken.content, {
         domain: domain,
         path: '/',
-        httpOnly: false,
+        httpOnly: true,
         expires: accessToken.expiresIn,
         secure: true,
-        sameSite: 'none',
       })
       .setCookie('refresh_token', refreshToken.content, {
         domain: domain,
         path: '/',
-        httpOnly: false,
+        httpOnly: true,
         expires: refreshToken.expiresIn,
         secure: true,
-        sameSite: 'none',
       });
   }
 
@@ -56,7 +54,7 @@ export class AuthController {
     @Body() { email, password }: LoginDto,
     @Res() reply: FastifyReply,
     @Req() request: FastifyRequest,
-  ) {
+  ): Promise<AuthEntity> {
     const user = await this.authService.getUserForEmailAndPassword(
       email,
       password,
@@ -69,14 +67,9 @@ export class AuthController {
       user.id,
     );
 
-    const newReply = this.setupAuthTokensCookie(
-      reply,
-      request,
-      accessToken,
-      refreshToken,
-    );
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken);
 
-    newReply.send({
+    return {
       accessToken: {
         expiresIn: accessToken.expiresIn,
       },
@@ -84,7 +77,7 @@ export class AuthController {
         expiresIn: refreshToken.expiresIn,
       },
       user,
-    });
+    };
   }
 
   @Get('logout')
@@ -96,10 +89,15 @@ export class AuthController {
     reply.clearCookie('access_token').clearCookie('refresh_token').send({
       success: true,
     });
+
+    return true;
   }
 
   @Get('refresh')
-  async refresh(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
+  async refresh(
+    @Res() reply: FastifyReply,
+    @Req() request: FastifyRequest,
+  ): Promise<AuthEntity> {
     const user = await this.tokenService.getUserFromToken(
       request.cookies.refresh_token,
     );
@@ -111,16 +109,15 @@ export class AuthController {
       user.id,
     );
 
-    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken)
-      .status(200)
-      .send({
-        accessToken: {
-          expiresIn: accessToken.expiresIn,
-        },
-        refreshToken: {
-          expiresIn: refreshToken.expiresIn,
-        },
-        user,
-      });
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken);
+    return {
+      accessToken: {
+        expiresIn: accessToken.expiresIn,
+      },
+      refreshToken: {
+        expiresIn: refreshToken.expiresIn,
+      },
+      user,
+    };
   }
 }
