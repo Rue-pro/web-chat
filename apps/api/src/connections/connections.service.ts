@@ -2,7 +2,7 @@ import { UserEntity } from 'src/users/entity';
 import { UpdateConnectionDto } from './dto/update-connection.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 import { ConnectionEntity } from './entity';
 import { CreateConnectionDto } from './dto';
@@ -14,7 +14,9 @@ export class ConnectionsService {
     private readonly connectionRepository: Repository<ConnectionEntity>,
   ) {}
 
-  async create(createMessageDto: CreateConnectionDto) {
+  async create(
+    createMessageDto: CreateConnectionDto,
+  ): Promise<ConnectionEntity> {
     const user = await this.findOne(createMessageDto.userId);
     if (user) {
       Object.assign(user, createMessageDto);
@@ -23,11 +25,11 @@ export class ConnectionsService {
     return this.connectionRepository.save(createMessageDto);
   }
 
-  async delete(socketId: string) {
+  delete(socketId: string): Promise<DeleteResult> {
     return this.connectionRepository.delete({ socketId });
   }
 
-  findOne(userId: string) {
+  findOne(userId: string): Promise<ConnectionEntity> {
     return this.connectionRepository
       .createQueryBuilder('connection')
       .innerJoinAndSelect(UserEntity, 'user', 'connection.userId=user.id')
@@ -35,7 +37,10 @@ export class ConnectionsService {
       .getOne();
   }
 
-  async update(connectionId: string, updateConnection: UpdateConnectionDto) {
+  async update(
+    connectionId: string,
+    updateConnection: UpdateConnectionDto,
+  ): Promise<ConnectionEntity> {
     const toUpdate = await this.connectionRepository.findOneBy({
       id: connectionId,
     });
