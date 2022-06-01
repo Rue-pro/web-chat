@@ -1,23 +1,23 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
-import { AuthModule } from 'src/auth/auth.module';
-import { DialogsService } from './dialogs.service';
-import { DialogsController } from './dialogs.controller';
+import { ConversationsService } from './conversations.service';
+import { ConversationsController } from './conversations.controller';
 import { UserEntity } from 'src/users/entity';
 import { MessageEntity } from 'src/messages/entity';
 import { ConversationEntity } from './entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, ConversationEntity, MessageEntity]),
     AuthModule,
   ],
-  controllers: [DialogsController],
-  providers: [DialogsService],
-  exports: [DialogsService],
+  controllers: [ConversationsController],
+  providers: [ConversationsService],
+  exports: [ConversationsService],
 })
-export class DialogsModule {}
+export class ConversationsModule {}
 
 /*
 export class ArticleModule implements NestModule {

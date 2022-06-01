@@ -8,14 +8,14 @@ import {
   ConversationEntity,
   ConversationId,
   DialogEntity,
-  DialogMessage,
-  DialogUser,
-  SearchResultDialogEntity,
+  ConversationMessage,
+  ConversationUser,
+  SearchResultConversationEntity,
 } from './entity';
-import { SearchFilterDialogDto } from './dto';
+import { SearchFilterConversationDto } from './dto';
 
 @Injectable()
-export class DialogsService {
+export class ConversationsService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -25,7 +25,7 @@ export class DialogsService {
     private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
-  private getCompanion(conversation, userId: UserId) {
+  private getCompanion(conversation, userId: UserId): ConversationUser {
     return conversation.user1_id === userId
       ? {
           id: conversation.user2_id,
@@ -40,9 +40,9 @@ export class DialogsService {
   }
 
   async searchAll(
-    filter: SearchFilterDialogDto,
+    filter: SearchFilterConversationDto,
     userId: string,
-  ): Promise<SearchResultDialogEntity[]> {
+  ): Promise<SearchResultConversationEntity[]> {
     const { query: filterString } = filter;
     const query = this.userRepository.createQueryBuilder('user').select('user');
 
@@ -74,25 +74,24 @@ export class DialogsService {
       'messages."authorId" = user.id',
     );
 
-    const dialogs = await query.getRawMany();
+    const Conversations = await query.getRawMany();
 
-    return dialogs.map((dialog) => {
-      const user: DialogUser = {
-        id: dialog.user_id,
-        name: dialog.user_name,
-        avatar: dialog.user_avatar,
+    return Conversations.map((Conversation) => {
+      const user: ConversationUser = {
+        id: Conversation.user_id,
+        name: Conversation.user_name,
+        avatar: Conversation.user_avatar,
       };
-      const message: DialogMessage = {
-        id: dialog.id,
-        content: dialog.content,
-        createdAt: dialog.createdAt,
+      const message: ConversationMessage = {
+        id: Conversation.id,
+        content: Conversation.content,
+        createdAt: Conversation.createdAt,
       };
-      return new SearchResultDialogEntity(user, message);
+      return new SearchResultConversationEntity(user, message);
     });
   }
 
   async findAll(userId: UserId): Promise<DialogEntity[]> {
-    console.log('FIND_ALL', userId);
     const queryConversations =
       this.conversationRepository.createQueryBuilder('conversation');
     queryConversations.leftJoinAndSelect(
@@ -109,7 +108,7 @@ export class DialogsService {
     queryConversations.orWhere('conversation.user2 = :id', { id: userId });
 
     const conversations = await queryConversations.getRawMany();
-    console.log('CONVERSATIONS', conversations);
+
     return Promise.all(
       conversations.map(async (conversation) => {
         const lastMessage = await this.messageRepository

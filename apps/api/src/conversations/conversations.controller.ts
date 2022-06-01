@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Query, Body, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Req } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -7,42 +7,39 @@ import {
 } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 
-import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { TokenService } from 'src/auth/token.service';
 import { UserEntity } from 'src/users/entity';
-import { DialogsService } from './dialogs.service';
-import { SearchFilterDialogDto } from './dto';
+import { ConversationsService } from './conversations.service';
+import { SearchFilterConversationDto } from './dto';
 
-@Controller('dialogs')
-@ApiTags('dialogs')
+@Controller('Conversations')
+@ApiTags('Conversations')
 @ApiBearerAuth()
-export class DialogsController {
+@UseGuards(JwtAuthGuard)
+export class ConversationsController {
   constructor(
-    private readonly authService: AuthService,
     private readonly tokenService: TokenService,
-    private readonly dialogsService: DialogsService,
+    private readonly ConversationsService: ConversationsService,
   ) {}
 
   @Get('/search')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'Поиск по всем диалогам' })
   @ApiOkResponse({
     description: 'Возвращает список диалогов проходящих под критерии фильтра',
     type: [UserEntity],
   })
   async searchAll(
-    @Query() filter: SearchFilterDialogDto,
+    @Query() filter: SearchFilterConversationDto,
     @Req() request: FastifyRequest,
   ) {
     const user = await this.tokenService.getUserFromToken(
       request.cookies.access_token,
     );
-    return this.dialogsService.searchAll(filter, user.id);
+    return this.ConversationsService.searchAll(filter, user.id);
   }
 
   @Get('')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     description: 'Запрос списка всех начатых пользователем диалогов',
   })
@@ -55,6 +52,6 @@ export class DialogsController {
       request.cookies.access_token,
     );
 
-    return this.dialogsService.findAll(user.id);
+    return this.ConversationsService.findAll(user.id);
   }
 }

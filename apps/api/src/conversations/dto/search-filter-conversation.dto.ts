@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 
-export class SearchFilterDialogDto {
+export class SearchFilterConversationDto {
   @ApiPropertyOptional()
   @IsOptional()
   query?: string;
