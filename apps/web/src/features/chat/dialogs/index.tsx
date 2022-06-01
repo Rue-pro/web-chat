@@ -15,12 +15,11 @@ interface DialogsProps {}
 
 const Dialogs: React.FC<DialogsProps> = () => {
   const dispatch = useDispatch<TDispatch>()
-  const { status, dialogs, userId, currentDialogId, isConnected } = useSelector(
+  const { status, dialogs, currentDialogId, isConnected } = useSelector(
     (state: TStore) => {
       return {
         status: state.DialogsReducer.status,
         dialogs: state.DialogsReducer.data.dialogs,
-        userId: state.AuthReducer.data.userId,
         currentDialogId: state.DialogsReducer.data.currentDialog.id,
         isConnected: state.SocketReducer.isConnectionEstablished,
       }
@@ -29,22 +28,24 @@ const Dialogs: React.FC<DialogsProps> = () => {
 
   useEffect(() => {
     if (isConnected) {
-      dispatch(dialogsActions.getAllDialogs({ userId: userId }))
+      dispatch(dialogsActions.getAllDialogs())
     }
-  }, [dispatch, userId, isConnected])
+  }, [dispatch, isConnected])
 
   useEffect(() => {
-    if (dialogs?.length && !currentDialogId) {
+    if (!dialogs.length) {
+      dispatch(dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null }))
+      return
+    }
+    if (!currentDialogId) {
       dispatch(
         dialogsActions.setCurrentDialog({
           type: 'EXISTING_DIALOG',
           id: dialogs[0].id,
         }),
       )
-    } else {
-      dispatch(dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null }))
     }
-  }, [dialogs, currentDialogId, dispatch])
+  }, [dispatch, dialogs, status, currentDialogId])
 
   const handleOpenDialog = useCallback(
     (id: DialogId) => {
@@ -66,7 +67,6 @@ const Dialogs: React.FC<DialogsProps> = () => {
 
   return (
     <>
-      {/*  TODO unreadedMessagesCount={1000} */}
       {dialogs?.map((dialog: Dialog) => (
         <DialogRow
           key={dialog.id}
@@ -78,7 +78,6 @@ const Dialogs: React.FC<DialogsProps> = () => {
           title={dialog.user.name}
           message={dialog.message?.content ?? ''}
           sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
-          unreadedMessagesCount={1000}
           onClick={() => {
             handleOpenDialog(dialog.id)
           }}

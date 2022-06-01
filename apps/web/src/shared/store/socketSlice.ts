@@ -15,11 +15,9 @@ const socketSlice = createSlice({
   initialState: initialState,
   reducers: {
     startConnecting: state => {
-      console.log('START_CINNECTING')
       state.isEstablishingConnection = true
     },
     connectionEstablished: state => {
-      console.log('CONNECTION_ESTABLISHED')
       state.isConnectionEstablished = true
       state.isEstablishingConnection = false
     },

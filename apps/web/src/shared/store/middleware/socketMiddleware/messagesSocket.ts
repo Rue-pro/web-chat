@@ -23,8 +23,12 @@ export function messagesSocketListeners(
       'WANT MESSAGES FOR CAT WITH dialogId',
       store.getState().DialogsReducer.data.currentDialog.id,
     )
+    const currentDialog = store.getState().DialogsReducer.data.currentDialog
     if (
-      message.dialogId === store.getState().DialogsReducer.data.currentDialog.id
+      (currentDialog.type === 'NEW_DIALOG' &&
+        message.receiverId === currentDialog.id) ||
+      (currentDialog.type === 'EXISTING_DIALOG' &&
+        message.dialogId === currentDialog.id)
     )
       store.dispatch(messagesActions.receiveMessage({ message }))
   })

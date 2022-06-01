@@ -10,7 +10,9 @@ import { ProfileSkeleton, ProfileTemplate } from '.'
 interface ProfileProps {}
 
 const Profile: React.FC<ProfileProps> = () => {
-  const userId = useSelector((state: TStore) => state.AuthReducer.data.userId)
+  const userId = useSelector(
+    (state: TStore) => state.AuthReducer.data.user.userId,
+  )
   const { data, isLoading } = useGetProfileQuery(userId, {
     skip: !Boolean(userId),
   })

@@ -7,7 +7,6 @@ import {
   ButtonBaseProps,
   ButtonBase,
 } from '@mui/material'
-import DoneAllIcon from '@mui/icons-material/DoneAll'
 
 import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
 import Template from './template'
@@ -17,7 +16,6 @@ export interface RowProps {
   title: string
   message: string
   sentTime: string
-  unreadedMessagesCount?: number
   onClick?: (e: MouseEvent<HTMLElement>) => void
   isCurrent?: boolean
 }
@@ -27,7 +25,6 @@ const Row: React.FC<RowProps> = ({
   title,
   message,
   sentTime,
-  unreadedMessagesCount,
   onClick,
   isCurrent = false,
 }) => {
@@ -41,28 +38,13 @@ const Row: React.FC<RowProps> = ({
           </Title>
         }
         message={<Message data-current={isCurrent}>{message}</Message>}
-        info={
-          <>
-            <Time data-current={isCurrent}>{sentTime}</Time>
-            {unreadedMessagesCount ? (
-              <MessagesCount data-current={isCurrent}>
-                {getMessagesCount(unreadedMessagesCount)}
-              </MessagesCount>
-            ) : (
-              <DoneAllIcon color={isCurrent ? 'inherit' : 'primary'} />
-            )}
-          </>
-        }
+        info={<Time data-current={isCurrent}>{sentTime}</Time>}
       />
     </Container>
   )
 }
 
 export default memo(Row)
-
-const getMessagesCount = (messagesCount: number) => {
-  return messagesCount >= 100 ? '99+' : messagesCount
-}
 
 const Container = styled((props: ButtonBaseProps) => <ButtonBase {...props} />)`
   width: 100%;
@@ -88,21 +70,6 @@ const Time = styled(Box)`
   &[data-current='false'] {
     color: #999999;
   }
-`
-
-const MessagesCount = styled(Box)`
-  font-size: 10px;
-  line-height: 14px;
-  font-weight: 600;
-  color: #ffffff;
-
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #14c686;
-  border-radius: 50%;
 `
 
 const Title = styled((props: TypographyProps) => <Typography {...props} />)`

@@ -1,5 +1,13 @@
-import { API_URL } from 'shared/config'
+import axios from 'axios'
+
+import { API_URL, UserId } from 'shared/config'
 import { loadState, removeState, saveState } from 'shared/lib'
+
+const APIInstance = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
+  withCredentials: true,
+})
 
 const KEY = 'tokens'
 
@@ -42,25 +50,23 @@ class TokenService {
     return currentTime >= new Date(refreshTokenExpiration)
   }
 
-  async refreshTokens(onRefresh?: () => void) {
+  async refreshTokens(onRefresh?: (userId: UserId) => void) {
     console.groupCollapsed('[TOKEN_SERVICE] refreshTokens')
     if (this.isAccessTokenExpired()) {
       console.log('Access token expired')
       try {
-        const response = await fetch(`${API_URL}/auth/refresh`, {
-          credentials: 'include',
-        })
+        const response = await APIInstance({ url: `${API_URL}/auth/refresh` })
 
-        const data = await response.json()
-        console.log(data)
-        if (data.statusCode !== 200) {
+        const data = response.data
+        if (response.status !== 200) {
           throw Error(data.message.content)
         }
-        if (onRefresh) onRefresh()
+
         this.setTokensExpirationTime(
           data.accessToken.expiresIn,
           data.refreshToken.expiresIn,
         )
+        if (onRefresh) onRefresh(data.user.id)
       } catch (e) {
         console.error('ERROR', e)
       }

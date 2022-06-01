@@ -1,13 +1,24 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api'
 import { UserId } from 'shared/config'
+import { loadState, saveState, removeState } from 'shared/lib'
 import { TokenService } from 'shared/services'
 import { GenericState } from './genericSlice'
 
+const KEY = 'user'
+
+interface User {
+  userId: UserId
+}
+
+const defaultUser = {
+  userId: '',
+}
+
 interface AuthData {
   isAuth: boolean
-  userId: UserId
+  user: User
 }
 
 interface AuthState extends GenericState<AuthData> {}
@@ -19,7 +30,7 @@ type LoginData = {
 
 const defaultData: AuthData = {
   isAuth: TokenService.isTokensValid(),
-  userId: '',
+  user: defaultUser,
 }
 
 export const login = createAsyncThunk(
@@ -34,7 +45,7 @@ export const login = createAsyncThunk(
 )
 
 const initialState: AuthState = {
-  data: defaultData,
+  data: { ...defaultData, user: loadState<User>(KEY, defaultUser) },
   status: 'loading',
 }
 
@@ -43,12 +54,15 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     logout(state) {
+      console.log('LOGOUT')
       state.data.isAuth = false
-      state.data.userId = ''
+      removeState(KEY)
       TokenService.removeTokensExpirationTime()
     },
-    setAuth(state) {
+    setAuth(state, action: PayloadAction<{ userId: UserId }>) {
       state.data.isAuth = true
+      state.data.user.userId = action.payload.userId
+      saveState<User>(KEY, state.data.user)
     },
   },
   extraReducers: builder => {
@@ -59,8 +73,9 @@ const authSlice = createSlice({
       console.log('LOGIN_FULFILLED', action)
       state.status = 'idle'
       state.data.isAuth = true
-      state.data.userId = action.payload.id
+      state.data.user.userId = action.payload.user.id
 
+      saveState<User>(KEY, state.data.user)
       TokenService.setTokensExpirationTime(
         action.payload.accessToken.expiresIn,
         action.payload.refreshToken.expiresIn,

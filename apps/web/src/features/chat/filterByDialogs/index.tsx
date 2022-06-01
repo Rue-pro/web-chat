@@ -94,7 +94,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             title={dialog.user.name}
             message={dialog.message?.content ?? ''}
             sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
-            unreadedMessagesCount={0}
             onClick={() => {
               handleOpenDialog({
                 dialogId: dialog.id,

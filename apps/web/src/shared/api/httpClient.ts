@@ -14,8 +14,8 @@ APIInstance.interceptors.request.use(async ({ ...config }) => {
   // X-Authorization
   const accessToken = '2131231' // getToken from the store
   if (!accessToken) return config
-
-  if (config.url !== '/auth/login/') {
+  console.log(config)
+  if (config.url !== '/auth/login/' && config.url !== '/auth/logout/') {
     const refreshTokenStatus = await TokenService.refreshTokens()
     console.log('REFRSH_TOKEN_STATUS', refreshTokenStatus)
   }

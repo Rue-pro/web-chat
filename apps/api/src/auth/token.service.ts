@@ -53,10 +53,10 @@ export class TokenService {
     return await this.validateUser(decodedToken.userId);
   }
 
-  async getUserFromSocket(socket: Socket): Promise<UserEntity | IWSError> {
+  async getUserFromSocket(socket: Socket): Promise<UserEntity> {
     const cookie = socket.handshake.headers.cookie;
     if (!cookie) {
-      return new IWSError({
+      throw new IWSError({
         code: 400,
         message: 'Found no cookie.',
         name: 'ERROR_FOUND_NO_COOKIE',
@@ -65,16 +65,16 @@ export class TokenService {
 
     const { access_token: accessToken } = parse(cookie);
     if (!accessToken) {
-      return new IWSError({
+      throw new IWSError({
         code: 400,
         message: 'Found no access_token cookie',
         name: 'ERROR_FOUNR_NO_ACCESS_TOKEN_COOKIE',
       });
     }
 
-    const result = (await this.verifyAccessToken(accessToken)) || {
-      userId: null,
-    };
+    const result = await this.verifyAccessToken(accessToken);
+
+    console.log('GET_USER_FROM_SOCKET', result);
 
     return this.validateUser(result.userId);
   }

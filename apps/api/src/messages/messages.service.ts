@@ -56,6 +56,7 @@ export class MessagesService {
         createdAt: new Date(message.messages_createdAt).toISOString(),
         authorId: message.messages_authorId,
         dialogId: conversationId,
+        receiverId: null,
       };
     });
   }

@@ -1,4 +1,13 @@
-import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
+import {
+  Record,
+  String,
+  Static,
+  Number,
+  Union,
+  Literal,
+  Array,
+  Null,
+} from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { GenericState } from './genericSlice'
@@ -18,6 +27,7 @@ const MessageSchema = Record({
   createdAt: String,
   content: String,
   authorId: String,
+  receiverId: String.Or(Null),
   dialogId: Number,
 })
 const MessagesArrSchema = Array(MessageSchema)
@@ -48,12 +58,15 @@ const messagesSlice = createSlice({
     ) => {
       console.log('RECEIVE_ALL_MESSAGES', action)
       const messages = action.payload.messages
+      console.log(messages)
       const isMessagesArr = MessagesArrSchema.guard(messages)
       if (!isMessagesArr) {
         const error: ClientError = {
           type: 'ERROR_BACKEND_REQUEST_VALIDATION',
           date: new Date(),
-          message: '[Receive all messages] Fetched messages format is wrong',
+          message:
+            '[Receive all messages] Fetched messages format is wrong' +
+            JSON.stringify(messages, null, 2),
           details:
             'Array of ' +
             JSON.stringify({

@@ -63,20 +63,18 @@ const dialogsSlice = createSlice({
       const dialogs = action.payload.dialogs
       const isDialogsArr = DialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
-        console.error('Fetched through socket dialogs format is wrong!')
+        console.error(
+          'Fetched through socket dialogs format is wrong!',
+          dialogs,
+        )
         state.data.dialogs = []
         return
       }
       state.data.dialogs = dialogs
       state.status = 'idle'
     },
-    getAllDialogs: (
-      state,
-      action: PayloadAction<{
-        userId: string
-      }>,
-    ) => {
-      console.log('REQUEST_FOR_ALL_DIALOGS', action)
+    getAllDialogs: state => {
+      console.log('REQUEST_FOR_ALL_DIALOGS')
       state.status = 'loading'
       return
     },

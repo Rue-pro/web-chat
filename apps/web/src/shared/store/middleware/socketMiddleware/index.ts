@@ -17,19 +17,14 @@ export const socketMiddleware: Middleware = store => {
   return next => action => {
     const isConnectionEstablished =
       socket && store.getState().SocketReducer.isConnectionEstablished
-    console.log('IS_CONNECTION_ESTABLISHED', isConnectionEstablished)
     if (socketActions.startConnecting.match(action)) {
-      console.log('SOCKET_MIDDLEWARE_START_CONNECTING', SOCKET_URL)
       socket = io(SOCKET_URL, {
         withCredentials: true,
         path: '/socket',
         transports: ['websocket', 'polling', 'flashsocket'],
       })
 
-      console.log('SOCKET', socket)
-
       socket.on('connect', () => {
-        console.log('SOCKET_MIDDLEWARE_CONNECTED')
         store.dispatch(socketActions.connectionEstablished())
       })
 
@@ -40,19 +35,16 @@ export const socketMiddleware: Middleware = store => {
       socket.on('error', async (error: any) => {
         console.log('SOCKET_MIDDLEWARE_ERROR_HAPPEND', error)
         if (
-          error.code === 403 &&
-          error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED'
+          (error.code === 403 &&
+            error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED') ||
+          (error.code === 400 &&
+            error.message.name === 'ERROR_FOUNR_NO_ACCESS_TOKEN_COOKIE')
         ) {
           console.log('ERROR_ACCESS_TOKEN_EXPIRED')
           const response = await TokenService.refreshTokens()
           console.log('SOCKET_MIDDLEWARE: ', response)
+          socket.emit(error.event, error.payload)
         }
-      })
-
-      socket.onAny((eventName, ...args) => {
-        console.log('ON_ANY')
-        console.log(eventName)
-        console.log(args)
       })
 
       messagesSocketListeners(socket, store)

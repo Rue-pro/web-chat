@@ -83,6 +83,7 @@ export class AuthController {
       refreshToken: {
         expiresIn: refreshToken.expiresIn,
       },
+      user,
     });
   }
 
@@ -110,13 +111,16 @@ export class AuthController {
       user.id,
     );
 
-    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken).send({
-      accessToken: {
-        expiresIn: accessToken.expiresIn,
-      },
-      refreshToken: {
-        expiresIn: refreshToken.expiresIn,
-      },
-    });
+    this.setupAuthTokensCookie(reply, request, accessToken, refreshToken)
+      .status(200)
+      .send({
+        accessToken: {
+          expiresIn: accessToken.expiresIn,
+        },
+        refreshToken: {
+          expiresIn: refreshToken.expiresIn,
+        },
+        user,
+      });
   }
 }

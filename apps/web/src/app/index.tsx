@@ -7,24 +7,26 @@ import { TStore } from 'shared/store'
 import { socketActions } from 'shared/store/socketSlice'
 import { TokenService } from 'shared/services'
 import { authActions } from 'shared/store/authSlice'
+import { UserId } from 'shared/config'
 
 const App: React.FC = () => {
   const [refresingTokens, setRefreshingTokens] = useState(false)
   const dispatch = useDispatch()
-  const { isAuth, isConnected } = useSelector((state: TStore) => ({
+  const { isAuth } = useSelector((state: TStore) => ({
     isAuth: state.AuthReducer.data.isAuth,
-    isConnected: state.SocketReducer.isConnectionEstablished,
   }))
 
-  const setAuth = useCallback(() => {
-    dispatch(authActions.setAuth)
-  }, [dispatch])
+  const setAuth = useCallback(
+    (userId: UserId) => {
+      dispatch(authActions.setAuth({ userId }))
+    },
+    [dispatch],
+  )
 
   useEffect(() => {
     async function refreshTokens() {
       setRefreshingTokens(true)
-      const response = await TokenService.refreshTokens(setAuth)
-      console.log('APP_REFRESH_TOKEN:', response)
+      await TokenService.refreshTokens(setAuth)
       setRefreshingTokens(false)
     }
     refreshTokens()
@@ -33,11 +35,6 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isAuth) dispatch(socketActions.startConnecting())
   }, [dispatch, isAuth])
-
-  console.group('[APP_INDEX]')
-  console.log('IS_AUTH', isAuth)
-  console.log('IS_CONNECTED', isConnected)
-  console.groupEnd()
 
   if (refresingTokens) {
     return <h1>ОБНОВЛЯЮ ТОКЕНЫ</h1>

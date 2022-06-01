@@ -17,7 +17,7 @@ const Dialog: React.FC<DialogProps> = () => {
       return {
         status: state.MessagesReducer.status,
         messages: state.MessagesReducer.data.messages,
-        userId: state.AuthReducer.data.userId,
+        userId: state.AuthReducer.data.user.userId,
         currentDialog: state.DialogsReducer.data.currentDialog,
       }
     },
@@ -63,8 +63,9 @@ const Dialog: React.FC<DialogProps> = () => {
   }, [messages, scrolledUpByUser])
 
   useEffect(() => {
-    if (currentDialog.type === 'EXISTING_DIALOG')
+    if (currentDialog.type === 'EXISTING_DIALOG') {
       dispatch(messagesActions.getAllMessages({ dialogId: currentDialog.id }))
+    }
   }, [dispatch, currentDialog])
 
   if (status === 'loading') {
