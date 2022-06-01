@@ -1,4 +1,4 @@
-import { ConversationEntity } from 'src/dialogs/entity';
+import { ConversationEntity } from 'src/conversations/entity';
 import { UserEntity } from 'src/users/entity';
 import {
   Column,

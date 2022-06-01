@@ -2,15 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { AuthService } from 'src/auth/auth.service';
-import { ConversationEntity } from 'src/dialogs/entity';
+import { ConversationEntity } from 'src/conversations/entity';
 import { MessageEntity } from './entity';
 import { CreateMessageDto } from './dto';
 
 @Injectable()
 export class MessagesService {
   constructor(
-    private readonly authService: AuthService,
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
     @InjectRepository(ConversationEntity)
@@ -24,14 +22,10 @@ export class MessagesService {
   }
 
   async getAllMessages(userId: string, conversationId: string) {
-    /**
-     * TODO
-     * на фронте сделать нормальную обработку ошибок с бэка
-     */
-    const query2 = this.conversationRepository
+    const query = this.conversationRepository
       .createQueryBuilder('conversation')
       .select('conversation');
-    query2.innerJoinAndSelect(
+    query.innerJoinAndSelect(
       (
         qb: SelectQueryBuilder<MessageEntity>,
       ): SelectQueryBuilder<MessageEntity> => {
@@ -44,10 +38,16 @@ export class MessagesService {
       'message',
       'conversation.id=message."messages_channelId"',
     );
-    query2.setParameter('conversationId', conversationId);
-    query2.where('conversation.id = :conversationId');
+    query.setParameter('conversationId', conversationId);
+    query.setParameter('userId', userId);
+    query.where('conversation.id = :conversationId');
+    query.andWhere(
+      new Brackets((qb) =>
+        qb.where('"user1" = :userId').orWhere('"user2" = :userId'),
+      ),
+    );
 
-    const messages = await query2.getRawMany();
+    const messages = await query.getRawMany();
 
     return messages.map((message) => {
       return {
