@@ -15,6 +15,7 @@ import { DialogsService } from '../dialogs/dialogs.service';
 import { IWSError } from '../error/ws.error.interface';
 import { MessagesService } from '../messages/messages.service';
 import { NewMessageDto } from '../messages/dto';
+import { TokenService } from 'src/auth/token.service';
 
 @WebSocketGateway({
   path: `/socket`,
@@ -28,6 +29,7 @@ export class SocketGateway implements OnGatewayConnection {
     private readonly dialogService: DialogsService,
     private readonly connectionService: ConnectionsService,
     private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
   ) {}
 
   private logger: Logger = new Logger('SocketGateway');
@@ -41,8 +43,7 @@ export class SocketGateway implements OnGatewayConnection {
   }
 
   async handleConnection(socket: Socket, ...args: any[]) {
-    console.log('HANDLE_CONNECTION');
-    const result = await this.authService.getUserFromSocket(socket);
+    const result = await this.tokenService.getUserFromSocket(socket);
     if (result instanceof IWSError) {
       result.event = 'connect';
       return;
@@ -63,9 +64,8 @@ export class SocketGateway implements OnGatewayConnection {
     @MessageBody() newMessage: NewMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('LISTENING_FOR_MESSAGES');
     const receiverId = newMessage.receiverId;
-    const result = await this.authService.getUserFromSocket(socket);
+    const result = await this.tokenService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
       result.event = 'send_message';
@@ -116,8 +116,7 @@ export class SocketGateway implements OnGatewayConnection {
     @MessageBody() dialogId: string,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('REQUEST_FOR_ALL_MESSAGES');
-    const result = await this.authService.getUserFromSocket(socket);
+    const result = await this.tokenService.getUserFromSocket(socket);
 
     if (result instanceof IWSError) {
       result.event = 'request_all_messages';
@@ -136,10 +135,7 @@ export class SocketGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_dialogs')
   async requestAllDialogs(@ConnectedSocket() socket: Socket) {
-    console.log('REQUEST_ALL_DIALOGS');
-    console.log(socket);
-    const result = await this.authService.getUserFromSocket(socket);
-    console.log('RESULT', result);
+    const result = await this.tokenService.getUserFromSocket(socket);
     if (result instanceof IWSError) {
       result.event = 'request_all_dialogs';
       socket.emit('error', result);
@@ -147,7 +143,6 @@ export class SocketGateway implements OnGatewayConnection {
     }
 
     const dialogs = await this.dialogService.findAll(result.id);
-    console.log('DIALOGS', dialogs);
     socket.emit('send_all_dialogs', dialogs);
   }
 }

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-jwt';
 
-import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 const cookieExtractor = (req) => {
   let jwt = null;
@@ -19,7 +19,7 @@ const cookieExtractor = (req) => {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly auth: AuthService,
+    private readonly tokenService: TokenService,
   ) {
     super({
       jwtFromRequest: cookieExtractor,
@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { userId: string }) {
-    const user = await this.auth.validateUser(payload.userId);
+    const user = await this.tokenService.validateUser(payload.userId);
 
     if (!user) {
       throw new UnauthorizedException();

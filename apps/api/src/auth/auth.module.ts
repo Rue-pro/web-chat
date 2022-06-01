@@ -9,6 +9,7 @@ import { UserEntity } from 'src/users/entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { TokenService } from './token.service';
 
 @Module({
   imports: [
@@ -17,9 +18,7 @@ import { JwtStrategy } from './jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey: configService.get<string>(
-          'JWT_ACCESS_TOKEN_SECRET',
-        ),
+        secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
           expiresIn: configService.get<string>(
             'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
@@ -30,7 +29,13 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UsersService, ConfigService],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    UsersService,
+    ConfigService,
+    TokenService,
+  ],
+  exports: [AuthService, TokenService],
 })
 export class AuthModule {}

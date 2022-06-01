@@ -1,30 +1,20 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import { UserId } from 'src/users/entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
 import { Token } from './entity';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { TokenService } from './token.service';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
     private readonly userService: UsersService,
-    private readonly configService: ConfigService,
   ) {}
 
   private setupAuthTokensCookie(
@@ -71,8 +61,8 @@ export class AuthController {
       email,
       password,
     );
-    const accessToken = await this.authService.getJwtAccessToken(user.id);
-    const refreshToken = await this.authService.getJwtRefreshToken(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
 
     await this.userService.setCurrentRefreshToken(
       refreshToken.content,
@@ -85,9 +75,7 @@ export class AuthController {
       accessToken,
       refreshToken,
     );
-    console.log('ACCESS_TOKEN', accessToken);
-    console.log('REFRESH_TOKEN', refreshToken);
-    console.log(new Date());
+
     newReply.send({
       accessToken: {
         expiresIn: accessToken.expiresIn,
@@ -100,7 +88,7 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
-    const user = await this.authService.getUserFromToken(
+    const user = await this.tokenService.getUserFromToken(
       request.cookies.access_token,
     );
     await this.userService.removeRefeshToken(user.id);
@@ -111,12 +99,11 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Res() reply: FastifyReply, @Req() request: FastifyRequest) {
-    console.log('REFRESH_COOKIES', request.cookies);
-    const user = await this.authService.getUserFromToken(
+    const user = await this.tokenService.getUserFromToken(
       request.cookies.refresh_token,
     );
-    const accessToken = this.authService.getJwtAccessToken(user.id);
-    const refreshToken = this.authService.getJwtRefreshToken(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
 
     await this.userService.setCurrentRefreshToken(
       refreshToken.content,

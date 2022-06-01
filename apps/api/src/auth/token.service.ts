@@ -1,7 +1,6 @@
 import {
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,11 +27,24 @@ export class TokenService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  private validateUser(userId: UserId) {
+  async validateUser(userId: UserId): Promise<UserEntity> {
     return this.usersService.findOne(userId);
   }
 
-  async getUserIdFromToken(accessToken: string): Promise<UserEntity> {
+  async verifyAccessToken(accessToken: string) {
+    try {
+      return this.jwtService.verifyAsync(accessToken);
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new ForbiddenException({
+          message: 'Access token is required, then retry the query',
+          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
+        });
+      }
+    }
+  }
+
+  async getUserFromToken(accessToken: string): Promise<UserEntity> {
     const decodedToken = this.jwtService.decode(accessToken);
     if (!decodedToken || typeof decodedToken === 'string') {
       throw new UnauthorizedException('Invalid accessToken');
@@ -43,7 +55,6 @@ export class TokenService {
 
   async getUserFromSocket(socket: Socket): Promise<UserEntity | IWSError> {
     const cookie = socket.handshake.headers.cookie;
-    console.log('SOCKET COOKIE', socket.handshake.headers.cookie);
     if (!cookie) {
       return new IWSError({
         code: 400,
@@ -61,52 +72,27 @@ export class TokenService {
       });
     }
 
-    let payload: TokenPayloadEntity = { userId: null };
-    try {
-      payload = this.jwtService.verify(accessToken, {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      });
-    } catch (e) {
-      if (e.name === 'TokenExpiredError') {
-        return new IWSError({
-          code: 403,
-          message: 'Refreshing token is required, then retry the query',
-          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
-        });
-      }
-    }
+    const result = (await this.verifyAccessToken(accessToken)) || {
+      userId: null,
+    };
 
-    return this.validateUser(payload.userId);
+    return this.validateUser(result.userId);
   }
 
-  async verifyToken(accessToken: string) {
-    try {
-      return this.jwtService.verify(accessToken, {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      });
-    } catch (e) {
-      if (e.name === 'TokenExpiredError') {
-        throw new ForbiddenException({
-          message: 'Refreshing token is required, then retry the query',
-          name: 'ERROR_ACCESS_TOKEN_EXPIRED',
-        });
-      }
-    }
-  }
-
-  generateAccessToken(userId: UserId): Token {
+  async generateAccessToken(userId: UserId): Promise<Token> {
     const payload: TokenPayloadEntity = { userId };
-    const token = this.jwtService.sign(payload, {
+
+    let expiresIn = new Date();
+    const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
         'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-      )}s`,
+      )}m`,
     });
 
-    let expiresIn = new Date();
-    expiresIn.setSeconds(
-      expiresIn.getSeconds() +
-        this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+    expiresIn.setMinutes(
+      expiresIn.getMinutes() +
+        +this.configService.get<number>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
     );
 
     return {
@@ -115,19 +101,19 @@ export class TokenService {
     };
   }
 
-  generateRefreshToken(userId: UserId): Token {
+  async generateRefreshToken(userId: UserId): Promise<Token> {
     const payload: TokenPayloadEntity = { userId };
-    const token = this.jwtService.sign(payload, {
+    const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
         'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-      )}s`,
+      )}m`,
     });
 
     let expiresIn = new Date();
-    expiresIn.setSeconds(
-      expiresIn.getSeconds() +
-        this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+    expiresIn.setMinutes(
+      expiresIn.getMinutes() +
+        +this.configService.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
     );
 
     return {

@@ -9,6 +9,7 @@ import { FastifyRequest } from 'fastify';
 
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { TokenService } from 'src/auth/token.service';
 import { UserEntity } from 'src/users/entity';
 import { DialogsService } from './dialogs.service';
 import { SearchFilterDialogDto } from './dto';
@@ -19,6 +20,7 @@ import { SearchFilterDialogDto } from './dto';
 export class DialogsController {
   constructor(
     private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
     private readonly dialogsService: DialogsService,
   ) {}
 
@@ -33,7 +35,7 @@ export class DialogsController {
     @Query() filter: SearchFilterDialogDto,
     @Req() request: FastifyRequest,
   ) {
-    const user = await this.authService.getUserFromToken(
+    const user = await this.tokenService.getUserFromToken(
       request.cookies.access_token,
     );
     return this.dialogsService.searchAll(filter, user.id);
@@ -49,7 +51,7 @@ export class DialogsController {
     type: [UserEntity],
   })
   async findAll(@Req() request: FastifyRequest) {
-    const user = await this.authService.getUserFromToken(
+    const user = await this.tokenService.getUserFromToken(
       request.cookies.access_token,
     );
 

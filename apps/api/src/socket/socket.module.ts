@@ -1,4 +1,3 @@
-import { ConnectionsService } from '../connections/connections.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
