@@ -10,6 +10,8 @@ import {
   styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import { theme } from 'shared/theme/theme'
+import { colors } from 'shared/theme/colors'
 
 interface TemplateProps {
   aside: React.ReactNode
@@ -30,7 +32,7 @@ const ChatTemplate: React.FC<TemplateProps> = ({ aside, title, main }) => {
 
   return (
     <>
-      <MuiAppBar sx={{ position: 'static' }}>
+      <Header sx={{ position: 'static' }}>
         <Toolbar>
           {!open && (
             <IconButton
@@ -53,7 +55,7 @@ const ChatTemplate: React.FC<TemplateProps> = ({ aside, title, main }) => {
             {title}
           </Typography>
         </Toolbar>
-      </MuiAppBar>
+      </Header>
       <Modal open={open} onClose={handleClose}>
         <Paper elevation={0} square sx={{ height: '100vh', width: '30%' }}>
           {aside}
@@ -66,8 +68,16 @@ const ChatTemplate: React.FC<TemplateProps> = ({ aside, title, main }) => {
 
 export default ChatTemplate
 
+const Header = styled(MuiAppBar)`
+  border-bottom: 2px solid ${colors.primary};
+
+  & .MuiToolbar-root {
+    background-color: ${theme.palette.background.default};
+  }
+`
+
 const Main = styled(Box)`
-  height: calc(100vh - 63.99px);
+  height: calc(100vh - 66px);
   width: 100%;
-  padding-top: 20px;
+  padding-top: 16px;
 `

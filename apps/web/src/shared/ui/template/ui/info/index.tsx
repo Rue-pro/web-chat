@@ -1,5 +1,6 @@
 import React from 'react'
 import { styled, Typography, Box } from '@mui/material'
+import { colors } from 'shared/theme/colors'
 
 interface InfoTemplateProps {
   children: string
@@ -9,9 +10,7 @@ const InfoTemplate: React.FC<InfoTemplateProps> = ({ children }) => {
   return (
     <Container>
       <TextContainer>
-        <Typography variant="body1" component="span">
-          {children}
-        </Typography>
+        <Typography variant="body1">{children}</Typography>
       </TextContainer>
     </Container>
   )
@@ -29,6 +28,6 @@ const Container = styled(Box)`
 
 const TextContainer = styled(Box)`
   padding: 8px 16px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${colors.gray[4]};
   border-radius: 20px;
 `

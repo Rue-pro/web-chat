@@ -24,7 +24,7 @@ export const extendedApi = emptyApi
         transformResponse: (res): SearchDialogResult[] => {
           const isDialogArr = SearchDialogResultArrSchema.guard(res)
           if (!isDialogArr) {
-            console.error('Fetched dialogs format is wrong!')
+            console.error('Fetched dialogs format is wrong!', res)
             return []
           }
           return res

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { ActionButton } from 'shared/ui'
 import { PAGES } from 'shared/config'
 import { authActions } from 'shared/store/authSlice'
+import { colors } from 'shared/theme/colors'
 
 interface TemplateProps {
   avatar: ReactElement
@@ -46,7 +47,7 @@ const Container = styled(Stack)`
 `
 
 const Header = styled(Box)`
-  background-color: #1976d2;
+  background-color: ${colors.gray[1]};
   padding: 20px 16px;
 `
 

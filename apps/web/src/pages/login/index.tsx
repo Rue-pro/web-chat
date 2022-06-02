@@ -12,9 +12,7 @@ const LoginPage: React.FC = () => {
   return isAuth ? (
     <Navigate to={PAGES.HomePage} />
   ) : (
-    <div>
-      <AuthByEmailForm formName="auth-form" pageToNavigate={PAGES.HomePage} />
-    </div>
+    <AuthByEmailForm formName="auth-form" pageToNavigate={PAGES.HomePage} />
   )
 }
 

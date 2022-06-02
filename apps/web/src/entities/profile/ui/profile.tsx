@@ -23,12 +23,12 @@ const Profile: React.FC<ProfileProps> = () => {
     <ProfileTemplate
       avatar={<AvatarBadge src={data.avatar ?? ''} alt={data.name} />}
       name={
-        <Typography variant="subtitle1" component="p" color="#FFFFFF">
-          {data.name}
+        <Typography variant="subtitle1" component="p">
+          <b>{data.name}</b>
         </Typography>
       }
       phone={
-        <Typography variant="subtitle1" component="p" color="#FFFFFF">
+        <Typography variant="subtitle1" component="p">
           {data.phone}
         </Typography>
       }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert } from '@mui/material'
+import { Alert, Stack, styled } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
@@ -8,6 +8,7 @@ import { TStore } from 'shared/store'
 import { login } from 'shared/store/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
+import { colors } from 'shared/theme/colors'
 
 interface FormProps {
   formName: string
@@ -47,7 +48,7 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
   }, [navigate, pageToNavigate, status, isAuth])
 
   return (
-    <>
+    <Container>
       {status === 'error' && <Alert severity="error">{error}</Alert>}
       <Formik
         initialValues={{
@@ -64,8 +65,16 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
           />
         )}
       />
-    </>
+    </Container>
   )
 }
 
 export default Form
+
+const Container = styled(Stack)`
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 4px solid ${colors.primary};
+`

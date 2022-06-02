@@ -2,6 +2,7 @@ import React from 'react'
 import { FormikProps } from 'formik'
 
 import { ActionButton, Input } from 'shared/ui'
+import { Stack, styled } from '@mui/material'
 
 export type FormValues = {
   email: string
@@ -21,36 +22,36 @@ const FormView = ({
   isSubmitting,
 }: FormViewProps): React.ReactElement => {
   return (
-    <>
-      <div>
-        <Input
-          formName={formName}
-          inputId="email"
-          label="Email"
-          value={values.email}
-          onChange={e => setFieldValue('email', e.target.value)}
-          error={Boolean(errors.email)}
-          helperText={errors.email}
-        />
-      </div>
-      <div>
-        <Input
-          formName={formName}
-          inputId="password"
-          label="Password"
-          type="password"
-          autoComplete="current-password"
-          value={values.password}
-          onChange={e => setFieldValue('password', e.target.value)}
-          error={Boolean(errors.password)}
-          helperText={errors.password}
-        />
-      </div>
+    <Container>
+      <Input
+        formName={formName}
+        inputId="email"
+        label="Email"
+        value={values.email}
+        onChange={e => setFieldValue('email', e.target.value)}
+        error={Boolean(errors.email)}
+        helperText={errors.email}
+      />
+      <Input
+        formName={formName}
+        inputId="password"
+        label="Password"
+        type="password"
+        autoComplete="current-password"
+        value={values.password}
+        onChange={e => setFieldValue('password', e.target.value)}
+        error={Boolean(errors.password)}
+        helperText={errors.password}
+      />
       <ActionButton type="submit" disabled={isSubmitting} onClick={submitForm}>
-        Войти
+        Sign In
       </ActionButton>
-    </>
+    </Container>
   )
 }
 
 export default FormView
+
+const Container = styled(Stack)`
+  width: 350px;
+`
