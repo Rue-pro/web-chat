@@ -36,10 +36,9 @@ const defaultData: AuthData = {
 export const login = createAsyncThunk(
   'auth/login',
   async (loginData: LoginData) => {
-    console.groupCollapsed('[AUTH_SLICE] login')
+    console.log('[AUTH_SLICE] login')
     const response = await APIInstance.post('/auth/login', loginData)
     console.log(response)
-    console.groupEnd()
     return response.data
   },
 )
@@ -55,9 +54,10 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       console.log('LOGOUT')
-      state.data.isAuth = false
       removeState(KEY)
       TokenService.removeTokensExpirationTime()
+
+      state.data.isAuth = false
     },
     setAuth(state, action: PayloadAction<{ userId: UserId }>) {
       state.data.isAuth = true

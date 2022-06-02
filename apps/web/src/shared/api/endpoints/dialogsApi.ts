@@ -18,7 +18,7 @@ export const extendedApi = emptyApi
     endpoints: build => ({
       findDialogs: build.query<SearchDialogResult[], Query>({
         query: query => ({
-          url: `/dialogs/search?query=${query}`,
+          url: `/conversations/search?query=${query}`,
           method: 'GET',
         }),
         transformResponse: (res): SearchDialogResult[] => {

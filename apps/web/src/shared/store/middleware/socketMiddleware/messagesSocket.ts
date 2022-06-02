@@ -5,19 +5,19 @@ import { TStore } from 'shared/store'
 import {
   messagesActions,
   ChatMessageEvent,
-  Message,
+  RawMessage,
 } from 'shared/store/messagesSlice'
 
 export function messagesSocketListeners(
   socket: Socket,
   store: MiddlewareAPI<Dispatch<AnyAction>, TStore>,
 ) {
-  socket.on(ChatMessageEvent.SendAllMessages, (messages: Message[]) => {
+  socket.on(ChatMessageEvent.SendAllMessages, (messages: RawMessage[]) => {
     console.log('CHAT_MIDDLEWARE_SEND_ALL_MESSAGES', messages)
     store.dispatch(messagesActions.receiveAllMessages({ messages }))
   })
 
-  socket.on(ChatMessageEvent.ReceiveMessage, (message: Message) => {
+  socket.on(ChatMessageEvent.ReceiveMessage, (message: RawMessage) => {
     console.log('CHAT_MIDDLEWARE_RECEIVE_MESSAGE', message)
     console.log(
       'WANT MESSAGES FOR CAT WITH dialogId',
@@ -28,7 +28,7 @@ export function messagesSocketListeners(
       (currentDialog.type === 'NEW_DIALOG' &&
         message.receiverId === currentDialog.id) ||
       (currentDialog.type === 'EXISTING_DIALOG' &&
-        message.dialogId === currentDialog.id)
+        message.conversationId === currentDialog.id)
     )
       store.dispatch(messagesActions.receiveMessage({ message }))
   })

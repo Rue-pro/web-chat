@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Grid, Stack } from '@mui/material'
+import { Grid, Stack, styled } from '@mui/material'
 
 interface TemplateProps {
   avatar: ReactElement
@@ -15,9 +15,9 @@ const Template: React.FC<TemplateProps> = ({
   info,
 }) => (
   <Grid container spacing={2}>
-    <Grid item xs={1} md={2}>
+    <AvatarContainer item xs={1} md={2}>
       {avatar}
-    </Grid>
+    </AvatarContainer>
     <Grid item xs={9} md={8}>
       {title}
       {message}
@@ -34,3 +34,8 @@ const Template: React.FC<TemplateProps> = ({
 )
 
 export default Template
+
+const AvatarContainer = styled(Grid)`
+  display: flex;
+  align-items: center;
+`

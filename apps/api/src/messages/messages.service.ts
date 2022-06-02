@@ -40,7 +40,7 @@ export class MessagesService {
         return r;
       },
       'message',
-      'conversation.id=message."messages_channelId"',
+      'conversation.id=message."messages_conversationId"',
     );
     query.setParameter('conversationId', conversationId);
     query.setParameter('userId', userId);

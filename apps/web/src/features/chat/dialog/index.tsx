@@ -7,6 +7,7 @@ import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage'
 import { throttle, timeStampToRuDate } from 'shared/lib'
 import { TStore } from 'shared/store'
 import { messagesActions, Message } from 'shared/store/messagesSlice'
+import { colors } from 'shared/theme/colors'
 
 interface DialogProps {}
 
@@ -115,7 +116,7 @@ const ButtonBackground = styled(Box)`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: white;
+  background-color: ${colors.gray[5]};
   border-radius: 50%;
 `
 

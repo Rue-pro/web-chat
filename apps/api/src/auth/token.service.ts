@@ -28,9 +28,11 @@ export class TokenService {
   }
 
   async verifyAccessToken(accessToken: string): Promise<TokenPayloadEntity> {
+    console.log('ACCESS_TOKEN', accessToken);
     try {
       return this.jwtService.verifyAsync(accessToken);
     } catch (e) {
+      console.log('veryfyAccessToken', e);
       if (e.name === 'TokenExpiredError') {
         throw new ForbiddenException({
           message: 'Access token is expired, refresh it, then retry the query',

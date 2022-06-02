@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, styled, Typography } from '@mui/material'
 
 import { MessageOwner } from 'shared/store/messagesSlice'
+import { colors } from 'shared/theme/colors'
 
 interface ChatMessageProps {
   type: MessageOwner
@@ -44,22 +45,22 @@ const Container = styled(Box)`
   &[data-type='own'] {
     align-self: flex-end;
     margin-right: 10px;
-    background-color: #009ed1;
+    background-color: ${colors.pink};
 
     &::after {
       right: -6px;
-      border-top-color: #009ed1;
+      border-top-color: ${colors.pink};
     }
   }
 
   &[data-type='theirs'] {
     align-self: flex-start;
     margin-left: 10px;
-    background-color: #e5f7fd;
+    background-color: ${colors.gray[5]};
 
     &::after {
       left: -6px;
-      border-top-color: #e5f7fd;
+      border-top-color: ${colors.gray[5]};
     }
   }
 `
@@ -68,14 +69,6 @@ const Time = styled(Typography)`
   font-size: 12px;
   line-height: 16px;
   font-weight: 400;
-
-  &[data-type='own'] {
-    color: #ffffff;
-  }
-
-  &[data-type='theirs'] {
-    color: #999999;
-  }
 `
 
 const Message = styled(Typography)`
@@ -84,12 +77,4 @@ const Message = styled(Typography)`
   font-weight: 400;
   margin-bottom: 20px;
   word-break: break-word;
-
-  &[data-type='own'] {
-    color: #ffffff;
-  }
-
-  &[data-type='theirs'] {
-    color: #666666;
-  }
 `

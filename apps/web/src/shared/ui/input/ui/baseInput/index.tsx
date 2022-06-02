@@ -30,6 +30,11 @@ const InputStyled = styled(TextField)`
     & input {
       padding-left: 22px;
       padding-right: 22px;
+
+      &:-webkit-autofill {
+        border-radius: 40px;
+        box-shadow: ${`0 0 0 100px ${colors.gray[1]} inset`};
+      }
     }
   }
   & .MuiInputLabel-root {

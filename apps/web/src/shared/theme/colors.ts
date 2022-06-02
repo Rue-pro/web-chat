@@ -8,5 +8,7 @@ export const colors = {
     2: '#2a292f',
     3: '#6d6c75',
     4: 'rgba(0, 0, 0, 0.1)',
+    5: '#2f2f37',
   },
+  pink: '#7d1f34',
 }

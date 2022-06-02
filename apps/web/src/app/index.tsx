@@ -26,11 +26,15 @@ const App: React.FC = () => {
   useEffect(() => {
     async function refreshTokens() {
       setRefreshingTokens(true)
-      await TokenService.refreshTokens(setAuth)
+      const data = await TokenService.refreshTokens()
+      if (data === 'ERROR_REFRESH_TOKEN_EXPIRED') {
+        dispatch(authActions.logout())
+      }
+      setAuth(data?.user?.id)
       setRefreshingTokens(false)
     }
     refreshTokens()
-  }, [isAuth, setAuth])
+  }, [dispatch, setAuth])
 
   useEffect(() => {
     if (isAuth) dispatch(socketActions.startConnecting())

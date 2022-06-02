@@ -13,7 +13,7 @@ import { UserEntity } from 'src/users/entity';
 import { ConversationsService } from './conversations.service';
 import { SearchFilterConversationDto } from './dto';
 
-@Controller('Conversations')
+@Controller('conversations')
 @ApiTags('Conversations')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)

@@ -22,17 +22,27 @@ export enum ChatMessageEvent {
 }
 
 const OwnerSchema = Union(Literal('own'), Literal('theirs'))
-const MessageSchema = Record({
+export type MessageOwner = Static<typeof OwnerSchema>
+
+const RawMessageSchema = Record({
   id: Number,
   createdAt: String,
   content: String,
   authorId: String,
-  receiverId: String.Or(Null),
-  dialogId: Number,
+  receiverId: String.optional(),
+  conversationId: Number,
 })
-const MessagesArrSchema = Array(MessageSchema)
-export type MessageOwner = Static<typeof OwnerSchema>
-export type Message = Static<typeof MessageSchema>
+export type RawMessage = Static<typeof RawMessageSchema>
+const RawMessagesArrSchema = Array(RawMessageSchema)
+
+export type Message = {
+  id: number
+  createdAt: string
+  content: string
+  authorId: string
+  receiverId?: string
+  dialogId: number
+}
 
 interface MessageData {
   messages: Message[]
@@ -53,13 +63,13 @@ const messagesSlice = createSlice({
     receiveAllMessages: (
       state,
       action: PayloadAction<{
-        messages: Message[]
+        messages: RawMessage[]
       }>,
     ) => {
       console.log('RECEIVE_ALL_MESSAGES', action)
       const messages = action.payload.messages
       console.log(messages)
-      const isMessagesArr = MessagesArrSchema.guard(messages)
+      const isMessagesArr = RawMessagesArrSchema.guard(messages)
       if (!isMessagesArr) {
         const error: ClientError = {
           type: 'ERROR_BACKEND_REQUEST_VALIDATION',
@@ -74,7 +84,7 @@ const messagesSlice = createSlice({
               createdAt: 'String',
               content: 'String',
               authorId: 'String',
-              dialogId: 'Number',
+              conversationId: 'Number',
             }),
         }
 
@@ -82,17 +92,19 @@ const messagesSlice = createSlice({
         state.data.messages = []
         return
       }
-      state.data.messages = messages
+      state.data.messages = messages.map(message =>
+        rawMessageToMessage(message),
+      )
       state.status = 'idle'
     },
     receiveMessage: (
       state,
       action: PayloadAction<{
-        message: Message
+        message: RawMessage
       }>,
     ) => {
       console.log('RECEIVING_MESSAGE', action)
-      state.data.messages.push(action.payload.message)
+      state.data.messages.push(rawMessageToMessage(action.payload.message))
       state.status = 'idle'
     },
     submitMessage: (
@@ -121,3 +133,14 @@ const messagesSlice = createSlice({
 
 export const messagesActions = messagesSlice.actions
 export default messagesSlice.reducer
+
+const rawMessageToMessage = (message: RawMessage): Message => {
+  return {
+    id: message.id,
+    createdAt: message.createdAt,
+    content: message.content,
+    authorId: message.authorId,
+    receiverId: message.receiverId,
+    dialogId: message.conversationId,
+  }
+}

@@ -113,7 +113,7 @@ export class ConversationsService {
       conversations.map(async (conversation) => {
         const lastMessage = await this.messageRepository
           .createQueryBuilder('message')
-          .where('message."channelId" = :conversationId', {
+          .where('message."conversationId" = :conversationId', {
             conversationId: conversation.conversation_id,
           })
           .orderBy('message."createdAt"', 'DESC')

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Input as BaseInput } from 'shared/ui'
 import { TDispatch, TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messagesSlice'
+import { colors } from 'shared/theme/colors'
 
 interface MessageInputProps {}
 
@@ -59,4 +60,8 @@ export default ChatInput
 
 const Input = styled(BaseInput)`
   width: 100%;
+
+  & input:-webkit-autofill {
+    box-shadow: ${`0 0 0 100px ${colors.gray[1]} inset`};
+  }
 `

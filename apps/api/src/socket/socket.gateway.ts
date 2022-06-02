@@ -101,11 +101,11 @@ export class SocketGateway implements OnGatewayConnection {
         content: newMessage.content,
         createdAt: message.createdAt,
         authorId: userId,
-        receriverId: newMessage.currentDialog.id,
-        dialogId: conversation.id,
+        receiverId: newMessage.currentDialog.id,
+        conversationId: conversation.id,
       });
     } catch (e) {
-      console.log(e.name);
+      console.log(e);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
         e.query = {
           event: 'send_message',
@@ -154,6 +154,7 @@ export class SocketGateway implements OnGatewayConnection {
       socket.emit('send_all_dialogs', dialogs);
     } catch (e) {
       console.log(e);
+      console.log(e instanceof IWSError);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
         e.query = { event: 'request_all_dialogs' };
         socket.emit('error', e);

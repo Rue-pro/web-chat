@@ -30,21 +30,28 @@ export const socketMiddleware: Middleware = store => {
 
       socket.on('connect_error', err => {
         console.log(`connect_error due to ${err.message}`)
+        console.log(err)
       })
 
       socket.on('error', async (error: any) => {
         console.log('SOCKET_MIDDLEWARE_ERROR_HAPPEND', error)
+        if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
+          store.dispatch(authActions.logout())
+        }
         if (
           (error.code === 403 &&
             error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED') ||
           (error.code === 400 &&
-            error.message.name === 'ERROR_FOUNR_NO_ACCESS_TOKEN_COOKIE') ||
+            error.message.name === 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE') ||
           error.name === 'TokenExpiredError'
         ) {
           console.log('ERROR_ACCESS_TOKEN_EXPIRED')
-          const response = await TokenService.refreshTokens()
-          console.log('SOCKET_MIDDLEWARE: ', response)
-          socket.emit(error.query.event, error.query.payload)
+          const result = await TokenService.refreshTokens()
+          console.log('AWAIT_RESOLVED', result)
+          if (result?.user) {
+            socket.emit(error.query.event, error.query.payload)
+          }
+
           // Если expired refresh token
           // store.dispatch(authActions.logout())
         }
