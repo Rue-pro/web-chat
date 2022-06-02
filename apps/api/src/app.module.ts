@@ -7,7 +7,7 @@ import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
-import { DialogsModule } from './dialogs/dialogs.module';
+import { ConversationsModule } from './conversations/conversations.module';
 import { ConnectionsModule } from './connections/connections.module';
 import { typeormConfig } from './database/config/typeorm.config';
 import { SocketModule } from './socket/socket.module';
@@ -26,7 +26,7 @@ import { SocketModule } from './socket/socket.module';
     AuthModule,
     SocketModule,
     UsersModule,
-    DialogsModule,
+    ConversationsModule,
     MessagesModule,
     ConnectionsModule,
   ],

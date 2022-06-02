@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
+import { plainToClass } from 'class-transformer';
 
 import { ConnectionArgsDto } from 'src/page/dto';
 import {
@@ -78,7 +79,7 @@ export class UsersService {
     }
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     Object.assign(toUpdate, { currentHashedRefreshToken });
-    return this.userRepository.save(toUpdate);
+    return plainToClass(UserEntity, this.userRepository.save(toUpdate));
   }
 
   async getUserIfRefreshTokenMatches(

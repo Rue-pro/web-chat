@@ -5,17 +5,20 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from 'src/users/entity';
+import { UserEntity, UserId } from 'src/users/entity';
+import { SocketId } from 'src/socket/types';
+
+export type ConnectionId = string;
 
 @Entity('connection')
 export class ConnectionEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: ConnectionId;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'userId' })
-  userId: string;
+  userId: UserId;
 
   @Column()
-  socketId: string;
+  socketId: SocketId;
 }

@@ -1,5 +1,5 @@
-import { ConversationEntity } from 'src/conversations/entity';
-import { UserEntity } from 'src/users/entity';
+import { ConversationEntity, ConversationId } from 'src/conversations/entity';
+import { UserEntity, UserId } from 'src/users/entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,22 +9,26 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+export type MessageId = string;
+export type MessageContent = string;
+export type MessageCreatedAt = Date;
+
 @Entity('message')
 export class MessageEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: MessageId;
 
   @Column()
-  content: string;
+  content: MessageContent;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: MessageCreatedAt;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'authorId' })
-  authorId: string;
+  authorId: UserId;
 
   @ManyToOne(() => ConversationEntity)
-  @JoinColumn({ name: 'channelId' })
-  channelId: number;
+  @JoinColumn({ name: 'conversationId' })
+  conversationId: ConversationId;
 }

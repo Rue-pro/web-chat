@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-jwt';
 
 import { TokenService } from './token.service';
-import { UserEntity } from 'src/users/entity';
+import { UserEntity, UserId } from 'src/users/entity';
 
 const cookieExtractor = (req) => {
   let jwt = null;
@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { userId: string }): Promise<UserEntity> {
+  async validate(payload: { userId: UserId }): Promise<UserEntity> {
     const user = await this.tokenService.validateUser(payload.userId);
 
     if (!user) {

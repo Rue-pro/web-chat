@@ -1,14 +1,18 @@
+import { ConversationId } from 'src/conversations/entity';
+import { UserId } from 'src/users/entity';
+import { MessageContent } from '../entity';
+
 type NewDialog = {
   type: 'NEW_DIALOG';
-  id: string;
+  id: UserId;
 };
 
 type ExistingDialog = {
   type: 'EXISTING_DIALOG';
-  id: number;
+  id: ConversationId;
 };
 export class NewMessageDto {
-  content: string;
+  content: MessageContent;
 
   currentDialog: NewDialog | ExistingDialog;
 }

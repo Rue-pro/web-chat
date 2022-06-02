@@ -1,1 +1,1 @@
-export { MessageEntity } from './message.entity';
+export * from './message.entity';

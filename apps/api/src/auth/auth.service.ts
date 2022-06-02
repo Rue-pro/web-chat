@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UserEntity } from 'src/users/entity';
+import { UserEmail, UserEntity, UserPassword } from 'src/users/entity';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +16,8 @@ export class AuthService {
   ) {}
 
   async getUserForEmailAndPassword(
-    email: string,
-    password: string,
+    email: UserEmail,
+    password: UserPassword,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: { email: email },

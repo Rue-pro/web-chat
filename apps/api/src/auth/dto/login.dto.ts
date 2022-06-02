@@ -1,5 +1,7 @@
-export class LoginDto {
-  email: string;
+import { UserEmail, UserPassword } from 'src/users/entity';
 
-  password: string;
+export class LoginDto {
+  email: UserEmail;
+
+  password: UserPassword;
 }

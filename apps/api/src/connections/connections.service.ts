@@ -1,11 +1,12 @@
-import { UserEntity } from 'src/users/entity';
+import { UserEntity, UserId } from 'src/users/entity';
 import { UpdateConnectionDto } from './dto/update-connection.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
-import { ConnectionEntity } from './entity';
+import { ConnectionEntity, ConnectionId } from './entity';
 import { CreateConnectionDto } from './dto';
+import { SocketId } from 'src/socket/types';
 
 @Injectable()
 export class ConnectionsService {
@@ -25,11 +26,11 @@ export class ConnectionsService {
     return this.connectionRepository.save(createMessageDto);
   }
 
-  delete(socketId: string): Promise<DeleteResult> {
+  delete(socketId: SocketId): Promise<DeleteResult> {
     return this.connectionRepository.delete({ socketId });
   }
 
-  findOne(userId: string): Promise<ConnectionEntity> {
+  findOne(userId: UserId): Promise<ConnectionEntity> {
     return this.connectionRepository
       .createQueryBuilder('connection')
       .innerJoinAndSelect(UserEntity, 'user', 'connection.userId=user.id')
@@ -38,7 +39,7 @@ export class ConnectionsService {
   }
 
   async update(
-    connectionId: string,
+    connectionId: ConnectionId,
     updateConnection: UpdateConnectionDto,
   ): Promise<ConnectionEntity> {
     const toUpdate = await this.connectionRepository.findOneBy({

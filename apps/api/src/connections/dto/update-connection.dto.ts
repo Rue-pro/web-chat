@@ -1,5 +1,8 @@
-export class UpdateConnectionDto {
-  userId: string;
+import { SocketId } from 'src/socket/types';
+import { UserId } from 'src/users/entity';
 
-  socketId: string;
+export class UpdateConnectionDto {
+  userId: UserId;
+
+  socketId: SocketId;
 }

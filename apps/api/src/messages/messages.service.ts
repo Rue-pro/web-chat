@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { ConversationEntity } from 'src/conversations/entity';
+import { ConversationEntity, ConversationId } from 'src/conversations/entity';
 import { MessageEntity } from './entity';
 import { CreateMessageDto } from './dto';
+import { UserId } from 'src/users/entity';
 
 @Injectable()
 export class MessagesService {
@@ -15,13 +16,16 @@ export class MessagesService {
     private readonly conversationRepository: Repository<ConversationEntity>,
   ) {}
 
-  saveMessage(createMessageDto: CreateMessageDto) {
+  saveMessage(createMessageDto: CreateMessageDto): Promise<MessageEntity> {
     return this.messageRepository.save({
       ...createMessageDto,
     });
   }
 
-  async getAllMessages(userId: string, conversationId: string) {
+  async getAllMessages(
+    userId: UserId,
+    conversationId: ConversationId,
+  ): Promise<MessageEntity[]> {
     const query = this.conversationRepository
       .createQueryBuilder('conversation')
       .select('conversation');
@@ -53,10 +57,9 @@ export class MessagesService {
       return {
         id: message.messages_id,
         content: message.messages_content,
-        createdAt: new Date(message.messages_createdAt).toISOString(),
+        createdAt: message.messages_createdAt,
         authorId: message.messages_authorId,
-        dialogId: conversationId,
-        receiverId: null,
+        conversationId,
       };
     });
   }

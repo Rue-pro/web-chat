@@ -9,13 +9,13 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-import { AuthService } from '../auth/auth.service';
 import { ConnectionsService } from '../connections/connections.service';
-import { DialogsService } from '../dialogs/dialogs.service';
+import { ConversationsService } from '../conversations/conversations.service';
 import { IWSError } from '../error/ws.error.interface';
 import { MessagesService } from '../messages/messages.service';
 import { NewMessageDto } from '../messages/dto';
 import { TokenService } from 'src/auth/token.service';
+import { ConversationId } from 'src/conversations/entity';
 
 @WebSocketGateway({
   path: `/socket`,
@@ -26,7 +26,7 @@ export class SocketGateway implements OnGatewayConnection {
 
   constructor(
     private readonly messageService: MessagesService,
-    private readonly dialogService: DialogsService,
+    private readonly conversationService: ConversationsService,
     private readonly connectionService: ConnectionsService,
     private readonly tokenService: TokenService,
   ) {}
@@ -43,10 +43,10 @@ export class SocketGateway implements OnGatewayConnection {
 
   async handleConnection(socket: Socket, ...args: any[]) {
     try {
-      const result = await this.tokenService.getUserFromSocket(socket);
+      const user = await this.tokenService.getUserFromSocket(socket);
 
       await this.connectionService.create({
-        userId: result.id,
+        userId: user.id,
         socketId: socket.id,
       });
     } catch (e) {
@@ -65,34 +65,33 @@ export class SocketGateway implements OnGatewayConnection {
     console.log('SEND_MESSAGE');
     console.log(newMessage);
     try {
-      const result = await this.tokenService.getUserFromSocket(socket);
+      const user = await this.tokenService.getUserFromSocket(socket);
+      const userId = user.id;
 
       let conversation = null;
 
       if (newMessage.currentDialog.type === 'NEW_DIALOG') {
-        conversation = await this.dialogService.createConversation(
-          result.id,
+        conversation = await this.conversationService.createConversation(
+          userId,
           newMessage.currentDialog.id,
         );
       }
 
       if (newMessage.currentDialog.type === 'EXISTING_DIALOG') {
-        conversation = await this.dialogService.findOne(
+        conversation = await this.conversationService.findOne(
           newMessage.currentDialog.id,
         );
       }
 
       const message = await this.messageService.saveMessage({
-        authorId: result.id,
-        channelId: conversation.id,
+        authorId: userId,
+        conversationId: conversation.id,
         content: newMessage.content,
       });
 
       const receivers = [socket.id];
       const connection = await this.connectionService.findOne(
-        conversation.user1 === result.id
-          ? conversation.user2
-          : conversation.user1,
+        conversation.user1 === userId ? conversation.user2 : conversation.user1,
       );
       if (connection) receivers.push(connection.socketId);
       console.log('DO RECEIVE MESSAGES');
@@ -101,18 +100,18 @@ export class SocketGateway implements OnGatewayConnection {
         id: message.id,
         content: newMessage.content,
         createdAt: message.createdAt,
-        authorId: result.id,
+        authorId: userId,
         receriverId: newMessage.currentDialog.id,
         dialogId: conversation.id,
       });
     } catch (e) {
       console.log(e.name);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
-        const result = {
+        e.query = {
           event: 'send_message',
           payload: newMessage,
         };
-        socket.emit('error', result);
+        socket.emit('error', e);
         return;
       }
     }
@@ -120,25 +119,25 @@ export class SocketGateway implements OnGatewayConnection {
 
   @SubscribeMessage('request_all_messages')
   async requestAllMessages(
-    @MessageBody() dialogId: string,
+    @MessageBody() conversationId: ConversationId,
     @ConnectedSocket() socket: Socket,
   ) {
     try {
-      const result = await this.tokenService.getUserFromSocket(socket);
+      const user = await this.tokenService.getUserFromSocket(socket);
       const messages = await this.messageService.getAllMessages(
-        result.id,
-        dialogId,
+        user.id,
+        conversationId,
       );
 
       socket.emit('send_all_messages', messages);
     } catch (e) {
       console.log(e);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
-        const result = {
+        e.query = {
           event: 'request_all_messages',
-          payload: dialogId,
+          payload: conversationId,
         };
-        socket.emit('error', result);
+        socket.emit('error', e);
         return;
       }
     }
@@ -148,16 +147,16 @@ export class SocketGateway implements OnGatewayConnection {
   async requestAllDialogs(@ConnectedSocket() socket: Socket) {
     try {
       console.log('REQUEST_ALL_DIALOGS');
-      const result = await this.tokenService.getUserFromSocket(socket);
+      const user = await this.tokenService.getUserFromSocket(socket);
 
-      const dialogs = await this.dialogService.findAll(result.id);
+      const dialogs = await this.conversationService.findAll(user.id);
       console.log(dialogs);
       socket.emit('send_all_dialogs', dialogs);
     } catch (e) {
       console.log(e);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
-        const result = { event: 'request_all_dialogs' };
-        socket.emit('error', result);
+        e.query = { event: 'request_all_dialogs' };
+        socket.emit('error', e);
         return;
       }
     }

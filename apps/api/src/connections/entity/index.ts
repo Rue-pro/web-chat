@@ -1,1 +1,1 @@
-export { ConnectionEntity } from './connection.entity';
+export * from './connection.entity';

@@ -41,7 +41,7 @@ export class ConversationsService {
 
   async searchAll(
     filter: SearchFilterConversationDto,
-    userId: string,
+    userId: UserId,
   ): Promise<SearchResultConversationEntity[]> {
     const { query: filterString } = filter;
     const query = this.userRepository.createQueryBuilder('user').select('user');

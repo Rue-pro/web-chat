@@ -1,7 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SocketGateway } from './socket.gateway';
-
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const Client = require('socket.io-client');
