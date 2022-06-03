@@ -9,11 +9,10 @@ import {
   messagesSocketListeners,
 } from './messagesSocket'
 import { dialogsSocketEmiters, dialogsSocketListeners } from './dialogsSocket'
-import { TokenService } from 'shared/services'
+import { RefreshTokensResultError, TokenService } from 'shared/lib'
 
 export const socketMiddleware: Middleware = store => {
   let socket: Socket
-  let refetch = 0
 
   return next => action => {
     const isConnectionEstablished =
@@ -45,14 +44,16 @@ export const socketMiddleware: Middleware = store => {
             error.message.name === 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE') ||
           error.name === 'TokenExpiredError'
         ) {
-          const result = await TokenService.refreshTokens()
-          if (socket.io.engine) socket.io.engine.close()
-          if (result?.user) {
-            socket.emit(error.query.event, error.query.payload)
-          }
-          if (result === 'ERROR_REFRESH_TOKEN_EXPIRED') {
-            store.dispatch(authActions.logout())
-          }
+          TokenService.refreshTokens()
+            .then(() => {
+              if (socket.io.engine) socket.io.engine.close()
+              socket.emit(error.query.event, error.query.payload)
+            })
+            .catch(e => {
+              if (e === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
+                store.dispatch(authActions.logout())
+              }
+            })
         }
       })
 

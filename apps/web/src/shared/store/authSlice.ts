@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api'
 import { UserId } from 'shared/config'
-import { loadState, saveState, removeState } from 'shared/lib'
-import { TokenService } from 'shared/services'
+import { BrowserStorageService } from 'shared/lib'
+import { TokenService } from 'shared/lib'
 import { GenericState } from './genericSlice'
 
 const KEY = 'user'
@@ -42,7 +42,10 @@ export const login = createAsyncThunk(
 )
 
 const initialState: AuthState = {
-  data: { ...defaultData, user: loadState<User>(KEY, defaultUser) },
+  data: {
+    ...defaultData,
+    user: BrowserStorageService.loadState<User>(KEY, defaultUser),
+  },
   status: 'loading',
 }
 
@@ -51,7 +54,7 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     logout(state) {
-      removeState(KEY)
+      BrowserStorageService.removeState(KEY)
       TokenService.removeTokensExpirationTime()
 
       state.data.isAuth = false
@@ -59,7 +62,7 @@ const authSlice = createSlice({
     setAuth(state, action: PayloadAction<{ userId: UserId }>) {
       state.data.isAuth = true
       state.data.user.userId = action.payload.userId
-      saveState<User>(KEY, state.data.user)
+      BrowserStorageService.saveState<User>(KEY, state.data.user)
     },
   },
   extraReducers: builder => {
@@ -71,7 +74,7 @@ const authSlice = createSlice({
       state.data.isAuth = true
       state.data.user.userId = action.payload.user.id
 
-      saveState<User>(KEY, state.data.user)
+      BrowserStorageService.saveState<User>(KEY, state.data.user)
       TokenService.setTokensExpirationTime(
         action.payload.accessToken.expiresIn,
         action.payload.refreshToken.expiresIn,

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { API_URL, ServerError } from 'shared/config'
 import { sleep } from 'shared/lib'
-import { TokenService } from 'shared/services'
+import { TokenService } from 'shared/lib'
 
 export const APIInstance = axios.create({
   baseURL: API_URL,

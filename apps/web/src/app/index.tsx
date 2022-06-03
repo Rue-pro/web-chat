@@ -5,7 +5,7 @@ import Pages from 'pages'
 import { withProviders } from './providers'
 import { TStore } from 'shared/store'
 import { socketActions } from 'shared/store/socketSlice'
-import { TokenService } from 'shared/services'
+import { RefreshTokensResultError, TokenService } from 'shared/lib'
 import { authActions } from 'shared/store/authSlice'
 import { UserId } from 'shared/config'
 
@@ -26,11 +26,15 @@ const App: React.FC = () => {
   useEffect(() => {
     async function refreshTokens() {
       setRefreshingTokens(true)
-      const data = await TokenService.refreshTokens()
-      if (data === 'ERROR_REFRESH_TOKEN_EXPIRED') {
-        dispatch(authActions.logout())
-      }
-      if (data?.user?.id) setAuth(data?.user?.id)
+      TokenService.refreshTokens()
+        .then(data => {
+          setAuth(data.user.id)
+        })
+        .catch(e => {
+          if (e === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
+            dispatch(authActions.logout())
+          }
+        })
       setRefreshingTokens(false)
     }
     refreshTokens()
