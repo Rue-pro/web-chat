@@ -50,9 +50,9 @@ export const socketMiddleware: Middleware = store => {
           if (result?.user) {
             socket.emit(error.query.event, error.query.payload)
           }
-
-          // Если expired refresh token
-          // store.dispatch(authActions.logout())
+          if (result === 'ERROR_REFRESH_TOKEN_EXPIRED') {
+            store.dispatch(authActions.logout())
+          }
         }
       })
 
