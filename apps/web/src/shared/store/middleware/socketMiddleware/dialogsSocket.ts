@@ -14,7 +14,6 @@ export function dialogsSocketListeners(
   store: MiddlewareAPI<Dispatch<AnyAction>, TStore>,
 ) {
   socket.on(ChatDialogEvent.SendAllDialogs, (dialogs: Dialog[]) => {
-    console.log('CHAT_DIALOGS_MIDDLEWARE_SEND_ALL_DIALOGS', dialogs)
     store.dispatch(dialogsActions.receiveAllDialogs({ dialogs }))
   })
 }
@@ -25,7 +24,6 @@ export function dialogsSocketEmiters(
   isConnectionEstablished: boolean,
 ) {
   if (dialogsActions.getAllDialogs.match(action) && isConnectionEstablished) {
-    console.log('CHAT_DIALOGS_MIDDLEWARE_GET_ALL_DIALOGS')
     socket.emit(ChatDialogEvent.RequestAllDialogs)
   }
 }

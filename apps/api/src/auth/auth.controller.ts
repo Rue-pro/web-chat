@@ -5,7 +5,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
-import { AuthEntity, Token } from './entity';
+import { Token } from './entity';
 import { TokenService } from './token.service';
 
 @Controller('auth')
@@ -32,16 +32,7 @@ export class AuthController {
 
     console.log('DOMAIN', domain);
 
-    const time = new Date();
-    console.log('time_changed', `${time.getHours()}:${time.getMinutes()}`);
     return reply
-      .setCookie('time_changed', `${time.getHours()}:${time.getMinutes()}`, {
-        domain: domain,
-        path: '/',
-        httpOnly: true,
-        expires: accessToken.expiresIn,
-        secure: false,
-      })
       .setCookie('access_token', accessToken.content, {
         domain: domain,
         path: '/',

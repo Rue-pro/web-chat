@@ -13,6 +13,7 @@ import { TokenService } from 'shared/services'
 
 export const socketMiddleware: Middleware = store => {
   let socket: Socket
+  let refetch = 0
 
   return next => action => {
     const isConnectionEstablished =
@@ -29,12 +30,11 @@ export const socketMiddleware: Middleware = store => {
       })
 
       socket.on('connect_error', err => {
-        console.log(`connect_error due to ${err.message}`)
-        console.log(err)
+        /*console.log(`connect_error due to ${err.message}`)
+        console.log(err)*/
       })
 
       socket.on('error', async (error: any) => {
-        console.log('SOCKET_MIDDLEWARE_ERROR_HAPPEND', error)
         if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
           store.dispatch(authActions.logout())
         }
@@ -45,9 +45,8 @@ export const socketMiddleware: Middleware = store => {
             error.message.name === 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE') ||
           error.name === 'TokenExpiredError'
         ) {
-          console.log('ERROR_ACCESS_TOKEN_EXPIRED')
           const result = await TokenService.refreshTokens()
-          console.log('AWAIT_RESOLVED', result)
+          if (socket.io.engine) socket.io.engine.close()
           if (result?.user) {
             socket.emit(error.query.event, error.query.payload)
           }

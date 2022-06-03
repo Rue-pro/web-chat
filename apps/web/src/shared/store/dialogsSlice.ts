@@ -59,7 +59,6 @@ const dialogsSlice = createSlice({
         dialogs: Dialog[]
       }>,
     ) => {
-      console.log('RECEIVE_ALL_DIALOGS', action)
       const dialogs = action.payload.dialogs
       const isDialogsArr = DialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
@@ -74,12 +73,10 @@ const dialogsSlice = createSlice({
       state.status = 'idle'
     },
     getAllDialogs: state => {
-      console.log('REQUEST_FOR_ALL_DIALOGS')
       state.status = 'loading'
       return
     },
     setCurrentDialog: (state, action: PayloadAction<CurrentDialogPayload>) => {
-      console.log('SETTING_CURRENT_DIALOG', action)
       state.data.currentDialog = action.payload
     },
   },

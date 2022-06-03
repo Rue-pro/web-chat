@@ -32,7 +32,6 @@ export class TokenService {
     try {
       return this.jwtService.verifyAsync(accessToken);
     } catch (e) {
-      console.log('veryfyAccessToken', e);
       if (e.name === 'TokenExpiredError') {
         throw new ForbiddenException({
           message: 'Access token is expired, refresh it, then retry the query',
@@ -43,16 +42,16 @@ export class TokenService {
   }
 
   async getUserFromToken(accessToken: string): Promise<UserEntity> {
-    const decodedToken = this.jwtService.decode(accessToken);
+    const payload = this.jwtService.decode(accessToken);
 
-    if (!decodedToken || typeof decodedToken === 'string') {
+    if (!payload || typeof payload === 'string') {
       throw new UnauthorizedException({
         message: 'Invalid accessToken',
         name: 'ERROR_INVALID_ACCESS_TOKEN',
       });
     }
 
-    return this.validateUser(decodedToken.userId);
+    return this.validateUser(payload.userId);
   }
 
   async getUserFromSocket(socket: Socket): Promise<UserEntity> {

@@ -1,6 +1,5 @@
 export const timeStampToRuDate = (timeStamp: string): string => {
   if (!timeStamp) return ''
-  console.log(timeStamp)
   const date = new Date(timeStamp)
 
   const year = date.getFullYear()

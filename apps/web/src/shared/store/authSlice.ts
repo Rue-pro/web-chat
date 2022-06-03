@@ -36,9 +36,7 @@ const defaultData: AuthData = {
 export const login = createAsyncThunk(
   'auth/login',
   async (loginData: LoginData) => {
-    console.log('[AUTH_SLICE] login')
     const response = await APIInstance.post('/auth/login', loginData)
-    console.log(response)
     return response.data
   },
 )
@@ -53,7 +51,6 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     logout(state) {
-      console.log('LOGOUT')
       removeState(KEY)
       TokenService.removeTokensExpirationTime()
 
@@ -70,7 +67,6 @@ const authSlice = createSlice({
       state.status = 'loading'
     })
     builder.addCase(login.fulfilled, (state: AuthState, action) => {
-      console.log('LOGIN_FULFILLED', action)
       state.status = 'idle'
       state.data.isAuth = true
       state.data.user.userId = action.payload.user.id
@@ -82,7 +78,6 @@ const authSlice = createSlice({
       )
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
-      console.log('LOGIN_REJECTED', action)
       state.status = 'error'
       state.error = action.error.message
     })

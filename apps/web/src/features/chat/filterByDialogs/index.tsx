@@ -37,8 +37,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
 
   const handleChangeSearchInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      console.log('handleChangeSearchInput')
-      console.log(e)
       setQuery(e.target.value)
       onSearch(e)
     },

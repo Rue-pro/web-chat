@@ -66,9 +66,7 @@ const messagesSlice = createSlice({
         messages: RawMessage[]
       }>,
     ) => {
-      console.log('RECEIVE_ALL_MESSAGES', action)
       const messages = action.payload.messages
-      console.log(messages)
       const isMessagesArr = RawMessagesArrSchema.guard(messages)
       if (!isMessagesArr) {
         const error: ClientError = {
@@ -103,7 +101,6 @@ const messagesSlice = createSlice({
         message: RawMessage
       }>,
     ) => {
-      console.log('RECEIVING_MESSAGE', action)
       state.data.messages.push(rawMessageToMessage(action.payload.message))
       state.status = 'idle'
     },
@@ -114,7 +111,6 @@ const messagesSlice = createSlice({
         content: string
       }>,
     ) => {
-      console.log('SUBMIT_MESSAGE', action)
       state.status = 'loading'
       return
     },
@@ -124,7 +120,6 @@ const messagesSlice = createSlice({
         dialogId: DialogId
       }>,
     ) => {
-      console.log('REQUEST_FOR_ALL_MESSAGES', action)
       state.status = 'loading'
       return
     },

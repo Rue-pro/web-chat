@@ -10,7 +10,6 @@ describe('my awesome project', () => {
     io = new Server(httpServer);
     httpServer.listen(() => {
       const port = httpServer.address().port;
-      console.log('PORT', port);
       clientSocket = new Client(`http://localhost:${port}`);
       io.on('connection', (socket) => {
         serverSocket = socket;

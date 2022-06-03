@@ -27,47 +27,26 @@ class TokenService {
   private isAccessTokenExpired(): boolean {
     const { accessTokenExpiration } = loadState<TokensData>(KEY, defaultData)
     if (!accessTokenExpiration) {
-      console.log('[TOKEN_SERVICE] accessTokenExpiration NotExist')
       return true
     }
     const currentTime = new Date()
-    console.log('[TOKEN_SERVICE] isAccessTokenExpired')
-    console.log('Current time:', currentTime)
-    console.log('accessTokenExpiration:', new Date(accessTokenExpiration))
-    console.log(
-      'If current time more then accessTokenExpiration: ',
-      currentTime >= new Date(accessTokenExpiration),
-    )
-    console.log()
-
     return currentTime >= new Date(accessTokenExpiration)
   }
 
   private isRefreshTokenExpired(): boolean {
     const { refreshTokenExpiration } = loadState<TokensData>(KEY, defaultData)
     if (!refreshTokenExpiration) {
-      console.log('[TOKEN_SERVICE] refreshToken NotExist')
       return true
     }
     const currentTime = new Date()
-    console.log('[TOKEN_SERVICE] isRefreshTokenExpired')
-    console.log('Current time:', currentTime)
-    console.log('refreshTokenExpiration:', new Date(refreshTokenExpiration))
-    console.log(
-      'If current time more then refreshTokenExpiration: ',
-      currentTime >= new Date(refreshTokenExpiration),
-    )
-    console.log()
     return currentTime >= new Date(refreshTokenExpiration)
   }
 
   async refreshTokens() {
-    console.log('[TOKEN_SERVICE] refreshTokens')
     if (this.isRefreshTokenExpired()) {
       return 'ERROR_REFRESH_TOKEN_EXPIRED'
     }
     if (this.isAccessTokenExpired()) {
-      console.log('Access token expired')
       try {
         const response = await APIInstance({ url: `${API_URL}/auth/refresh` })
 
@@ -89,7 +68,6 @@ class TokenService {
   }
 
   removeTokensExpirationTime() {
-    console.log('removeTokensExpirationTime')
     removeState(KEY)
   }
 
@@ -104,12 +82,9 @@ class TokenService {
   }
 
   isTokensValid(): boolean {
-    console.log('[TOKEN_SERVICE] isTokensValid')
     if (this.isAccessTokenExpired() || this.isRefreshTokenExpired()) {
-      console.log('RETURN FALSE')
       return false
     }
-    console.log('RETURN TRUE')
     return true
   }
 }

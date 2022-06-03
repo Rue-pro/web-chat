@@ -11,13 +11,8 @@ export const APIInstance = axios.create({
 })
 
 APIInstance.interceptors.request.use(async ({ ...config }) => {
-  // X-Authorization
-  const accessToken = '2131231' // getToken from the store
-  if (!accessToken) return config
-  console.log(config)
   if (config.url !== '/auth/login/' && config.url !== '/auth/logout/') {
-    const refreshTokenStatus = await TokenService.refreshTokens()
-    console.log('REFRSH_TOKEN_STATUS', refreshTokenStatus)
+    await TokenService.refreshTokens()
   }
   return {
     ...config,
@@ -48,12 +43,6 @@ APIInstance.interceptors.response.use(
   function (error) {
     if (!error.response) {
       //document.location = document.location.origin + PAGES.BadGatewayPage
-    }
-    if (
-      error.response.data.message ===
-      'Refreshing token is required, then retry the query'
-    ) {
-      console.error('Refreshing token is required, then retry the query')
     }
     return Promise.reject<ServerError>({
       message: error.response.data.message,

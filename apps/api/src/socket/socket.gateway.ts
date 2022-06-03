@@ -49,12 +49,7 @@ export class SocketGateway implements OnGatewayConnection {
         userId: user.id,
         socketId: socket.id,
       });
-    } catch (e) {
-      console.log(e);
-      if (e instanceof IWSError || e.name === 'TokenExpiredError') {
-        return;
-      }
-    }
+    } catch (e) {}
   }
 
   @SubscribeMessage('send_message')
@@ -105,7 +100,6 @@ export class SocketGateway implements OnGatewayConnection {
         conversationId: conversation.id,
       });
     } catch (e) {
-      console.log(e);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
         e.query = {
           event: 'send_message',
@@ -131,7 +125,6 @@ export class SocketGateway implements OnGatewayConnection {
 
       socket.emit('send_all_messages', messages);
     } catch (e) {
-      console.log(e);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
         e.query = {
           event: 'request_all_messages',
@@ -153,8 +146,6 @@ export class SocketGateway implements OnGatewayConnection {
       console.log(dialogs);
       socket.emit('send_all_dialogs', dialogs);
     } catch (e) {
-      console.log(e);
-      console.log(e instanceof IWSError);
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {
         e.query = { event: 'request_all_dialogs' };
         socket.emit('error', e);

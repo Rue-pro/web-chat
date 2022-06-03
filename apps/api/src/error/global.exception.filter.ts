@@ -17,7 +17,6 @@ import { GlobalResponseError } from './global.response.error';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    console.log('GlobalExceptionFilter catch', exception);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
@@ -27,7 +26,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let code = 'HttpException';
     let errorName = '';
 
-    console.log(message);
     Logger.error(
       message,
       (exception as any).stack,

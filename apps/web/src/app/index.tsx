@@ -30,7 +30,7 @@ const App: React.FC = () => {
       if (data === 'ERROR_REFRESH_TOKEN_EXPIRED') {
         dispatch(authActions.logout())
       }
-      setAuth(data?.user?.id)
+      if (data?.user?.id) setAuth(data?.user?.id)
       setRefreshingTokens(false)
     }
     refreshTokens()
