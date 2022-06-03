@@ -1,13 +1,16 @@
 import { Record, Static, Number, Array, Optional } from 'runtypes'
+import {
+  RawDialogMessageSchema,
+  RawDialogUserSchema,
+} from 'shared/store/dialogs/types'
 
-import { DialogMessageSchema, DialogUserSchema } from 'shared/config'
 import { emptyApi } from './emptyApi'
 
 export type Query = string
 const SearchDialogResultSchema = Record({
   id: Optional(Number),
-  user: DialogUserSchema,
-  message: Optional(DialogMessageSchema),
+  user: RawDialogUserSchema,
+  message: Optional(RawDialogMessageSchema),
 })
 const SearchDialogResultArrSchema = Array(SearchDialogResultSchema)
 export type SearchDialogResult = Static<typeof SearchDialogResultSchema>

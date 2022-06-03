@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { GenericState } from '../genericSlice'
-import { CurrentDialogExisting, CurrentDialogNew } from '../dialogsSlice'
 import { ClientError, DialogId } from 'shared/config'
 import {
   Message,
@@ -10,6 +9,7 @@ import {
   RawMessageSchema,
 } from './types'
 import { rawMessageToMessage } from './model'
+import { CurrentDialogExisting, CurrentDialogNew } from '../dialogs/types'
 
 interface MessageData {
   messages: Message[]

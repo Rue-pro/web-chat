@@ -1,5 +1,3 @@
-import { Record, String, Number, Null } from 'runtypes'
-
 export type ServerError = {
   message: string
   name: string
@@ -17,15 +15,3 @@ export type UserId = string
 export type MessageId = string
 
 export type DialogId = number
-
-export const DialogUserSchema = Record({
-  id: String,
-  name: String,
-  avatar: String.Or(Null),
-})
-
-export const DialogMessageSchema = Record({
-  id: Number,
-  content: String,
-  createdAt: String,
-})

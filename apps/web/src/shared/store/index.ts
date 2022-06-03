@@ -6,7 +6,7 @@ import { api } from 'shared/api'
 import AuthReducer from 'shared/store/auth/authSlice'
 import SocketReducer from 'shared/store/socketSlice'
 import MessagesReducer from 'shared/store/messages/messagesSlice'
-import DialogsReducer from 'shared/store/dialogsSlice'
+import DialogsReducer from 'shared/store/dialogs/dialogsSlice'
 import { myLogger, socketMiddleware } from './middleware'
 
 const appReducer = combineReducers({

@@ -6,7 +6,7 @@ import { Dialog, Dialogs, FilterByDialogs } from 'features/chat'
 import { ChatInput } from 'entities/chatMessage'
 import { InfoTemplate } from 'shared/ui/template'
 import { TStore } from 'shared/store'
-import { dialogsActions } from 'shared/store/dialogsSlice'
+import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 import { colors } from 'shared/theme/colors'
 
 interface ChatProps {}

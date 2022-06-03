@@ -1,41 +1,20 @@
 import { Record, Static, Number, Array } from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { DialogId, DialogMessageSchema, DialogUserSchema } from 'shared/config'
-import { GenericState } from './genericSlice'
-
-export type NewDialogId = string
-export type CurrentDialogId = DialogId | NewDialogId | null
-
-const DialogSchema = Record({
-  id: Number,
-  user: DialogUserSchema,
-  message: DialogMessageSchema,
-})
-const DialogArrSchema = Array(DialogSchema)
-export type Dialog = Static<typeof DialogSchema>
-
-export interface CurrentDialogExisting {
-  type: 'EXISTING_DIALOG'
-  id: number
-}
-export interface CurrentDialogNew {
-  type: 'NEW_DIALOG'
-  id: string
-}
-interface NoCurrentDialog {
-  type: 'NO_DIALOG'
-  id: null
-}
-export type CurrentDialogPayload =
-  | CurrentDialogExisting
-  | CurrentDialogNew
-  | NoCurrentDialog
+import { GenericState } from '../genericSlice'
+import {
+  CurrentDialogPayload,
+  RawDialog,
+  RawDialogArrSchema,
+  Dialog,
+} from './types'
+import { rawDialogToDialog } from './model'
 
 interface DialogData {
   currentDialog: CurrentDialogPayload
   dialogs: Dialog[]
 }
+
 interface DialogState extends GenericState<DialogData> {}
 
 const initialState: DialogState = {
@@ -56,11 +35,11 @@ const dialogsSlice = createSlice({
     receiveAllDialogs: (
       state,
       action: PayloadAction<{
-        dialogs: Dialog[]
+        dialogs: RawDialog[]
       }>,
     ) => {
       const dialogs = action.payload.dialogs
-      const isDialogsArr = DialogArrSchema.guard(dialogs)
+      const isDialogsArr = RawDialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
         console.error(
           'Fetched through socket dialogs format is wrong!',
@@ -69,7 +48,7 @@ const dialogsSlice = createSlice({
         state.data.dialogs = []
         return
       }
-      state.data.dialogs = dialogs
+      state.data.dialogs = dialogs.map(rawDialogToDialog)
       state.status = 'idle'
     },
     getAllDialogs: state => {
