@@ -14,6 +14,7 @@ APIInstance.interceptors.request.use(async ({ ...config }) => {
   if (config.url !== '/auth/login/' && config.url !== '/auth/logout/') {
     await TokenService.refreshTokens()
   }
+  console.log('DO_REQUEST', config)
   return {
     ...config,
     headers: {
@@ -41,12 +42,9 @@ APIInstance.interceptors.response.use(
     return response
   },
   function (error) {
+    console.log('AXIOS LOGIN RESPONSE', error)
     if (!error.response) {
       //document.location = document.location.origin + PAGES.BadGatewayPage
     }
-    return Promise.reject<ServerError>({
-      message: error.response.data.message,
-      name: `Error: ${error.response.status} ${error.response.statusText}`,
-    })
   },
 )

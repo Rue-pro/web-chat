@@ -5,6 +5,7 @@ class BrowserStorageService {
       if (!serializedState) return defaultState
       return JSON.parse(serializedState)
     } catch (e) {
+      console.log('LOAD STATE ERROR', e)
       return defaultState
     }
   }

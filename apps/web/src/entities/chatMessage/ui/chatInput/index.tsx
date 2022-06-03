@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { Input as BaseInput } from 'shared/ui/input'
 import { TDispatch, TStore } from 'shared/store'
-import { messagesActions } from 'shared/store/messagesSlice'
+import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
 
 interface MessageInputProps {}

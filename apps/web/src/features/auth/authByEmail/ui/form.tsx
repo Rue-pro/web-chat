@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
 
 import { TStore } from 'shared/store'
-import { login } from 'shared/store/authSlice'
+import { login } from 'shared/store//auth/authSlice'
 import { Schema } from '../model'
 import FormView, { FormValues } from './formView'
 import { colors } from 'shared/theme/colors'
@@ -28,6 +28,7 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
 
   const handleSubmit = useCallback(
     (values: FormValues) => {
+      console.log('VALUES', values)
       setSubmitting(true)
       dispatch(login(values))
     },
@@ -47,6 +48,7 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
     }
   }, [navigate, pageToNavigate, status, isAuth])
 
+  console.log('ERROR HAPPEND', error)
   return (
     <Container>
       {status === 'error' && <Alert severity="error">{error}</Alert>}

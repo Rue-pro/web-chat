@@ -2,7 +2,7 @@ import { Middleware } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
 import { SOCKET_URL } from 'shared/config'
-import { authActions } from 'shared/store/authSlice'
+import { authActions } from 'shared/store/auth/authSlice'
 import { socketActions } from 'shared/store/socketSlice'
 import {
   messagesSocketEmiters,

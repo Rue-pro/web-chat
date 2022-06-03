@@ -1,48 +1,15 @@
-import {
-  Record,
-  String,
-  Static,
-  Number,
-  Union,
-  Literal,
-  Array,
-  Null,
-} from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { GenericState } from './genericSlice'
-import { CurrentDialogExisting, CurrentDialogNew } from './dialogsSlice'
+import { GenericState } from '../genericSlice'
+import { CurrentDialogExisting, CurrentDialogNew } from '../dialogsSlice'
 import { ClientError, DialogId } from 'shared/config'
-
-export enum ChatMessageEvent {
-  SendMessage = 'send_message',
-  RequestAllMessages = 'request_all_messages',
-  SendAllMessages = 'send_all_messages',
-  ReceiveMessage = 'receive_message',
-}
-
-const OwnerSchema = Union(Literal('own'), Literal('theirs'))
-export type MessageOwner = Static<typeof OwnerSchema>
-
-const RawMessageSchema = Record({
-  id: Number,
-  createdAt: String,
-  content: String,
-  authorId: String,
-  receiverId: String.optional(),
-  conversationId: Number,
-})
-export type RawMessage = Static<typeof RawMessageSchema>
-const RawMessagesArrSchema = Array(RawMessageSchema)
-
-export type Message = {
-  id: number
-  createdAt: string
-  content: string
-  authorId: string
-  receiverId?: string
-  dialogId: number
-}
+import {
+  Message,
+  RawMessage,
+  RawMessagesArrSchema,
+  RawMessageSchema,
+} from './types'
+import { rawMessageToMessage } from './model'
 
 interface MessageData {
   messages: Message[]
@@ -67,8 +34,8 @@ const messagesSlice = createSlice({
       }>,
     ) => {
       const messages = action.payload.messages
-      const isMessagesArr = RawMessagesArrSchema.guard(messages)
-      if (!isMessagesArr) {
+      const isRawMessagesArr = RawMessagesArrSchema.guard(messages)
+      if (!isRawMessagesArr) {
         const error: ClientError = {
           type: 'ERROR_BACKEND_REQUEST_VALIDATION',
           date: new Date(),
@@ -85,14 +52,11 @@ const messagesSlice = createSlice({
               conversationId: 'Number',
             }),
         }
-
-        console.error(error)
         state.data.messages = []
-        return
+        console.error(error)
       }
-      state.data.messages = messages.map(message =>
-        rawMessageToMessage(message),
-      )
+
+      state.data.messages = messages.map(rawMessageToMessage)
       state.status = 'idle'
     },
     receiveMessage: (
@@ -101,6 +65,20 @@ const messagesSlice = createSlice({
         message: RawMessage
       }>,
     ) => {
+      const message = action.payload.message
+      const isRawMessage = RawMessageSchema.guard(message)
+      if (!isRawMessage) {
+        const error: ClientError = {
+          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
+          date: new Date(),
+          message:
+            '[Receive message] Fetched message format is wrong' +
+            JSON.stringify(message, null, 2),
+          details: '',
+        }
+        console.error(error)
+      }
+
       state.data.messages.push(rawMessageToMessage(action.payload.message))
       state.status = 'idle'
     },
@@ -128,14 +106,3 @@ const messagesSlice = createSlice({
 
 export const messagesActions = messagesSlice.actions
 export default messagesSlice.reducer
-
-const rawMessageToMessage = (message: RawMessage): Message => {
-  return {
-    id: message.id,
-    createdAt: message.createdAt,
-    content: message.content,
-    authorId: message.authorId,
-    receiverId: message.receiverId,
-    dialogId: message.conversationId,
-  }
-}

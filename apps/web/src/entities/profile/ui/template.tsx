@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { ActionButton } from 'shared/ui/button'
 import { PAGES } from 'shared/config'
-import { authActions } from 'shared/store/authSlice'
+import { authActions } from 'shared/store/auth/authSlice'
 import { colors } from 'shared/theme/colors'
 
 interface TemplateProps {

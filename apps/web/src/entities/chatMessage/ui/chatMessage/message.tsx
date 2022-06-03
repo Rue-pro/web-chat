@@ -1,20 +1,16 @@
 import React from 'react'
 import { Box, styled, Typography } from '@mui/material'
 
-import { MessageOwner } from 'shared/store/messagesSlice'
 import { colors } from 'shared/theme/colors'
+import { MessageOwner } from 'shared/store/messages/types'
 
-interface ChatMessageProps {
+export interface Props {
   type: MessageOwner
   message: string
   sentTime: string
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({
-  type,
-  message,
-  sentTime,
-}: ChatMessageProps) => (
+const ChatMessage: React.FC<Props> = ({ type, message, sentTime }) => (
   <Container data-type={type}>
     <Message data-type={type}>{message}</Message>
     <Time data-type={type}>{sentTime}</Time>

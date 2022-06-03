@@ -1,18 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { APIInstance } from 'shared/api'
-import { UserId } from 'shared/config'
+import { ClientError } from 'shared/config'
 import { BrowserStorageService } from 'shared/lib'
 import { TokenService } from 'shared/lib'
-import { GenericState } from './genericSlice'
+import { GenericState } from '../genericSlice'
+import { User, LoginData, RawLoggedDataSchema } from './types'
 
 const KEY = 'user'
 
-interface User {
-  userId: UserId
-}
-
-const defaultUser = {
+const defaultUser: User = {
   userId: '',
 }
 
@@ -23,23 +20,10 @@ interface AuthData {
 
 interface AuthState extends GenericState<AuthData> {}
 
-type LoginData = {
-  email: string
-  password: string
-}
-
 const defaultData: AuthData = {
   isAuth: TokenService.isTokensValid(),
   user: defaultUser,
 }
-
-export const login = createAsyncThunk(
-  'auth/login',
-  async (loginData: LoginData) => {
-    const response = await APIInstance.post('/auth/login', loginData)
-    return response.data
-  },
-)
 
 const initialState: AuthState = {
   data: {
@@ -59,7 +43,7 @@ const authSlice = createSlice({
 
       state.data.isAuth = false
     },
-    setAuth(state, action: PayloadAction<{ userId: UserId }>) {
+    setAuth(state, action: PayloadAction<User>) {
       state.data.isAuth = true
       state.data.user.userId = action.payload.userId
       BrowserStorageService.saveState<User>(KEY, state.data.user)
@@ -70,6 +54,21 @@ const authSlice = createSlice({
       state.status = 'loading'
     })
     builder.addCase(login.fulfilled, (state: AuthState, action) => {
+      console.log('LOGIN FULFILLED', action)
+      const loggedData = action.payload
+      const isRawLoggedData = RawLoggedDataSchema.guard(loggedData)
+      if (isRawLoggedData) {
+        const error: ClientError = {
+          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
+          date: new Date(),
+          message:
+            '[Login fulfilled] Fetched logged data format is wrong' +
+            JSON.stringify(loggedData),
+          details: '',
+        }
+        console.error(error)
+      }
+
       state.status = 'idle'
       state.data.isAuth = true
       state.data.user.userId = action.payload.user.id
@@ -89,3 +88,13 @@ const authSlice = createSlice({
 
 export const authActions = authSlice.actions
 export default authSlice.reducer
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (loginData: LoginData) => {
+    console.log('login', loginData)
+    const response = await APIInstance.post('/auth/login', loginData)
+    console.log('Auth Login', response)
+    return response.data
+  },
+)

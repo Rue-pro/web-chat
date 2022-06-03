@@ -6,7 +6,7 @@ import { withProviders } from './providers'
 import { TStore } from 'shared/store'
 import { socketActions } from 'shared/store/socketSlice'
 import { RefreshTokensResultError, TokenService } from 'shared/lib'
-import { authActions } from 'shared/store/authSlice'
+import { authActions } from 'shared/store/auth/authSlice'
 import { UserId } from 'shared/config'
 
 const App: React.FC = () => {

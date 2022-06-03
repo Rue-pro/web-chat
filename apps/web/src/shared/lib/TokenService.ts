@@ -79,8 +79,9 @@ class TokenService {
     if (this.isAccessTokenExpired()) {
       try {
         const response = await APIInstance({ url: `${API_URL}/auth/refresh` })
-
+        console.log(response)
         const data = response.data
+
         if (response.status !== 200) {
           throw Error(data.message.content)
         }
@@ -121,7 +122,9 @@ class TokenService {
           refreshTokenExpiration: data.refreshToken.expiresIn,
           user: data.user,
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error(e)
+      }
     }
     throw RefreshTokensResultError.ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED
   }

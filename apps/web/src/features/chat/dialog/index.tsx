@@ -6,7 +6,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage'
 import { throttle, timeStampToRuDate } from 'shared/lib'
 import { TStore } from 'shared/store'
-import { messagesActions, Message } from 'shared/store/messagesSlice'
+import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
 
 interface DialogProps {}
@@ -84,7 +84,7 @@ const Dialog: React.FC<DialogProps> = () => {
       <Stack
         ref={containerRef}
         sx={{ height: '700px', width: '100%', overflowY: 'auto' }}>
-        {messages?.map((message: Message) => (
+        {messages?.map(message => (
           <ChatMessage
             key={message.id}
             type={message.authorId === userId ? 'own' : 'theirs'}
