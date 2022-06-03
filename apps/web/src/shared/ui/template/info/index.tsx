@@ -1,12 +1,13 @@
 import React from 'react'
 import { styled, Typography, Box } from '@mui/material'
+
 import { colors } from 'shared/theme/colors'
 
-interface InfoTemplateProps {
+interface Props {
   children: string
 }
 
-const InfoTemplate: React.FC<InfoTemplateProps> = ({ children }) => {
+const InfoTemplate: React.FC<Props> = ({ children }) => {
   return (
     <Container>
       <TextContainer>

@@ -2,7 +2,7 @@ import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import { styled } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Input as BaseInput } from 'shared/ui'
+import { Input as BaseInput } from 'shared/ui/input'
 import { TDispatch, TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messagesSlice'
 import { colors } from 'shared/theme/colors'

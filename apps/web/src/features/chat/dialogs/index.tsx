@@ -73,7 +73,6 @@ const Dialogs: React.FC<DialogsProps> = () => {
           avatar={{
             src: dialog.user.avatar ?? '',
             alt: dialog.user.name,
-            isOnline: true,
           }}
           title={dialog.user.name}
           message={dialog.message?.content ?? ''}

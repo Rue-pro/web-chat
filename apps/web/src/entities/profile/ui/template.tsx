@@ -3,7 +3,7 @@ import { Stack, Box, styled } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-import { ActionButton } from 'shared/ui'
+import { ActionButton } from 'shared/ui/button'
 import { PAGES } from 'shared/config'
 import { authActions } from 'shared/store/authSlice'
 import { colors } from 'shared/theme/colors'

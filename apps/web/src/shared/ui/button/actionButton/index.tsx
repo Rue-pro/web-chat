@@ -5,15 +5,17 @@ import {
   styled,
 } from '@mui/material'
 
-const Button: React.FC<MuiButtonProps> = props => {
-  return <StyledButton variant="contained" {...props} />
-}
+import { borderRadius } from 'shared/theme/common'
+
+const Button: React.FC<MuiButtonProps> = props => (
+  <StyledButton variant="contained" {...props} />
+)
 
 export default Button
 
 const StyledButton = styled(MuiButton)`
   text-transform: none;
-  border-radius: 40px;
+  border-radius: ${`${borderRadius[0]}px`};
   padding-top: 12px;
   padding-bottom: 12px;
 `

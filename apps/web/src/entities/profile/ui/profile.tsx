@@ -4,7 +4,7 @@ import { Typography } from '@mui/material'
 
 import { TStore } from 'shared/store'
 import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
-import { AvatarBadge } from 'shared/ui'
+import { Avatar } from 'shared/ui/avatar'
 import { ProfileSkeleton, ProfileTemplate } from '.'
 
 interface ProfileProps {}
@@ -21,7 +21,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
   return (
     <ProfileTemplate
-      avatar={<AvatarBadge src={data.avatar ?? ''} alt={data.name} />}
+      avatar={<Avatar src={data.avatar ?? ''} alt={data.name} />}
       name={
         <Typography variant="subtitle1" component="p">
           <b>{data.name}</b>

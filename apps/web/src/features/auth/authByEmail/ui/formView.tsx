@@ -1,8 +1,9 @@
 import React from 'react'
 import { FormikProps } from 'formik'
-
-import { ActionButton, Input } from 'shared/ui'
 import { Stack, styled } from '@mui/material'
+
+import { Input } from 'shared/ui/input'
+import { ActionButton } from 'shared/ui/button'
 
 export type FormValues = {
   email: string

@@ -8,12 +8,12 @@ import {
   ButtonBase,
 } from '@mui/material'
 
-import { AvatarBadge, AvatarBadgeProps } from 'shared/ui'
+import { Avatar, AvatarProps } from 'shared/ui/avatar'
 import Template from './template'
 import { colors } from 'shared/theme/colors'
 
 export interface RowProps {
-  avatar: AvatarBadgeProps
+  avatar: AvatarProps
   title: string
   message: string
   sentTime: string
@@ -32,7 +32,7 @@ const Row: React.FC<RowProps> = ({
   return (
     <Container onClick={onClick} data-current={isCurrent}>
       <Template
-        avatar={<AvatarBadge {...avatar} />}
+        avatar={<Avatar {...avatar} />}
         title={
           <Text variant="subtitle1" data-current={isCurrent}>
             {title}

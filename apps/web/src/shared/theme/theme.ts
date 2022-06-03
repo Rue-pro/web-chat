@@ -1,17 +1,18 @@
 import { createTheme, ThemeOptions } from '@mui/material'
+import { colors } from './colors'
 
 const themeOptions: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: {
-      main: '#f51d46',
+      main: colors.primary,
     },
     secondary: {
-      main: '#f50057',
+      main: colors.secondary,
     },
     background: {
-      default: '#26252b',
-      paper: '#2a292f',
+      default: colors.gray[6],
+      paper: colors.gray[2],
     },
   },
   typography: {

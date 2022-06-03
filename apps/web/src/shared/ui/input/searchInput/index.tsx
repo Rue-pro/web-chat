@@ -8,18 +8,19 @@ import {
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { colors } from 'shared/theme/colors'
+import { borderRadius } from 'shared/theme/common'
 
-type SearchInputProps = InputBaseProps & {
+type Props = InputBaseProps & {
   debounceTimeout?: number
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({
+const SearchInput: React.FC<Props> = ({
   placeholder,
   debounceTimeout,
   onChange,
   ...rest
 }) => {
-  const timer = useRef<any>()
+  const timer = useRef<NodeJS.Timeout>()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     clearTimeout(timer.current)
@@ -55,7 +56,7 @@ export default SearchInput
 const Container = styled(Paper)`
   display: flex;
   align-items: center;
-  border-radius: 40px;
+  border-radius: ${`${borderRadius[0]}px`};
   background-color: ${colors.gray[1]};
   box-shadow: none;
 `

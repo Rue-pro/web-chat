@@ -10,16 +10,17 @@ import {
   styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+
 import { theme } from 'shared/theme/theme'
 import { colors } from 'shared/theme/colors'
 
-interface TemplateProps {
+interface Props {
   aside: React.ReactNode
   title: string
   main: React.ReactNode
 }
 
-const ChatTemplate: React.FC<TemplateProps> = ({ aside, title, main }) => {
+const ChatTemplate: React.FC<Props> = ({ aside, title, main }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = useCallback(() => {

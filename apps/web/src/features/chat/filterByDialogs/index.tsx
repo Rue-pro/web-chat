@@ -14,7 +14,7 @@ import {
   NewDialogId,
   CurrentDialogPayload,
 } from 'shared/store/dialogsSlice'
-import { SearchInput } from 'shared/ui'
+import { SearchInput } from 'shared/ui/input'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import { DialogId } from 'shared/config'
 
@@ -87,7 +87,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             avatar={{
               src: dialog.user.avatar ?? '',
               alt: dialog.user.name,
-              isOnline: true,
             }}
             title={dialog.user.name}
             message={dialog.message?.content ?? ''}

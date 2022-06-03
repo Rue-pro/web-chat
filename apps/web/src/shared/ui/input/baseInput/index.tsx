@@ -1,17 +1,17 @@
 import React from 'react'
 import { styled, TextField, TextFieldProps } from '@mui/material'
-import { colors } from 'shared/theme/colors'
 
-type InputProps = TextFieldProps & {
+import { colors } from 'shared/theme/colors'
+import { borderRadius } from 'shared/theme/common'
+
+type Props = TextFieldProps & {
   formName: string
   inputId: string
 }
 
-const Input: React.FC<InputProps> = ({ formName, inputId, ...rest }) => {
-  return (
-    <InputStyled id={formName + '_' + inputId} variant="filled" {...rest} />
-  )
-}
+const Input: React.FC<Props> = ({ formName, inputId, ...rest }) => (
+  <InputStyled id={formName + '_' + inputId} variant="filled" {...rest} />
+)
 
 export default Input
 
@@ -19,9 +19,9 @@ const InputStyled = styled(TextField)`
   margin-bottom: 20px;
   & .MuiInputBase-root {
     background-color: ${colors.gray[0]};
-    border-radius: 40px;
+    border-radius: ${`${borderRadius[0]}px`};
     &::before {
-      display: none;
+      content: none;
     }
     &::after {
       display: none;
@@ -32,13 +32,13 @@ const InputStyled = styled(TextField)`
       padding-right: 22px;
 
       &:-webkit-autofill {
-        border-radius: 40px;
+        border-radius: ${`${borderRadius[0]}px`};
         box-shadow: ${`0 0 0 100px ${colors.gray[1]} inset`};
       }
     }
   }
   & .MuiInputLabel-root {
-    max-width: calc(100% - 40px);
+    max-width: calc(100% - 44px);
     left: 10px;
   }
 `
