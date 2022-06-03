@@ -48,7 +48,6 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
     }
   }, [navigate, pageToNavigate, status, isAuth])
 
-  console.log('ERROR HAPPEND', error)
   return (
     <Container>
       {status === 'error' && <Alert severity="error">{error}</Alert>}

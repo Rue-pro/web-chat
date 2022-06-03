@@ -26,15 +26,13 @@ const App: React.FC = () => {
   useEffect(() => {
     async function refreshTokens() {
       setRefreshingTokens(true)
-      TokenService.refreshTokens()
-        .then(data => {
-          setAuth(data.user.id)
-        })
-        .catch(e => {
-          if (e === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
-            dispatch(authActions.logout())
-          }
-        })
+      const data = await TokenService.refreshTokens()
+      if (typeof data === 'object') {
+        setAuth(data.user.id)
+      }
+      if (data === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
+        dispatch(authActions.logout())
+      }
       setRefreshingTokens(false)
     }
     refreshTokens()

@@ -44,16 +44,14 @@ export const socketMiddleware: Middleware = store => {
             error.message.name === 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE') ||
           error.name === 'TokenExpiredError'
         ) {
-          TokenService.refreshTokens()
-            .then(() => {
-              if (socket.io.engine) socket.io.engine.close()
-              socket.emit(error.query.event, error.query.payload)
-            })
-            .catch(e => {
-              if (e === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
-                store.dispatch(authActions.logout())
-              }
-            })
+          const data = await TokenService.refreshTokens()
+          if (typeof data === 'object') {
+            if (socket.io.engine) socket.io.engine.close()
+            socket.emit(error.query.event, error.query.payload)
+          }
+          if (data === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
+            store.dispatch(authActions.logout())
+          }
         }
       })
 

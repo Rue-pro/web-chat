@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Record, String, InstanceOf } from 'runtypes'
+import { Record, String, Null } from 'runtypes'
 
 import { API_URL, ClientError } from 'shared/config'
 import { BrowserStorageService } from 'shared/lib'
@@ -29,20 +29,26 @@ const defaultTokensExpiration: TokensExpiration = {
 
 const RawTokensPayloadSchema = Record({
   accessToken: Record({
-    expiresIn: InstanceOf(Date),
+    expiresIn: String,
   }),
   refreshToken: Record({
-    expiresIn: InstanceOf(Date),
+    expiresIn: String,
   }),
   user: Record({
     id: String,
+    name: String,
+    createdAt: String,
+    updatedAt: String,
+    email: String,
+    phone: String,
+    avatar: String.Or(Null),
   }),
 })
 
 export enum RefreshTokensResultError {
-  REFRESH_TOKEN_EXPIRED,
-  ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED,
-  FETCHED_FORMAT_IS_WRONG,
+  REFRESH_TOKEN_EXPIRED = 'REFRESH_TOKEN_EXPIRED',
+  ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED = 'ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED',
+  FETCHED_FORMAT_IS_WRONG = 'FETCHED_FORMAT_IS_WRONG',
 }
 
 class TokenService {
@@ -72,19 +78,15 @@ class TokenService {
     return currentTime >= new Date(refreshTokenExpiration)
   }
 
-  async refreshTokens(): Promise<TokensPayload> {
+  async refreshTokens(): Promise<TokensPayload | RefreshTokensResultError> {
     if (this.isRefreshTokenExpired()) {
-      throw RefreshTokensResultError.REFRESH_TOKEN_EXPIRED
+      return RefreshTokensResultError.REFRESH_TOKEN_EXPIRED
     }
     if (this.isAccessTokenExpired()) {
       try {
         const response = await APIInstance({ url: `${API_URL}/auth/refresh` })
-        console.log(response)
-        const data = response.data
 
-        if (response.status !== 200) {
-          throw Error(data.message.content)
-        }
+        const data = response?.data
 
         const isRawTokensPayload = RawTokensPayloadSchema.guard(data)
         if (!isRawTokensPayload) {
@@ -98,10 +100,10 @@ class TokenService {
               'Expected object: ' +
               JSON.stringify({
                 accessToken: {
-                  expiresIn: 'String',
+                  expiresIn: 'InstanceOf(Date)',
                 },
                 refreshToken: {
-                  expiresIn: 'String',
+                  expiresIn: 'InstanceOf(Date)',
                 },
                 user: {
                   id: 'String',
@@ -110,23 +112,23 @@ class TokenService {
           }
 
           console.error(error)
-          throw RefreshTokensResultError.FETCHED_FORMAT_IS_WRONG
+          return RefreshTokensResultError.FETCHED_FORMAT_IS_WRONG
         }
 
         this.setTokensExpirationTime(
-          data.accessToken.expiresIn,
-          data.refreshToken.expiresIn,
+          new Date(data.accessToken.expiresIn),
+          new Date(data.refreshToken.expiresIn),
         )
         return {
-          accessTokenExpiration: data.accessToken.expiresIn,
-          refreshTokenExpiration: data.refreshToken.expiresIn,
+          accessTokenExpiration: new Date(data.accessToken.expiresIn),
+          refreshTokenExpiration: new Date(data.refreshToken.expiresIn),
           user: data.user,
         }
       } catch (e) {
         console.error(e)
       }
     }
-    throw RefreshTokensResultError.ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED
+    return RefreshTokensResultError.ACCESS_AND_REFRESH_TOKENS_ARE_NOT_EXPIRED
   }
 
   removeTokensExpirationTime() {
