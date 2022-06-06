@@ -9,7 +9,6 @@ import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie';
 
 import { AppModule } from './app.module';
 import { setupSwagger } from './api-docs.swagger';
-import { GlobalExceptionFilter } from './error/global.exception.filter';
 
 const isProd = process.env.DATABASE_URL;
 const PREFIX = process.env.GLOBAL_PREFIX ?? '';
@@ -61,8 +60,6 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-
-  app.useGlobalFilters(new GlobalExceptionFilter());
 
   setupSwagger(app);
 

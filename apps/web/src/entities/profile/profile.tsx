@@ -4,6 +4,7 @@ import { Typography } from '@mui/material'
 
 import { TStore } from 'shared/store'
 import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
+import { useToastError } from 'shared/lib'
 import { Avatar } from 'shared/ui/avatar'
 import Skeleton from './skeleton'
 import Template from './template'
@@ -14,9 +15,11 @@ const Profile: React.FC<Props> = () => {
   const userId = useSelector(
     (state: TStore) => state.AuthReducer.data.user.userId,
   )
-  const { data, isLoading } = useGetProfileQuery(userId, {
+  const { data, isLoading, error } = useGetProfileQuery(userId, {
     skip: !Boolean(userId),
   })
+
+  useToastError(error)
 
   if (isLoading || !data) return <Skeleton />
 

@@ -28,7 +28,6 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
 
   const handleSubmit = useCallback(
     (values: FormValues) => {
-      console.log('VALUES', values)
       setSubmitting(true)
       dispatch(login(values))
     },

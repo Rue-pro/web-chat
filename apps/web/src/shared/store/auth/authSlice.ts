@@ -56,7 +56,6 @@ const authSlice = createSlice({
       state.status = 'loading'
     })
     builder.addCase(login.fulfilled, (state: AuthState, action) => {
-      console.log('LOGIN FULFILLED', action)
       const loggedData = action.payload
       const isRawLoggedData = RawLoggedDataSchema.guard(loggedData)
       if (isRawLoggedData) {
@@ -83,6 +82,11 @@ const authSlice = createSlice({
       )
     })
     builder.addCase(login.rejected, (state: AuthState, action) => {
+      const error = action.error.message ? JSON.parse(action.error.message) : {}
+      if (error?.isHandled) {
+        state.status = 'idle'
+        return
+      }
       state.status = 'error'
       state.error = action.error.message
     })

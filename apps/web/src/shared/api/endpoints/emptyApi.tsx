@@ -1,7 +1,9 @@
+import { SerializedError } from '@reduxjs/toolkit'
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
-import { AxiosRequestConfig, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 
 import { APIInstance, API_URL, ServerError } from 'shared/config'
+import { AxiosHandledError } from 'shared/config/httpClient'
 
 const CustomQuery =
   (
@@ -11,22 +13,21 @@ const CustomQuery =
       url: string
       method: AxiosRequestConfig['method']
       data?: AxiosRequestConfig['data']
+      params?: AxiosRequestConfig['params']
     },
     unknown,
-    unknown
+    SerializedError
   > =>
-  async ({ url, method, data }) => {
+  async ({
+    url,
+    method,
+    data,
+  }): Promise<AxiosRequestConfig['data'] | SerializedError> => {
     try {
-      const result = await APIInstance({ url: baseUrl + url, method, data })
+      const result = await APIInstance.request({ url, method, data })
       return { data: result.data }
-    } catch (axiosError) {
-      const error = axiosError as AxiosError<ServerError>
-      if (!error.response) {
-        //document.location = document.location.origin + PAGES.BadGatewayPage
-      }
-      return {
-        error: { status: error.response?.status, data: error.response?.data },
-      }
+    } catch (axiosHandledError) {
+      throw axiosHandledError
     }
   }
 

@@ -1,6 +1,7 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import { toast } from 'react-toastify'
 
-import { API_URL, ServerError } from 'shared/config'
+import { API_URL } from 'shared/config'
 import { sleep } from 'shared/lib'
 import { TokenService } from 'shared/lib'
 
@@ -14,7 +15,6 @@ APIInstance.interceptors.request.use(async ({ ...config }) => {
   if (config.url !== '/auth/login/' && config.url !== '/auth/logout/') {
     await TokenService.refreshTokens()
   }
-  console.log('DO_REQUEST', config)
   return {
     ...config,
     headers: {
@@ -37,14 +37,39 @@ APIInstance.interceptors.request.use(
   },
 )
 
+export interface AxiosHandledError {
+  isHandled: boolean
+  status: number
+  message: string
+}
+
 APIInstance.interceptors.response.use(
   async response => {
     return response
   },
-  function (error) {
-    console.log('AXIOS LOGIN RESPONSE', error)
-    if (!error.response) {
-      //document.location = document.location.origin + PAGES.BadGatewayPage
+  function (error: AxiosError) {
+    const message: AxiosHandledError = {
+      isHandled: false,
+      status: error.response?.status ?? 500,
+      message: error.response?.data.message ?? 'Something went wrong',
     }
+
+    const toastText = getErrorText(error)
+    if (toastText) {
+      toast.error(toastText)
+      message.isHandled = true
+    }
+
+    throw new Error(JSON.stringify(message))
   },
 )
+
+function getErrorText(error: AxiosError): string {
+  if (!error.response) {
+    return "Server sent no response. Seems like it's off."
+  }
+  if (error.response.status >= 500) {
+    return 'Something went wrong.'
+  }
+  return ''
+}

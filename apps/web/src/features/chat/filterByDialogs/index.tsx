@@ -2,7 +2,7 @@ import React, { ChangeEvent, useCallback, useState } from 'react'
 import { Box } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { dateToRuDate } from 'shared/lib'
+import { dateToRuDate, useToastError } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import { SearchInput } from 'shared/ui/input'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogs/dialogsApi'
@@ -32,9 +32,15 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   })
 
   const [query, setQuery] = useState<string>('')
-  const { data: users, isLoading } = useFindDialogsQuery(query, {
+  const {
+    data: users,
+    isLoading,
+    error,
+  } = useFindDialogsQuery(query, {
     skip: !Boolean(query),
   })
+
+  useToastError(error)
 
   const handleChangeSearchInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

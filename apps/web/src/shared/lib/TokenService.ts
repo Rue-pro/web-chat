@@ -85,7 +85,7 @@ class TokenService {
     }
     if (this.isAccessTokenExpired()) {
       try {
-        const response = await APIInstance({ url: `${API_URL}/auth/refresh` })
+        const response = await APIInstance.get('/auth/refresh')
 
         const data = response?.data
 
