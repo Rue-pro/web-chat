@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Stack, Box, styled, IconButton } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage'
+import { ChatMessage } from 'entities/chatMessage'
 import { throttle, dateToRuDate } from 'shared/lib'
 import { TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messages/messagesSlice'
@@ -71,13 +71,7 @@ const Dialog: React.FC<DialogProps> = () => {
   }, [dispatch, currentDialog])
 
   if (status === 'loading') {
-    return (
-      <>
-        <ChatMessageSkeleton />
-        <ChatMessageSkeleton />
-        <ChatMessageSkeleton />
-      </>
-    )
+    return <></>
   }
 
   return (
