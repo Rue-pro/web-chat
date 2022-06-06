@@ -8,6 +8,7 @@ import { throttle, dateToRuDate } from 'shared/lib'
 import { TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
+import { DialogTypes } from 'shared/store/dialogs/types'
 
 interface DialogProps {}
 
@@ -64,7 +65,7 @@ const Dialog: React.FC<DialogProps> = () => {
   }, [messages, scrolledUpByUser])
 
   useEffect(() => {
-    if (currentDialog.type === 'EXISTING_DIALOG') {
+    if (currentDialog.type === DialogTypes.EXISTING_DIALOG) {
       dispatch(messagesActions.getAllMessages({ dialogId: currentDialog.id }))
     }
   }, [dispatch, currentDialog])

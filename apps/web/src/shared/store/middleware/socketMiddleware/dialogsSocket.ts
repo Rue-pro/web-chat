@@ -1,9 +1,9 @@
 import { Socket } from 'socket.io-client'
 import { AnyAction, Dispatch, MiddlewareAPI } from 'redux'
 
-import { TStore } from 'shared/store'
-import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
-import { RawDialog } from 'shared/store/dialogs/types'
+import { TStore } from '../../index'
+import { RawDialog } from '../../dialogs/types'
+import { dialogsActions } from '../../dialogs/dialogsSlice'
 
 export enum ChatDialogEvent {
   RequestAllDialogs = 'request_all_dialogs',

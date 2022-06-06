@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { GenericState } from '../genericSlice'
+import { ClientError } from 'shared/config'
+import { GenericState } from '../types'
 import {
   CurrentDialogPayload,
   RawDialog,
   RawDialogArrSchema,
   Dialog,
+  DialogTypes,
 } from './types'
 import { rawDialogToDialog } from './model'
-import { ClientError } from 'shared/config'
 
 interface DialogData {
   currentDialog: CurrentDialogPayload
@@ -20,7 +21,7 @@ interface DialogState extends GenericState<DialogData> {}
 const initialState: DialogState = {
   data: {
     currentDialog: {
-      type: 'NO_DIALOG',
+      type: DialogTypes.NO_DIALOG,
       id: null,
     },
     dialogs: [],

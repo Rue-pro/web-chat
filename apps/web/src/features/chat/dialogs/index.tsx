@@ -9,7 +9,7 @@ import {
 import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
-import { Dialog } from 'shared/store/dialogs/types'
+import { Dialog, DialogTypes } from 'shared/store/dialogs/types'
 import { DialogId } from 'shared/config'
 
 interface DialogsProps {}
@@ -35,13 +35,18 @@ const Dialogs: React.FC<DialogsProps> = () => {
 
   useEffect(() => {
     if (!dialogs.length) {
-      dispatch(dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null }))
+      dispatch(
+        dialogsActions.setCurrentDialog({
+          type: DialogTypes.NO_DIALOG,
+          id: null,
+        }),
+      )
       return
     }
     if (!currentDialogId) {
       dispatch(
         dialogsActions.setCurrentDialog({
-          type: 'EXISTING_DIALOG',
+          type: DialogTypes.EXISTING_DIALOG,
           id: dialogs[0].id,
         }),
       )
@@ -50,7 +55,12 @@ const Dialogs: React.FC<DialogsProps> = () => {
 
   const handleOpenDialog = useCallback(
     (id: DialogId) => {
-      dispatch(dialogsActions.setCurrentDialog({ type: 'EXISTING_DIALOG', id }))
+      dispatch(
+        dialogsActions.setCurrentDialog({
+          type: DialogTypes.EXISTING_DIALOG,
+          id,
+        }),
+      )
     },
     [dispatch],
   )

@@ -2,14 +2,14 @@ import { Middleware } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
 import { SOCKET_URL } from 'shared/config'
-import { authActions } from 'shared/store/auth/authSlice'
-import { socketActions } from 'shared/store/socketSlice'
+import { RefreshTokensResultError, TokenService } from 'shared/lib'
+import { authActions } from '../../auth/authSlice'
+import { socketActions } from '../../socket/socketSlice'
 import {
   messagesSocketEmiters,
   messagesSocketListeners,
 } from './messagesSocket'
 import { dialogsSocketEmiters, dialogsSocketListeners } from './dialogsSocket'
-import { RefreshTokensResultError, TokenService } from 'shared/lib'
 
 export const socketMiddleware: Middleware = store => {
   let socket: Socket
@@ -34,6 +34,7 @@ export const socketMiddleware: Middleware = store => {
       })
 
       socket.on('error', async (error: any) => {
+        console.log('SOCKET_ERROR', error)
         if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
           store.dispatch(authActions.logout())
         }

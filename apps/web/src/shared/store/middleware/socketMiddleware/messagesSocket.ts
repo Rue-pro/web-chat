@@ -1,9 +1,10 @@
 import { Socket } from 'socket.io-client'
 import { MiddlewareAPI, Dispatch, AnyAction } from 'redux'
 
-import { TStore } from 'shared/store'
-import { messagesActions } from 'shared/store/messages/messagesSlice'
-import { ChatMessageEvent, RawMessage } from 'shared/store/messages/types'
+import { TStore } from '../../index'
+import { messagesActions } from '../../messages/messagesSlice'
+import { ChatMessageEvent, RawMessage } from '../../messages/types'
+import { DialogTypes } from '../../dialogs/types'
 
 export function messagesSocketListeners(
   socket: Socket,
@@ -16,9 +17,9 @@ export function messagesSocketListeners(
   socket.on(ChatMessageEvent.ReceiveMessage, (message: RawMessage) => {
     const currentDialog = store.getState().DialogsReducer.data.currentDialog
     if (
-      (currentDialog.type === 'NEW_DIALOG' &&
+      (currentDialog.type === DialogTypes.NEW_DIALOG &&
         message.receiverId === currentDialog.id) ||
-      (currentDialog.type === 'EXISTING_DIALOG' &&
+      (currentDialog.type === DialogTypes.EXISTING_DIALOG &&
         message.conversationId === currentDialog.id)
     )
       store.dispatch(messagesActions.receiveMessage({ message }))

@@ -12,7 +12,11 @@ import { TDispatch, TStore } from 'shared/store'
 import { SearchInput } from 'shared/ui/input'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import { DialogId } from 'shared/config'
-import { CurrentDialogPayload, NewDialogId } from 'shared/store/dialogs/types'
+import {
+  CurrentDialogPayload,
+  DialogTypes,
+  NewDialogId,
+} from 'shared/store/dialogs/types'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 
 interface FilterByUsersProps {
@@ -50,11 +54,11 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
     }) => {
       let payload: CurrentDialogPayload = dialogId
         ? {
-            type: 'EXISTING_DIALOG',
+            type: DialogTypes.EXISTING_DIALOG,
             id: dialogId,
           }
         : {
-            type: 'NEW_DIALOG',
+            type: DialogTypes.NEW_DIALOG,
             id: newDialogId,
           }
       dispatch(dialogsActions.setCurrentDialog(payload))

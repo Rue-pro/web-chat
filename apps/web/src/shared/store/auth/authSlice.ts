@@ -4,7 +4,7 @@ import { APIInstance } from 'shared/api'
 import { ClientError } from 'shared/config'
 import { BrowserStorageService } from 'shared/lib'
 import { TokenService } from 'shared/lib'
-import { GenericState } from '../genericSlice'
+import { GenericState } from '../types'
 import { User, LoginData, RawLoggedDataSchema } from './types'
 
 const KEY = 'user'

@@ -6,6 +6,7 @@ import { Input as BaseInput } from 'shared/ui/input'
 import { TDispatch, TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
+import { DialogTypes } from 'shared/store/dialogs/types'
 
 interface MessageInputProps {}
 
@@ -25,7 +26,7 @@ const ChatInput: React.FC<MessageInputProps> = () => {
 
   const handleEnterClick = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      if (currentDialog.type === 'NO_DIALOG') {
+      if (currentDialog.type === DialogTypes.NO_DIALOG) {
         return
       }
       const dialogMessage = {
@@ -37,7 +38,7 @@ const ChatInput: React.FC<MessageInputProps> = () => {
     }
   }
 
-  if (currentDialog.type === 'NO_DIALOG') {
+  if (currentDialog.type === DialogTypes.NO_DIALOG) {
     return <></>
   }
 

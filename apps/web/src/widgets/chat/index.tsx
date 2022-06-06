@@ -8,6 +8,7 @@ import { InfoTemplate } from 'shared/ui/template'
 import { TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 import { colors } from 'shared/theme/colors'
+import { DialogTypes } from 'shared/store/dialogs/types'
 
 interface ChatProps {}
 
@@ -25,7 +26,7 @@ const Chat: React.FC<ChatProps> = () => {
 
   const keyDownHandler = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
-      dialogsActions.setCurrentDialog({ type: 'NO_DIALOG', id: null })
+      dialogsActions.setCurrentDialog({ type: DialogTypes.NO_DIALOG, id: null })
     }
   }, [])
 
@@ -39,7 +40,7 @@ const Chat: React.FC<ChatProps> = () => {
         {showDialogs && <Dialogs />}
       </DialogsContainer>
       <DialogContainer item xs={8}>
-        {currentDialog.type === 'NO_DIALOG' ? (
+        {currentDialog.type === DialogTypes.NO_DIALOG ? (
           <InfoTemplate>Select a chat to start messaging</InfoTemplate>
         ) : (
           <>

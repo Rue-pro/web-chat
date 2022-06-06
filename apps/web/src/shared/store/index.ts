@@ -3,10 +3,10 @@ import { configureStore } from '@reduxjs/toolkit'
 import thunkMiddleware from 'redux-thunk'
 
 import { api } from 'shared/api'
-import AuthReducer from 'shared/store/auth/authSlice'
-import SocketReducer from 'shared/store/socketSlice'
-import MessagesReducer from 'shared/store/messages/messagesSlice'
-import DialogsReducer from 'shared/store/dialogs/dialogsSlice'
+import AuthReducer from './auth/authSlice'
+import SocketReducer from './socket/socketSlice'
+import MessagesReducer from './messages/messagesSlice'
+import DialogsReducer from './dialogs/dialogsSlice'
 import { myLogger, socketMiddleware } from './middleware'
 
 const appReducer = combineReducers({

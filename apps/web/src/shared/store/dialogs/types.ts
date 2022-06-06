@@ -22,16 +22,21 @@ export const RawDialogSchema = Record({
 export const RawDialogArrSchema = Array(RawDialogSchema)
 export type RawDialog = Static<typeof RawDialogSchema>
 
+export enum DialogTypes {
+  EXISTING_DIALOG,
+  NEW_DIALOG,
+  NO_DIALOG,
+}
 export interface CurrentDialogExisting {
-  type: 'EXISTING_DIALOG'
+  type: DialogTypes.EXISTING_DIALOG
   id: number
 }
 export interface CurrentDialogNew {
-  type: 'NEW_DIALOG'
+  type: DialogTypes.NEW_DIALOG
   id: string
 }
 interface NoCurrentDialog {
-  type: 'NO_DIALOG'
+  type: DialogTypes.NO_DIALOG
   id: null
 }
 export type CurrentDialogPayload =
