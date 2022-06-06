@@ -99,7 +99,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             message={dialog.message.content}
             sentTime={
               dialog.message.createdAt
-                ? dateToRuDate(dialog.message?.createdAt)
+                ? dateToRuDate(new Date(dialog.message?.createdAt))
                 : ''
             }
             onClick={() => {

@@ -96,7 +96,10 @@ export class SocketGateway implements OnGatewayConnection {
         content: newMessage.content,
         createdAt: message.createdAt,
         authorId: userId,
-        receiverId: newMessage.currentDialog.id,
+        receiverId:
+          newMessage.currentDialog.type === 'EXISTING_DIALOG'
+            ? undefined
+            : newMessage.currentDialog.id,
         conversationId: conversation.id,
       });
     } catch (e) {

@@ -11,9 +11,7 @@ export const rawDialogToDialog = (dialog: RawSearchDialog): SearchDialog => {
     message: {
       id: dialog.message?.id ?? null,
       content: dialog.message?.content ?? '',
-      createdAt: dialog.message?.createdAt
-        ? new Date(dialog.message.createdAt)
-        : null,
+      createdAt: dialog.message?.createdAt ? dialog.message.createdAt : null,
     },
   }
 }

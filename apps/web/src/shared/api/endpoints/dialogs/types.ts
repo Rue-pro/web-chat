@@ -28,6 +28,6 @@ export interface SearchDialog {
   message: {
     id: number | null
     content: string
-    createdAt: Date | null
+    createdAt: string | null
   }
 }

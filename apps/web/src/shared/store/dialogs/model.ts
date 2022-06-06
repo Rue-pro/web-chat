@@ -11,7 +11,7 @@ export const rawDialogToDialog = (dialog: RawDialog): Dialog => {
     message: {
       id: dialog.message.id,
       content: dialog.message.content,
-      createdAt: new Date(dialog.message.createdAt),
+      createdAt: dialog.message.createdAt,
     },
   }
 }

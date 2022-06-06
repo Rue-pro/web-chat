@@ -23,9 +23,9 @@ export const RawDialogArrSchema = Array(RawDialogSchema)
 export type RawDialog = Static<typeof RawDialogSchema>
 
 export enum DialogTypes {
-  EXISTING_DIALOG,
-  NEW_DIALOG,
-  NO_DIALOG,
+  EXISTING_DIALOG = 'EXISTING_DIALOG',
+  NEW_DIALOG = 'NEW_DIALOG',
+  NO_DIALOG = 'NO_DIALOG',
 }
 export interface CurrentDialogExisting {
   type: DialogTypes.EXISTING_DIALOG
@@ -54,6 +54,6 @@ export interface Dialog {
   message: {
     id: number
     content: string
-    createdAt: Date
+    createdAt: string
   }
 }

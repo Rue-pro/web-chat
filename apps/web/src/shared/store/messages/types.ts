@@ -24,7 +24,7 @@ export const RawMessagesArrSchema = Array(RawMessageSchema)
 
 export type Message = {
   id: MessageId
-  createdAt: Date
+  createdAt: string
   content: string
   authorId: string
   receiverId?: string

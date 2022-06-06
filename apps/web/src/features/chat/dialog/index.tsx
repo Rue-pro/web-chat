@@ -82,7 +82,7 @@ const Dialog: React.FC<DialogProps> = ({ ...boxProps }) => {
             key={message.id}
             type={message.authorId === userId ? 'own' : 'theirs'}
             message={message.content}
-            sentTime={dateToRuDate(message.createdAt)}
+            sentTime={dateToRuDate(new Date(message.createdAt))}
           />
         ))}
       </MessagesContainer>

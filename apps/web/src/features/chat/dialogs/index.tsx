@@ -85,7 +85,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
           }}
           title={dialog.user.name}
           message={dialog.message.content}
-          sentTime={dateToRuDate(dialog.message.createdAt)}
+          sentTime={dateToRuDate(new Date(dialog.message.createdAt))}
           onClick={() => {
             handleOpenDialog(dialog.id)
           }}
