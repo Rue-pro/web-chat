@@ -1,4 +1,10 @@
-import React, { KeyboardEvent, useState, ChangeEvent, useCallback } from 'react'
+import React, {
+  KeyboardEvent,
+  useState,
+  ChangeEvent,
+  useCallback,
+  useEffect,
+} from 'react'
 import { useSelector } from 'react-redux'
 import { Grid, styled } from '@mui/material'
 
@@ -25,8 +31,18 @@ const Chat: React.FC<ChatProps> = () => {
     }
   })
 
+  useEffect(() => {
+    if (currentDialog.type === DialogTypes.NEW_DIALOG) {
+      console.log('CURRENT_DIALOG_CHANGED', currentDialog)
+    }
+  }, [currentDialog])
+
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setShowDialogs(!Boolean(e.target.value))
+  }
+
+  const handleOnSelect = () => {
+    setShowDialogs(true)
   }
 
   const keyDownHandler = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
@@ -50,7 +66,7 @@ const Chat: React.FC<ChatProps> = () => {
         ) : (
           <>
             <Dialog />
-            <ChatInput />
+            <ChatInput onSend={handleOnSelect} />
           </>
         )}
       </DialogContainer>

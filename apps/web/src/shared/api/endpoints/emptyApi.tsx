@@ -1,9 +1,8 @@
 import { SerializedError } from '@reduxjs/toolkit'
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
-import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 
-import { APIInstance, API_URL, ServerError } from 'shared/config'
-import { AxiosHandledError } from 'shared/config/httpClient'
+import { APIInstance, API_URL } from 'shared/config'
 
 const CustomQuery =
   (

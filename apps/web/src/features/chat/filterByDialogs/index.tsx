@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -36,9 +36,14 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
     data: users,
     isLoading,
     error,
+    refetch,
   } = useFindDialogsQuery(query, {
     skip: !Boolean(query),
   })
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, query])
 
   useToastError(error)
 
@@ -68,7 +73,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             id: newDialogId,
           }
       dispatch(dialogsActions.setCurrentDialog(payload))
-      setQuery('')
     },
     [dispatch],
   )

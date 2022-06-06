@@ -65,6 +65,9 @@ const Dialog: React.FC<DialogProps> = ({ ...boxProps }) => {
   }, [messages, scrolledUpByUser])
 
   useEffect(() => {
+    if (currentDialog.type === DialogTypes.NEW_DIALOG) {
+      dispatch(messagesActions.resetAllMessages())
+    }
     if (currentDialog.type === DialogTypes.EXISTING_DIALOG) {
       dispatch(messagesActions.getAllMessages({ dialogId: currentDialog.id }))
     }

@@ -20,6 +20,7 @@ const SearchInput: React.FC<Props> = ({
   onChange,
   ...rest
 }) => {
+  console.log('SearchInput', rest)
   const timer = useRef<NodeJS.Timeout>()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

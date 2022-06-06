@@ -8,7 +8,10 @@ import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
 import { DialogTypes } from 'shared/store/dialogs/types'
 
-const ChatInput: React.FC = () => {
+interface Props {
+  onSend: () => void
+}
+const ChatInput: React.FC<Props> = ({ onSend }) => {
   const dispatch = useDispatch<TDispatch>()
   const { currentDialog } = useSelector((state: TStore) => {
     return {
@@ -33,6 +36,7 @@ const ChatInput: React.FC = () => {
       }
       dispatch(messagesActions.submitMessage(dialogMessage))
       setMessage('')
+      onSend()
     }
   }
 

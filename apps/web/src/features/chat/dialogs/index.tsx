@@ -1,11 +1,7 @@
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  DialogRow,
-  DialogRowSkeleton,
-  DialogLoadingTemplate,
-} from 'entities/dialog'
+import { DialogRow } from 'entities/dialog'
 import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'

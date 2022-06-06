@@ -93,6 +93,9 @@ const messagesSlice = createSlice({
       state.status = 'loading'
       return
     },
+    resetAllMessages(state) {
+      state.data.messages = []
+    },
   },
 })
 
