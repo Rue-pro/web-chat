@@ -5,11 +5,12 @@ import { Typography } from '@mui/material'
 import { TStore } from 'shared/store'
 import { useGetProfileQuery } from 'shared/api/endpoints/profileApi'
 import { Avatar } from 'shared/ui/avatar'
-import { ProfileSkeleton, ProfileTemplate } from '.'
+import Skeleton from './skeleton'
+import Template from './template'
 
-interface ProfileProps {}
+interface Props {}
 
-const Profile: React.FC<ProfileProps> = () => {
+const Profile: React.FC<Props> = () => {
   const userId = useSelector(
     (state: TStore) => state.AuthReducer.data.user.userId,
   )
@@ -17,10 +18,10 @@ const Profile: React.FC<ProfileProps> = () => {
     skip: !Boolean(userId),
   })
 
-  if (isLoading || !data) return <ProfileSkeleton />
+  if (isLoading || !data) return <Skeleton />
 
   return (
-    <ProfileTemplate
+    <Template
       avatar={<Avatar src={data.avatar ?? ''} alt={data.name} />}
       name={
         <Typography variant="subtitle1" component="p">

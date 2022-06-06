@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Box, styled, Typography } from '@mui/material'
 
 import { colors } from 'shared/theme/colors'
@@ -17,7 +17,7 @@ const ChatMessage: React.FC<Props> = ({ type, message, sentTime }) => (
   </Container>
 )
 
-export default ChatMessage
+export default memo(ChatMessage)
 
 const Container = styled(Box)`
   position: relative;

@@ -1,7 +1,7 @@
 import React, { memo, ReactElement, Fragment } from 'react'
 import { Box, Divider } from '@mui/material'
 
-interface DialogLoadingTemplateProps {
+interface Props {
   skeleton: React.ReactElement
   skeletonsCount: number
 }
@@ -22,11 +22,9 @@ const getSkeletons = (
   return skeletons
 }
 
-const DialogLoadingTemplate: React.FC<DialogLoadingTemplateProps> = ({
+const DialogLoadingTemplate: React.FC<Props> = ({
   skeleton,
   skeletonsCount,
-}) => {
-  return <Box>{getSkeletons(skeleton, skeletonsCount)}</Box>
-}
+}) => <Box>{getSkeletons(skeleton, skeletonsCount)}</Box>
 
 export default memo(DialogLoadingTemplate)

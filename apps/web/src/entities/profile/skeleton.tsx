@@ -1,12 +1,12 @@
 import React from 'react'
 import { Skeleton as MuiSkeleton } from '@mui/material'
 
-import { ProfileTemplate } from '.'
+import Template from './template'
 
-type SkeletonProps = {}
+type Props = {}
 
-const Skeleton: React.FC<SkeletonProps> = () => (
-  <ProfileTemplate
+const Skeleton: React.FC<Props> = () => (
+  <Template
     avatar={<MuiSkeleton variant="circular" width={40} height={40} />}
     name={<MuiSkeleton height="1.75rem" />}
     phone={<MuiSkeleton height="1.75rem" />}

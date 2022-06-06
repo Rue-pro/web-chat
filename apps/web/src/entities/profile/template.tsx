@@ -9,13 +9,13 @@ import { colors } from 'shared/theme/colors'
 import { ActionButton } from 'shared/ui/button'
 import { Container as DefaultContainer } from 'shared/ui/contianer'
 
-interface TemplateProps {
+interface Props {
   avatar: ReactElement
   name: ReactElement
   phone: ReactElement
 }
 
-const Template: React.FC<TemplateProps> = ({ avatar, name, phone }) => {
+const Template: React.FC<Props> = ({ avatar, name, phone }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 

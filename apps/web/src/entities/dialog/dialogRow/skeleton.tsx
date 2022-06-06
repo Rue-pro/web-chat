@@ -3,9 +3,9 @@ import { Box, Skeleton as MuiSkeleton, styled } from '@mui/material'
 
 import Template from './template'
 
-type SkeletonProps = {}
+type Props = {}
 
-const Skeleton: React.FC<SkeletonProps> = () => (
+const Skeleton: React.FC<Props> = () => (
   <Container>
     <Template
       avatar={<MuiSkeleton variant="circular" width={40} height={40} />}

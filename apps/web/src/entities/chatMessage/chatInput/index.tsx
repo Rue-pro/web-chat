@@ -1,5 +1,5 @@
 import React, { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
-import { styled } from '@mui/material'
+import { Box, styled } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Input as BaseInput } from 'shared/ui/input'
@@ -8,9 +8,7 @@ import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
 import { DialogTypes } from 'shared/store/dialogs/types'
 
-interface MessageInputProps {}
-
-const ChatInput: React.FC<MessageInputProps> = () => {
+const ChatInput: React.FC = () => {
   const dispatch = useDispatch<TDispatch>()
   const { currentDialog } = useSelector((state: TStore) => {
     return {
@@ -43,7 +41,7 @@ const ChatInput: React.FC<MessageInputProps> = () => {
   }
 
   return (
-    <div>
+    <Box>
       <Input
         formName="chat-input"
         inputId="adasd"
@@ -53,7 +51,7 @@ const ChatInput: React.FC<MessageInputProps> = () => {
         onKeyPress={handleEnterClick}
         value={message}
       />
-    </div>
+    </Box>
   )
 }
 

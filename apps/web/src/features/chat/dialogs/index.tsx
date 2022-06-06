@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import {
   DialogRow,
+  DialogRowSkeleton,
   DialogLoadingTemplate,
-  DialogRowSketeton,
 } from 'entities/dialog'
 import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
@@ -65,12 +65,10 @@ const Dialogs: React.FC<DialogsProps> = () => {
     [dispatch],
   )
 
-  console.log('DIALOGS', dialogs)
-  console.log('DIALOGS_LOADING_STATUS', status)
   if (status === 'loading') {
     return (
       <DialogLoadingTemplate
-        skeleton={<DialogRowSketeton />}
+        skeleton={<DialogRowSkeleton />}
         skeletonsCount={6}
       />
     )
@@ -78,7 +76,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
 
   return (
     <>
-      {dialogs?.map((dialog: Dialog) => (
+      {dialogs.map((dialog: Dialog) => (
         <DialogRow
           key={dialog.id}
           avatar={{

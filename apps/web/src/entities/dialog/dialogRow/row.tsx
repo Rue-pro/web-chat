@@ -9,10 +9,10 @@ import {
 } from '@mui/material'
 
 import { Avatar, AvatarProps } from 'shared/ui/avatar'
-import Template from './template'
 import { colors } from 'shared/theme/colors'
+import Template from './template'
 
-export interface RowProps {
+export interface Props {
   avatar: AvatarProps
   title: string
   message: string
@@ -21,29 +21,27 @@ export interface RowProps {
   isCurrent?: boolean
 }
 
-const Row: React.FC<RowProps> = ({
+const Row: React.FC<Props> = ({
   avatar,
   title,
   message,
   sentTime,
   onClick,
   isCurrent = false,
-}) => {
-  return (
-    <Container onClick={onClick} data-current={isCurrent}>
-      <Template
-        avatar={<Avatar {...avatar} />}
-        title={
-          <Text variant="subtitle1" data-current={isCurrent}>
-            {title}
-          </Text>
-        }
-        message={<Text data-current={isCurrent}>{message}</Text>}
-        info={<Time data-current={isCurrent}>{sentTime}</Time>}
-      />
-    </Container>
-  )
-}
+}) => (
+  <Container onClick={onClick} data-current={isCurrent}>
+    <Template
+      avatar={<Avatar {...avatar} />}
+      title={
+        <Text variant="subtitle1" data-current={isCurrent}>
+          {title}
+        </Text>
+      }
+      message={<Text data-current={isCurrent}>{message}</Text>}
+      info={<Time data-current={isCurrent}>{sentTime}</Time>}
+    />
+  </Container>
+)
 
 export default memo(Row)
 

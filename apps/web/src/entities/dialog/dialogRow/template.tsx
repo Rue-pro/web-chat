@@ -1,19 +1,14 @@
 import React, { ReactElement } from 'react'
 import { Grid, Stack, styled } from '@mui/material'
 
-interface TemplateProps {
+interface Props {
   avatar: ReactElement
   title: ReactElement
   message: ReactElement
   info: ReactElement
 }
 
-const Template: React.FC<TemplateProps> = ({
-  avatar,
-  title,
-  message,
-  info,
-}) => (
+const Template: React.FC<Props> = ({ avatar, title, message, info }) => (
   <Grid container spacing={2}>
     <AvatarContainer item xs={1} md={2}>
       {avatar}

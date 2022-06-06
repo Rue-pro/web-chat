@@ -1,9 +1,7 @@
 import React from 'react'
 import { Skeleton as MuiSkeleton } from '@mui/material'
 
-type SkeletonProps = {}
-
-const Skeleton: React.FC<SkeletonProps> = () => (
+const Skeleton: React.FC = () => (
   <MuiSkeleton height="100px" sx={{ width: '100%' }} />
 )
 

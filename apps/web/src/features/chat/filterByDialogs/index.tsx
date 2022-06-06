@@ -2,15 +2,10 @@ import React, { ChangeEvent, useCallback, useState } from 'react'
 import { Box } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  DialogRow,
-  DialogLoadingTemplate,
-  DialogRowSketeton,
-} from 'entities/dialog'
 import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
 import { SearchInput } from 'shared/ui/input'
-import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
+import { useFindDialogsQuery } from 'shared/api/endpoints/dialogs/dialogsApi'
 import { DialogId } from 'shared/config'
 import {
   CurrentDialogPayload,
@@ -18,6 +13,11 @@ import {
   NewDialogId,
 } from 'shared/store/dialogs/types'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
+import {
+  DialogLoadingTemplate,
+  DialogRow,
+  DialogRowSkeleton,
+} from 'entities/dialog'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
@@ -77,7 +77,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
       />
       {isLoading ? (
         <DialogLoadingTemplate
-          skeleton={<DialogRowSketeton />}
+          skeleton={<DialogRowSkeleton />}
           skeletonsCount={6}
         />
       ) : (
@@ -86,14 +86,14 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
           <DialogRow
             key={dialog.user.id}
             avatar={{
-              src: dialog.user.avatar ?? '',
+              src: dialog.user.avatar,
               alt: dialog.user.name,
             }}
             title={dialog.user.name}
-            message={dialog.message?.content ?? ''}
+            message={dialog.message.content}
             sentTime={
-              dialog.message?.createdAt
-                ? dateToRuDate(new Date(dialog.message?.createdAt))
+              dialog.message.createdAt
+                ? dateToRuDate(dialog.message?.createdAt)
                 : ''
             }
             onClick={() => {
