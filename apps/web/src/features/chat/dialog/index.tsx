@@ -70,10 +70,6 @@ const Dialog: React.FC<DialogProps> = ({ ...boxProps }) => {
     }
   }, [dispatch, currentDialog])
 
-  if (status === 'loading') {
-    return <></>
-  }
-
   return (
     <Container {...boxProps}>
       <MessagesContainer ref={containerRef}>

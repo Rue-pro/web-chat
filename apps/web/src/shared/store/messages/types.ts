@@ -1,13 +1,6 @@
 import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
 import { MessageId } from 'shared/config'
 
-export enum ChatMessageEvent {
-  SendMessage = 'send_message',
-  RequestAllMessages = 'request_all_messages',
-  SendAllMessages = 'send_all_messages',
-  ReceiveMessage = 'receive_message',
-}
-
 const OwnerSchema = Union(Literal('own'), Literal('theirs'))
 export type MessageOwner = Static<typeof OwnerSchema>
 

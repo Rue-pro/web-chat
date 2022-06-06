@@ -44,7 +44,6 @@ const messagesSlice = createSlice({
           expectedType: RawMessagesArrSchema,
         })
         console.error(error)
-        state.data.messages = []
         state.status = 'idle'
         return
       }

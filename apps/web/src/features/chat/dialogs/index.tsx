@@ -65,15 +65,6 @@ const Dialogs: React.FC<DialogsProps> = () => {
     [dispatch],
   )
 
-  if (status === 'loading') {
-    return (
-      <DialogLoadingTemplate
-        skeleton={<DialogRowSkeleton />}
-        skeletonsCount={6}
-      />
-    )
-  }
-
   return (
     <>
       {dialogs.map((dialog: Dialog) => (

@@ -3,8 +3,16 @@ import { MiddlewareAPI, Dispatch, AnyAction } from 'redux'
 
 import { TStore } from '../../index'
 import { messagesActions } from '../../messages/messagesSlice'
-import { ChatMessageEvent, RawMessage } from '../../messages/types'
+import { RawMessage } from '../../messages/types'
 import { DialogTypes } from '../../dialogs/types'
+import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
+
+export enum ChatMessageEvent {
+  SendMessage = 'send_message',
+  RequestAllMessages = 'request_all_messages',
+  SendAllMessages = 'send_all_messages',
+  ReceiveMessage = 'receive_message',
+}
 
 export function messagesSocketListeners(
   socket: Socket,
@@ -23,6 +31,7 @@ export function messagesSocketListeners(
         message.conversationId === currentDialog.id)
     )
       store.dispatch(messagesActions.receiveMessage({ message }))
+    store.dispatch(dialogsActions.getAllDialogs())
   })
 }
 
