@@ -1,7 +1,4 @@
-export const timeStampToRuDate = (timeStamp: string): string => {
-  if (!timeStamp) return ''
-  const date = new Date(timeStamp)
-
+export const dateToRuDate = (date: Date): string => {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()

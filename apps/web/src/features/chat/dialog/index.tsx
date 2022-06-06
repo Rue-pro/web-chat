@@ -4,7 +4,7 @@ import { Stack, Box, styled, IconButton } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ChatMessage, ChatMessageSkeleton } from 'entities/chatMessage'
-import { throttle, timeStampToRuDate } from 'shared/lib'
+import { throttle, dateToRuDate } from 'shared/lib'
 import { TStore } from 'shared/store'
 import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
@@ -89,7 +89,7 @@ const Dialog: React.FC<DialogProps> = () => {
             key={message.id}
             type={message.authorId === userId ? 'own' : 'theirs'}
             message={message.content}
-            sentTime={timeStampToRuDate(message.createdAt)}
+            sentTime={dateToRuDate(message.createdAt)}
           />
         ))}
       </Stack>

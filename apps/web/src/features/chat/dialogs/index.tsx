@@ -6,9 +6,10 @@ import {
   DialogLoadingTemplate,
   DialogRowSketeton,
 } from 'entities/dialog'
-import { timeStampToRuDate } from 'shared/lib'
+import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
-import { dialogsActions, Dialog } from 'shared/store/dialogsSlice'
+import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
+import { Dialog } from 'shared/store/dialogs/types'
 import { DialogId } from 'shared/config'
 
 interface DialogsProps {}
@@ -71,12 +72,12 @@ const Dialogs: React.FC<DialogsProps> = () => {
         <DialogRow
           key={dialog.id}
           avatar={{
-            src: dialog.user.avatar ?? '',
+            src: dialog.user.avatar,
             alt: dialog.user.name,
           }}
           title={dialog.user.name}
-          message={dialog.message?.content ?? ''}
-          sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
+          message={dialog.message.content}
+          sentTime={dateToRuDate(dialog.message.createdAt)}
           onClick={() => {
             handleOpenDialog(dialog.id)
           }}

@@ -6,7 +6,7 @@ export const rawDialogToDialog = (dialog: RawDialog): Dialog => {
     user: {
       id: dialog.user.id,
       name: dialog.user.name,
-      avatar: dialog.user.avatar,
+      avatar: dialog.user.avatar ?? '',
     },
     message: {
       id: dialog.message.id,

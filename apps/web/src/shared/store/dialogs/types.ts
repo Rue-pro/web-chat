@@ -44,7 +44,7 @@ export interface Dialog {
   user: {
     id: string
     name: string
-    avatar: string | null
+    avatar: string
   }
   message: {
     id: number

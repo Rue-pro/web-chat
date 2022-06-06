@@ -7,16 +7,13 @@ import {
   DialogLoadingTemplate,
   DialogRowSketeton,
 } from 'entities/dialog'
-import { timeStampToRuDate } from 'shared/lib'
+import { dateToRuDate } from 'shared/lib'
 import { TDispatch, TStore } from 'shared/store'
-import {
-  dialogsActions,
-  NewDialogId,
-  CurrentDialogPayload,
-} from 'shared/store/dialogsSlice'
 import { SearchInput } from 'shared/ui/input'
 import { useFindDialogsQuery } from 'shared/api/endpoints/dialogsApi'
 import { DialogId } from 'shared/config'
+import { CurrentDialogPayload, NewDialogId } from 'shared/store/dialogs/types'
+import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 
 interface FilterByUsersProps {
   onSearch: (e: ChangeEvent<HTMLInputElement>) => void
@@ -90,7 +87,11 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
             }}
             title={dialog.user.name}
             message={dialog.message?.content ?? ''}
-            sentTime={timeStampToRuDate(dialog.message?.createdAt ?? '')}
+            sentTime={
+              dialog.message?.createdAt
+                ? dateToRuDate(new Date(dialog.message?.createdAt))
+                : ''
+            }
             onClick={() => {
               handleOpenDialog({
                 dialogId: dialog.id,
