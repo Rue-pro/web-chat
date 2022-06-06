@@ -57,8 +57,6 @@ export class SocketGateway implements OnGatewayConnection {
     @MessageBody() newMessage: NewMessageDto,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log('SEND_MESSAGE');
-    console.log(newMessage);
     try {
       const user = await this.tokenService.getUserFromSocket(socket);
       const userId = user.id;
@@ -89,8 +87,6 @@ export class SocketGateway implements OnGatewayConnection {
         conversation.user1 === userId ? conversation.user2 : conversation.user1,
       );
       if (connection) receivers.push(connection.socketId);
-      console.log('DO RECEIVE MESSAGES');
-      console.log(receivers);
       this.server.sockets.to(receivers).emit('receive_message', {
         id: message.id,
         content: newMessage.content,
@@ -142,11 +138,9 @@ export class SocketGateway implements OnGatewayConnection {
   @SubscribeMessage('request_all_dialogs')
   async requestAllDialogs(@ConnectedSocket() socket: Socket) {
     try {
-      console.log('REQUEST_ALL_DIALOGS');
       const user = await this.tokenService.getUserFromSocket(socket);
 
       const dialogs = await this.conversationService.findAll(user.id);
-      console.log(dialogs);
       socket.emit('send_all_dialogs', dialogs);
     } catch (e) {
       if (e instanceof IWSError || e.name === 'TokenExpiredError') {

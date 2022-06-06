@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios'
 import { toast } from 'react-toastify'
 
 import { API_URL } from 'shared/config'
-import { sleep } from 'shared/lib'
 import { TokenService } from 'shared/lib'
 
 export const APIInstance = axios.create({
@@ -21,11 +20,6 @@ APIInstance.interceptors.request.use(async ({ ...config }) => {
       ...(config.headers || {}),
     },
   }
-})
-
-APIInstance.interceptors.response.use(async response => {
-  await sleep()
-  return response
 })
 
 APIInstance.interceptors.request.use(

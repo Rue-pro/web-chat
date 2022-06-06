@@ -13,8 +13,6 @@ import { setupSwagger } from './api-docs.swagger';
 const isProd = process.env.DATABASE_URL;
 const PREFIX = process.env.GLOBAL_PREFIX ?? '';
 
-console.log('GLOBAL_PREFIX', PREFIX);
-
 const whitelist = isProd
   ? [
       'https://chat-swart.vercel.app',

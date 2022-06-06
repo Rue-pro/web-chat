@@ -42,7 +42,6 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   })
 
   useEffect(() => {
-    console.log('do_refetch')
     refetch()
   }, [refetch, query])
 

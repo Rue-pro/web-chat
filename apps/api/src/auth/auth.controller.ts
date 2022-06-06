@@ -30,8 +30,6 @@ export class AuthController {
       ? 'localhost'
       : origin.slice(indexOfDomain);
 
-    console.log('DOMAIN', domain);
-
     return reply
       .setCookie('access_token', accessToken.content, {
         domain: domain,

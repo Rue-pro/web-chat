@@ -28,23 +28,11 @@ export const socketMiddleware: Middleware = store => {
         store.dispatch(socketActions.connectionEstablished())
       })
 
-      socket.on('connect_error', err => {
-        /*console.log(`connect_error due to ${err.message}`)
-        console.log(err)*/
-      })
-
       socket.on('error', async (error: any) => {
-        console.log('SOCKET_ERROR', error)
         if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
           store.dispatch(authActions.logout())
         }
-        if (
-          (error.code === 403 &&
-            error.message.name === 'ERROR_ACCESS_TOKEN_EXPIRED') ||
-          (error.code === 400 &&
-            error.message.name === 'ERROR_FOUND_NO_ACCESS_TOKEN_COOKIE') ||
-          error.name === 'TokenExpiredError'
-        ) {
+        if (error.name === 'TokenExpiredError') {
           const data = await TokenService.refreshTokens()
           if (typeof data === 'object') {
             if (socket.io.engine) socket.io.engine.close()

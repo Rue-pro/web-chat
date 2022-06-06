@@ -31,12 +31,6 @@ const Chat: React.FC<ChatProps> = () => {
     }
   })
 
-  useEffect(() => {
-    if (currentDialog.type === DialogTypes.NEW_DIALOG) {
-      console.log('CURRENT_DIALOG_CHANGED', currentDialog)
-    }
-  }, [currentDialog])
-
   const handleOnSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setShowDialogs(!Boolean(e.target.value))
   }

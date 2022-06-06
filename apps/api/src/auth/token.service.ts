@@ -28,7 +28,6 @@ export class TokenService {
   }
 
   async verifyAccessToken(accessToken: string): Promise<TokenPayloadEntity> {
-    console.log('ACCESS_TOKEN', accessToken);
     try {
       return this.jwtService.verifyAsync(accessToken);
     } catch (e) {
