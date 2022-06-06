@@ -3,10 +3,11 @@ import { Stack, Box, styled } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-import { ActionButton } from 'shared/ui/button'
 import { PAGES } from 'shared/config'
 import { authActions } from 'shared/store/auth/authSlice'
 import { colors } from 'shared/theme/colors'
+import { ActionButton } from 'shared/ui/button'
+import { Container as DefaultContainer } from 'shared/ui/contianer'
 
 interface TemplateProps {
   avatar: ReactElement
@@ -46,13 +47,15 @@ const Container = styled(Stack)`
   justify-content: space-between;
 `
 
-const Header = styled(Box)`
+const Header = styled(DefaultContainer)`
   background-color: ${colors.gray[1]};
-  padding: 20px 16px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 `
 
-const Footer = styled(Box)`
-  padding: 20px 16px;
+const Footer = styled(DefaultContainer)`
+  padding-top: 20px;
+  padding-bottom: 20px;
 `
 
 const AvatarContainer = styled(Box)`

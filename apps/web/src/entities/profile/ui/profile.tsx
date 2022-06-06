@@ -16,7 +16,7 @@ const Profile: React.FC<ProfileProps> = () => {
   const { data, isLoading } = useGetProfileQuery(userId, {
     skip: !Boolean(userId),
   })
-  console.log('PROFILE', data)
+
   if (isLoading || !data) return <ProfileSkeleton />
 
   return (
