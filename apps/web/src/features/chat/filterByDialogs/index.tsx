@@ -42,6 +42,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
   })
 
   useEffect(() => {
+    console.log('do_refetch')
     refetch()
   }, [refetch, query])
 
@@ -63,6 +64,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
       dialogId?: DialogId
       newDialogId: NewDialogId
     }) => {
+      setQuery('')
       let payload: CurrentDialogPayload = dialogId
         ? {
             type: DialogTypes.EXISTING_DIALOG,
