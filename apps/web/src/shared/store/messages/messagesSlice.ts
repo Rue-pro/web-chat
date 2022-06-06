@@ -41,7 +41,7 @@ const messagesSlice = createSlice({
           date: new Date(),
           message:
             '[Receive all messages] Fetched messages format is wrong' +
-            JSON.stringify(messages, null, 2),
+            JSON.stringify(messages),
           details:
             'Array of ' +
             JSON.stringify({
@@ -54,6 +54,7 @@ const messagesSlice = createSlice({
         }
         state.data.messages = []
         console.error(error)
+        return
       }
 
       state.data.messages = messages.map(rawMessageToMessage)
@@ -73,10 +74,12 @@ const messagesSlice = createSlice({
           date: new Date(),
           message:
             '[Receive message] Fetched message format is wrong' +
-            JSON.stringify(message, null, 2),
+            JSON.stringify(message),
           details: '',
         }
         console.error(error)
+        state.status = 'error'
+        return
       }
 
       state.data.messages.push(rawMessageToMessage(action.payload.message))

@@ -1,4 +1,3 @@
-import { Record, Static, Number, Array } from 'runtypes'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { GenericState } from '../genericSlice'
@@ -9,6 +8,7 @@ import {
   Dialog,
 } from './types'
 import { rawDialogToDialog } from './model'
+import { ClientError } from 'shared/config'
 
 interface DialogData {
   currentDialog: CurrentDialogPayload
@@ -41,11 +41,31 @@ const dialogsSlice = createSlice({
       const dialogs = action.payload.dialogs
       const isDialogsArr = RawDialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
-        console.error(
-          'Fetched through socket dialogs format is wrong!',
-          dialogs,
-        )
+        const error: ClientError = {
+          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
+          date: new Date(),
+          message:
+            '[Receive all dialogs] Fetched dialogs format is wrong' +
+            JSON.stringify(dialogs),
+          details:
+            'Array of ' +
+            JSON.stringify({
+              id: 'Number',
+              user: {
+                id: 'String',
+                name: 'String',
+                avatar: 'String.Or(Null)',
+              },
+              message: {
+                id: 'Number',
+                content: 'String',
+                createdAt: 'String',
+              },
+            }),
+        }
         state.data.dialogs = []
+        console.error(error)
+        state.status = 'error'
         return
       }
       state.data.dialogs = dialogs.map(rawDialogToDialog)

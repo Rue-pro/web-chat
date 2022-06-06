@@ -12,6 +12,6 @@ export type ClientError = {
 
 export type UserId = string
 
-export type MessageId = string
+export type MessageId = number
 
 export type DialogId = number

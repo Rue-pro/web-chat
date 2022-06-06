@@ -1,4 +1,5 @@
 import { Record, String, Static, Number, Union, Literal, Array } from 'runtypes'
+import { MessageId } from 'shared/config'
 
 export enum ChatMessageEvent {
   SendMessage = 'send_message',
@@ -22,7 +23,7 @@ export type RawMessage = Static<typeof RawMessageSchema>
 export const RawMessagesArrSchema = Array(RawMessageSchema)
 
 export type Message = {
-  id: number
+  id: MessageId
   createdAt: Date
   content: string
   authorId: string

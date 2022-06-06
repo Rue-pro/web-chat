@@ -3,7 +3,7 @@ import { AnyAction, Dispatch, MiddlewareAPI } from 'redux'
 
 import { TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
-import { Dialog, RawDialog } from 'shared/store/dialogs/types'
+import { RawDialog } from 'shared/store/dialogs/types'
 
 export enum ChatDialogEvent {
   RequestAllDialogs = 'request_all_dialogs',

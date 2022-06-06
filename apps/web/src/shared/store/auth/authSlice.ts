@@ -67,6 +67,8 @@ const authSlice = createSlice({
           details: '',
         }
         console.error(error)
+        state.status = 'error'
+        return
       }
 
       state.status = 'idle'
