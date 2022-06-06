@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { ClientError } from 'shared/config'
+import { generateWrongFetchedFormatError } from 'shared/lib'
 import { GenericState } from '../types'
 import {
   CurrentDialogPayload,
@@ -42,31 +42,15 @@ const dialogsSlice = createSlice({
       const dialogs = action.payload.dialogs
       const isDialogsArr = RawDialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
-        const error: ClientError = {
-          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
-          date: new Date(),
-          message:
-            '[Receive all dialogs] Fetched dialogs format is wrong' +
-            JSON.stringify(dialogs),
-          details:
-            'Array of ' +
-            JSON.stringify({
-              id: 'Number',
-              user: {
-                id: 'String',
-                name: 'String',
-                avatar: 'String.Or(Null)',
-              },
-              message: {
-                id: 'Number',
-                content: 'String',
-                createdAt: 'String',
-              },
-            }),
-        }
-        state.data.dialogs = []
+        const error = generateWrongFetchedFormatError({
+          query: 'Receive all dialogs',
+          entity: 'dialogs',
+          res: dialogs,
+          expectedType: RawDialogArrSchema,
+        })
         console.error(error)
-        state.status = 'error'
+        state.data.dialogs = []
+        state.status = 'idle'
         return
       }
       state.data.dialogs = dialogs.map(rawDialogToDialog)

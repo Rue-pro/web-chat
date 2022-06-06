@@ -1,8 +1,7 @@
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
 import { AxiosRequestConfig, AxiosError } from 'axios'
 
-import { API_URL, ServerError } from 'shared/config'
-import { APIInstance } from 'shared/api'
+import { APIInstance, API_URL, ServerError } from 'shared/config'
 
 const CustomQuery =
   (

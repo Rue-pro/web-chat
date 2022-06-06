@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { ClientError, DialogId } from 'shared/config'
+import { DialogId } from 'shared/config'
+import { generateWrongFetchedFormatError } from 'shared/lib'
 import { GenericState } from '../types'
 import { CurrentDialogExisting, CurrentDialogNew } from '../dialogs/types'
 import {
@@ -36,24 +37,15 @@ const messagesSlice = createSlice({
       const messages = action.payload.messages
       const isRawMessagesArr = RawMessagesArrSchema.guard(messages)
       if (!isRawMessagesArr) {
-        const error: ClientError = {
-          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
-          date: new Date(),
-          message:
-            '[Receive all messages] Fetched messages format is wrong' +
-            JSON.stringify(messages),
-          details:
-            'Array of ' +
-            JSON.stringify({
-              id: 'Number',
-              createdAt: 'String',
-              content: 'String',
-              authorId: 'String',
-              conversationId: 'Number',
-            }),
-        }
-        state.data.messages = []
+        const error = generateWrongFetchedFormatError({
+          query: 'Receive all messages',
+          entity: 'messages',
+          res: messages,
+          expectedType: RawMessagesArrSchema,
+        })
         console.error(error)
+        state.data.messages = []
+        state.status = 'idle'
         return
       }
 
@@ -69,16 +61,14 @@ const messagesSlice = createSlice({
       const message = action.payload.message
       const isRawMessage = RawMessageSchema.guard(message)
       if (!isRawMessage) {
-        const error: ClientError = {
-          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
-          date: new Date(),
-          message:
-            '[Receive message] Fetched message format is wrong' +
-            JSON.stringify(message),
-          details: '',
-        }
+        const error = generateWrongFetchedFormatError({
+          query: 'Receive message',
+          entity: 'message',
+          res: message,
+          expectedType: RawMessageSchema,
+        })
         console.error(error)
-        state.status = 'error'
+        state.status = 'idle'
         return
       }
 

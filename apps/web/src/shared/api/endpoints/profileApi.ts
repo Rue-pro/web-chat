@@ -1,6 +1,7 @@
 import { Record, String, Static, Null } from 'runtypes'
 
 import { UserId } from 'shared/config'
+import { generateWrongFetchedFormatError } from 'shared/lib'
 import { emptyApi } from './emptyApi'
 
 const UserSchema = Record({
@@ -17,7 +18,7 @@ const UserSchema = Record({
 
 type User = Static<typeof UserSchema>
 
-const defaultUser = {
+const defaultUser: User = {
   id: '',
   name: '',
   email: '',
@@ -39,12 +40,18 @@ const extendedApi = emptyApi
           method: 'GET',
         }),
         transformResponse: (res): User => {
-          console.log('PROFILE_DATA_TRANSFORM_RESPONSE', res)
           const isUserSchema = UserSchema.guard(res)
-          if (isUserSchema) {
-            return res
+          if (!isUserSchema) {
+            const error = generateWrongFetchedFormatError({
+              query: 'Get profile query',
+              entity: 'profile',
+              res,
+              expectedType: UserSchema,
+            })
+            console.error(error)
+            return defaultUser
           }
-          return defaultUser
+          return res
         },
       }),
     }),

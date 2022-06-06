@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { Record, String, Null } from 'runtypes'
 
-import { API_URL, ClientError } from 'shared/config'
+import { API_URL } from 'shared/config'
 import { BrowserStorageService } from 'shared/lib'
+import { generateWrongFetchedFormatError } from './errors'
 
 const APIInstance = axios.create({
   baseURL: API_URL,
@@ -90,27 +91,12 @@ class TokenService {
 
         const isRawTokensPayload = RawTokensPayloadSchema.guard(data)
         if (!isRawTokensPayload) {
-          const error: ClientError = {
-            type: 'ERROR_BACKEND_REQUEST_VALIDATION',
-            date: new Date(),
-            message:
-              '[Refresh tokens] Fetched token result format is wrong' +
-              JSON.stringify(data, null, 2),
-            details:
-              'Expected object: ' +
-              JSON.stringify({
-                accessToken: {
-                  expiresIn: 'InstanceOf(Date)',
-                },
-                refreshToken: {
-                  expiresIn: 'InstanceOf(Date)',
-                },
-                user: {
-                  id: 'String',
-                },
-              }),
-          }
-
+          const error = generateWrongFetchedFormatError({
+            query: 'Refresh tokens',
+            entity: 'token',
+            res: data,
+            expectedType: RawTokensPayloadSchema,
+          })
           console.error(error)
           return RefreshTokensResultError.FETCHED_FORMAT_IS_WRONG
         }

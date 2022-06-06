@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { APIInstance } from 'shared/api'
-import { ClientError } from 'shared/config'
-import { BrowserStorageService } from 'shared/lib'
-import { TokenService } from 'shared/lib'
+import { APIInstance } from 'shared/config'
+import {
+  BrowserStorageService,
+  generateWrongFetchedFormatError,
+  TokenService,
+} from 'shared/lib'
 import { GenericState } from '../types'
 import { User, LoginData, RawLoggedDataSchema } from './types'
 
@@ -58,16 +60,15 @@ const authSlice = createSlice({
       const loggedData = action.payload
       const isRawLoggedData = RawLoggedDataSchema.guard(loggedData)
       if (isRawLoggedData) {
-        const error: ClientError = {
-          type: 'ERROR_BACKEND_REQUEST_VALIDATION',
-          date: new Date(),
-          message:
-            '[Login fulfilled] Fetched logged data format is wrong' +
-            JSON.stringify(loggedData),
-          details: '',
-        }
+        const error = generateWrongFetchedFormatError({
+          query: 'Login',
+          entity: 'logged',
+          res: loggedData,
+          expectedType: RawLoggedDataSchema,
+        })
         console.error(error)
         state.status = 'error'
+        state.error = 'Something went wrong, try again later.'
         return
       }
 
@@ -94,9 +95,7 @@ export default authSlice.reducer
 export const login = createAsyncThunk(
   'auth/login',
   async (loginData: LoginData) => {
-    console.log('login', loginData)
     const response = await APIInstance.post('/auth/login', loginData)
-    console.log('Auth Login', response)
     return response.data
   },
 )
