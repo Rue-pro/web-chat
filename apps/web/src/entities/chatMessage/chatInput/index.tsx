@@ -44,7 +44,7 @@ const ChatInput: React.FC = () => {
     <Box>
       <Input
         formName="chat-input"
-        inputId="adasd"
+        inputId="chat-input"
         variant="outlined"
         placeholder="Write a message..."
         onChange={handleChange}

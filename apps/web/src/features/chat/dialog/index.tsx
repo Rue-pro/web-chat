@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Stack, Box, styled, IconButton } from '@mui/material'
+import { Stack, Box, styled, IconButton, BoxProps } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import { ChatMessage } from 'entities/chatMessage'
@@ -10,9 +10,9 @@ import { messagesActions } from 'shared/store/messages/messagesSlice'
 import { colors } from 'shared/theme/colors'
 import { DialogTypes } from 'shared/store/dialogs/types'
 
-interface DialogProps {}
+interface DialogProps extends BoxProps {}
 
-const Dialog: React.FC<DialogProps> = () => {
+const Dialog: React.FC<DialogProps> = ({ ...boxProps }) => {
   const dispatch = useDispatch()
   const { status, messages, userId, currentDialog } = useSelector(
     (state: TStore) => {
@@ -75,10 +75,8 @@ const Dialog: React.FC<DialogProps> = () => {
   }
 
   return (
-    <Container>
-      <Stack
-        ref={containerRef}
-        sx={{ height: '700px', width: '100%', overflowY: 'auto' }}>
+    <Container {...boxProps}>
+      <MessagesContainer ref={containerRef}>
         {messages?.map(message => (
           <ChatMessage
             key={message.id}
@@ -87,7 +85,7 @@ const Dialog: React.FC<DialogProps> = () => {
             sentTime={dateToRuDate(message.createdAt)}
           />
         ))}
-      </Stack>
+      </MessagesContainer>
 
       {scrolledUpByUser && (
         <ScrollDownButton onClick={scrollToBottom}>
@@ -105,6 +103,11 @@ const Container = styled(Box)`
   position: relative;
 `
 
+const MessagesContainer = styled(Stack)`
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+`
 const ButtonBackground = styled(Box)`
   position: absolute;
   top: 0;

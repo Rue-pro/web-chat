@@ -23,7 +23,7 @@ const FormView = ({
   isSubmitting,
 }: FormViewProps): React.ReactElement => {
   return (
-    <Container>
+    <Stack>
       <Input
         formName={formName}
         inputId="email"
@@ -47,12 +47,8 @@ const FormView = ({
       <ActionButton type="submit" disabled={isSubmitting} onClick={submitForm}>
         Sign In
       </ActionButton>
-    </Container>
+    </Stack>
   )
 }
 
 export default FormView
-
-const Container = styled(Stack)`
-  width: 350px;
-`

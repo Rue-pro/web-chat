@@ -50,22 +50,28 @@ const Form: React.FC<FormProps> = ({ formName, pageToNavigate }) => {
 
   return (
     <Container>
-      {status === 'error' && <Alert severity="error">{error}</Alert>}
-      <Formik
-        initialValues={{
-          email: '',
-          password: '',
-        }}
-        validationSchema={Schema}
-        onSubmit={handleSubmit}
-        component={props => (
-          <FormView
-            {...props}
-            formName={formName}
-            isSubmitting={isSubmitting}
-          />
+      <Wrapper>
+        {status === 'error' && (
+          <Alert severity="error" sx={{ mb: '20px' }}>
+            {error}
+          </Alert>
         )}
-      />
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          validationSchema={Schema}
+          onSubmit={handleSubmit}
+          component={props => (
+            <FormView
+              {...props}
+              formName={formName}
+              isSubmitting={isSubmitting}
+            />
+          )}
+        />
+      </Wrapper>
     </Container>
   )
 }
@@ -78,4 +84,8 @@ const Container = styled(Stack)`
   align-items: center;
   justify-content: center;
   border-bottom: 4px solid ${colors.primary};
+`
+
+const Wrapper = styled(Stack)`
+  width: 350px;
 `

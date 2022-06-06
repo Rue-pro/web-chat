@@ -1,14 +1,19 @@
 import React, { KeyboardEvent, useState, ChangeEvent, useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { Box, Grid, styled } from '@mui/material'
+import { Grid, styled } from '@mui/material'
 
-import { Dialog, Dialogs, FilterByDialogs } from 'features/chat'
+import {
+  Dialog as DialogDefault,
+  Dialogs,
+  FilterByDialogs,
+} from 'features/chat'
 import { ChatInput } from 'entities/chatMessage'
 import { InfoTemplate } from 'shared/ui/template'
 import { TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 import { colors } from 'shared/theme/colors'
 import { DialogTypes } from 'shared/store/dialogs/types'
+import { Container } from 'shared/ui/contianer'
 
 interface ChatProps {}
 
@@ -31,11 +36,11 @@ const Chat: React.FC<ChatProps> = () => {
   }, [])
 
   return (
-    <Container onKeyDown={keyDownHandler} tabIndex={0} container spacing={2}>
+    <Wrapper onKeyDown={keyDownHandler} tabIndex={0} container spacing={2}>
       <DialogsContainer item xs={4}>
-        <FilterContainer>
+        <Container>
           <FilterByDialogs onSearch={handleOnSearch} />
-        </FilterContainer>
+        </Container>
 
         {showDialogs && <Dialogs />}
       </DialogsContainer>
@@ -49,13 +54,13 @@ const Chat: React.FC<ChatProps> = () => {
           </>
         )}
       </DialogContainer>
-    </Container>
+    </Wrapper>
   )
 }
 
 export default Chat
 
-const Container = styled(Grid)`
+const Wrapper = styled(Grid)`
   outline: none;
   height: 100%;
 `
@@ -65,12 +70,13 @@ const DialogsContainer = styled(Grid)`
   overflow-y: auto;
 `
 
+const Dialog = styled(DialogDefault)`
+  height: calc(100% - 60px);
+`
+
 const DialogContainer = styled(Grid)`
   background-color: ${colors.gray[1]};
   height: 100%;
-`
-
-const FilterContainer = styled(Box)`
-  margin-left: 20px;
-  margin-right: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 `
