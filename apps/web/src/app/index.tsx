@@ -8,6 +8,7 @@ import { socketActions } from 'shared/store/socket/socketSlice'
 import { RefreshTokensResultError, TokenService } from 'shared/lib'
 import { authActions } from 'shared/store/auth/authSlice'
 import { UserId } from 'shared/config'
+import { Spinner } from 'shared/ui/spinner'
 
 const App: React.FC = () => {
   const [refresingTokens, setRefreshingTokens] = useState(false)
@@ -43,8 +44,9 @@ const App: React.FC = () => {
   }, [dispatch, isAuth])
 
   if (refresingTokens) {
-    return <h1>ОБНОВЛЯЮ ТОКЕНЫ</h1>
+    return <Spinner />
   }
+
   return <Pages />
 }
 
