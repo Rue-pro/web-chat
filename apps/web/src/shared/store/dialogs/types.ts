@@ -30,10 +30,12 @@ export enum DialogTypes {
 export interface CurrentDialogExisting {
   type: DialogTypes.EXISTING_DIALOG
   id: number
+  title: string
 }
 export interface CurrentDialogNew {
   type: DialogTypes.NEW_DIALOG
   id: string
+  title: string
 }
 interface NoCurrentDialog {
   type: DialogTypes.NO_DIALOG

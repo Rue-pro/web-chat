@@ -9,7 +9,7 @@ import { colors } from 'shared/theme/colors'
 import { DialogTypes } from 'shared/store/dialogs/types'
 
 interface Props {
-  onSend: () => void
+  onSend?: () => void
 }
 const ChatInput: React.FC<Props> = ({ onSend }) => {
   const dispatch = useDispatch<TDispatch>()
@@ -36,7 +36,7 @@ const ChatInput: React.FC<Props> = ({ onSend }) => {
       }
       dispatch(messagesActions.submitMessage(dialogMessage))
       setMessage('')
-      onSend()
+      if (onSend) onSend()
     }
   }
 

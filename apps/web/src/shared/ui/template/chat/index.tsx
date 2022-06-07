@@ -58,9 +58,7 @@ const ChatTemplate: React.FC<Props> = ({ aside, title, main }) => {
         </Toolbar>
       </Header>
       <Modal open={open} onClose={handleClose}>
-        <Paper elevation={0} square sx={{ height: '100vh', width: '30%' }}>
-          {aside}
-        </Paper>
+        <LeftModal>{aside}</LeftModal>
       </Modal>
       <Main>{main}</Main>
     </>
@@ -81,4 +79,12 @@ const Main = styled(Box)`
   height: calc(100vh - 66px);
   width: 100%;
   padding-top: 16px;
+`
+
+const LeftModal = styled(Paper)`
+  height: 100vh;
+  width: 40%;
+  @media screen and (max-width: 768px) {
+    width: 80%;
+  }
 `

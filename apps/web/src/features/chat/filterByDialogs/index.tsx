@@ -59,19 +59,23 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
     ({
       dialogId,
       newDialogId,
+      title,
     }: {
       dialogId?: DialogId
       newDialogId: NewDialogId
+      title: string
     }) => {
       setQuery('')
       let payload: CurrentDialogPayload = dialogId
         ? {
             type: DialogTypes.EXISTING_DIALOG,
             id: dialogId,
+            title,
           }
         : {
             type: DialogTypes.NEW_DIALOG,
             id: newDialogId,
+            title,
           }
       dispatch(dialogsActions.setCurrentDialog(payload))
     },
@@ -111,6 +115,7 @@ const FilterByDialogs: React.FC<FilterByUsersProps> = ({ onSearch }) => {
               handleOpenDialog({
                 dialogId: dialog.id,
                 newDialogId: dialog.user.id,
+                title: dialog.user.name,
               })
             }}
             isCurrent={currentDialogId === dialog.id}

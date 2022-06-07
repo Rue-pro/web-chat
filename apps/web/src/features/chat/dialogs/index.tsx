@@ -7,6 +7,7 @@ import { TDispatch, TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 import { Dialog, DialogTypes } from 'shared/store/dialogs/types'
 import { DialogId } from 'shared/config'
+import useIsDevice from 'shared/lib/useDevice'
 
 interface DialogsProps {}
 
@@ -22,6 +23,8 @@ const Dialogs: React.FC<DialogsProps> = () => {
       }
     },
   )
+
+  const { isDesktop } = useIsDevice()
 
   useEffect(() => {
     if (isConnected) {
@@ -39,22 +42,24 @@ const Dialogs: React.FC<DialogsProps> = () => {
       )
       return
     }
-    if (!currentDialogId) {
+    if (!currentDialogId && isDesktop) {
       dispatch(
         dialogsActions.setCurrentDialog({
           type: DialogTypes.EXISTING_DIALOG,
           id: dialogs[0].id,
+          title: dialogs[0].user.name,
         }),
       )
     }
-  }, [dispatch, dialogs, status, currentDialogId])
+  }, [dispatch, dialogs, status, currentDialogId, isDesktop])
 
   const handleOpenDialog = useCallback(
-    (id: DialogId) => {
+    (id: DialogId, title: string) => {
       dispatch(
         dialogsActions.setCurrentDialog({
           type: DialogTypes.EXISTING_DIALOG,
           id,
+          title,
         }),
       )
     },
@@ -74,7 +79,7 @@ const Dialogs: React.FC<DialogsProps> = () => {
           message={dialog.message.content}
           sentTime={dateToRuDate(new Date(dialog.message.createdAt))}
           onClick={() => {
-            handleOpenDialog(dialog.id)
+            handleOpenDialog(dialog.id, dialog.user.name)
           }}
           isCurrent={currentDialogId === dialog.id}
         />

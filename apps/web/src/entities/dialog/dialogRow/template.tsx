@@ -10,10 +10,10 @@ interface Props {
 
 const Template: React.FC<Props> = ({ avatar, title, message, info }) => (
   <Grid container spacing={2}>
-    <AvatarContainer item xs={1} md={2}>
+    <AvatarContainer item xs={2} sm={1} md={2}>
       {avatar}
     </AvatarContainer>
-    <Grid item xs={9} md={8}>
+    <Grid item xs={8} sm={9} md={8}>
       {title}
       {message}
     </Grid>

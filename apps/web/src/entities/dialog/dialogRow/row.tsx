@@ -61,6 +61,7 @@ const Time = styled(Box)`
   font-size: 12px;
   line-height: 16px;
   font-weight: 400;
+  text-align: end;
 `
 
 const Text = styled((props: TypographyProps) => <Typography {...props} />)`
