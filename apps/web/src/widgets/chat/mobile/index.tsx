@@ -75,7 +75,6 @@ const DialogsContainer = styled(Grid)`
   height: 100%;
   overflow-y: auto;
   padding-left: 20px;
-  padding-right: 20px;
 `
 
 const Dialog = styled(DialogDefault)`
