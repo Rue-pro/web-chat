@@ -33,11 +33,10 @@ export class MessagesService {
       (
         qb: SelectQueryBuilder<MessageEntity>,
       ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
+        return qb
           .select('messages')
           .from(MessageEntity, 'messages')
           .orderBy({ 'messages.createdAt': 'ASC' });
-        return r;
       },
       'message',
       'conversation.id=message."messages_conversationId"',

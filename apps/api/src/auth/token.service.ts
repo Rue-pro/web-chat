@@ -29,7 +29,7 @@ export class TokenService {
 
   async verifyAccessToken(accessToken: string): Promise<TokenPayloadEntity> {
     try {
-      return this.jwtService.verifyAsync(accessToken);
+      return await this.jwtService.verifyAsync(accessToken);
     } catch (e) {
       if (e.name === 'TokenExpiredError') {
         throw new ForbiddenException({

@@ -14,16 +14,14 @@ interface DialogProps extends BoxProps {}
 
 const Dialog: React.FC<DialogProps> = ({ ...boxProps }) => {
   const dispatch = useDispatch()
-  const { status, messages, userId, currentDialog } = useSelector(
-    (state: TStore) => {
-      return {
-        status: state.MessagesReducer.status,
-        messages: state.MessagesReducer.data.messages,
-        userId: state.AuthReducer.data.user.userId,
-        currentDialog: state.DialogsReducer.data.currentDialog,
-      }
-    },
-  )
+  const { messages, userId, currentDialog } = useSelector((state: TStore) => {
+    return {
+      status: state.MessagesReducer.status,
+      messages: state.MessagesReducer.data.messages,
+      userId: state.AuthReducer.data.user.userId,
+      currentDialog: state.DialogsReducer.data.currentDialog,
+    }
+  })
 
   const containerRef = useRef<HTMLDivElement>()
   const [scrolledUpByUser, setScrolledUpByUser] = useState<boolean>(false)

@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { UserEntity } from 'src/users/entity';
 
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
@@ -47,16 +48,11 @@ export class AuthController {
       });
   }
 
-  @Post('login')
-  async login(
-    @Body() { email, password }: LoginDto,
-    @Res() reply: FastifyReply,
-    @Req() request: FastifyRequest,
+  private async sendAuthData(
+    reply: FastifyReply,
+    request: FastifyRequest,
+    user: UserEntity,
   ) {
-    const user = await this.authService.getUserForEmailAndPassword(
-      email,
-      password,
-    );
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
 
@@ -81,6 +77,20 @@ export class AuthController {
       },
       user,
     });
+  }
+
+  @Post('login')
+  async login(
+    @Body() { email, password }: LoginDto,
+    @Res() reply: FastifyReply,
+    @Req() request: FastifyRequest,
+  ) {
+    const user = await this.authService.getUserForEmailAndPassword(
+      email,
+      password,
+    );
+
+    this.sendAuthData(reply, request, user);
   }
 
   @Get('logout')
@@ -101,29 +111,7 @@ export class AuthController {
     const user = await this.tokenService.getUserFromToken(
       request.cookies.refresh_token,
     );
-    const accessToken = await this.tokenService.generateAccessToken(user.id);
-    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
 
-    await this.userService.setCurrentRefreshToken(
-      refreshToken.content,
-      user.id,
-    );
-
-    const newReply = this.setupAuthTokensCookie(
-      reply,
-      request,
-      accessToken,
-      refreshToken,
-    );
-
-    newReply.status(200).send({
-      accessToken: {
-        expiresIn: accessToken.expiresIn,
-      },
-      refreshToken: {
-        expiresIn: refreshToken.expiresIn,
-      },
-      user,
-    });
+    this.sendAuthData(reply, request, user);
   }
 }

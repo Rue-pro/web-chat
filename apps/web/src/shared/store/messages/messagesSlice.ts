@@ -30,11 +30,11 @@ const messagesSlice = createSlice({
   reducers: {
     receiveAllMessages: (
       state,
-      action: PayloadAction<{
+      _action: PayloadAction<{
         messages: RawMessage[]
       }>,
     ) => {
-      const messages = action.payload.messages
+      const messages = _action.payload.messages
       const isRawMessagesArr = RawMessagesArrSchema.guard(messages)
       if (!isRawMessagesArr) {
         const error = generateWrongFetchedFormatError({
@@ -53,11 +53,11 @@ const messagesSlice = createSlice({
     },
     receiveMessage: (
       state,
-      action: PayloadAction<{
+      _action: PayloadAction<{
         message: RawMessage
       }>,
     ) => {
-      const message = action.payload.message
+      const message = _action.payload.message
       const isRawMessage = RawMessageSchema.guard(message)
       if (!isRawMessage) {
         const error = generateWrongFetchedFormatError({
@@ -71,27 +71,25 @@ const messagesSlice = createSlice({
         return
       }
 
-      state.data.messages.push(rawMessageToMessage(action.payload.message))
+      state.data.messages.push(rawMessageToMessage(_action.payload.message))
       state.status = 'idle'
     },
     submitMessage: (
       state,
-      action: PayloadAction<{
+      _action: PayloadAction<{
         currentDialog: CurrentDialogExisting | CurrentDialogNew
         content: string
       }>,
     ) => {
       state.status = 'loading'
-      return
     },
     getAllMessages: (
       state,
-      action: PayloadAction<{
+      _action: PayloadAction<{
         dialogId: DialogId
       }>,
     ) => {
       state.status = 'loading'
-      return
     },
     resetAllMessages(state) {
       state.data.messages = []

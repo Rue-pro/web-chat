@@ -64,11 +64,10 @@ export class ConversationsService {
       (
         qb: SelectQueryBuilder<MessageEntity>,
       ): SelectQueryBuilder<MessageEntity> => {
-        const r = qb
+        return qb
           .from(MessageEntity, 'messages')
           .orderBy({ 'messages.createdAt': 'ASC' })
           .take(1);
-        return r;
       },
       'messages',
       'messages."authorId" = user.id',
@@ -129,7 +128,7 @@ export class ConversationsService {
   }
 
   async findOne(id: ConversationId): Promise<ConversationEntity> {
-    const query = await this.conversationRepository.createQueryBuilder('*');
+    const query = this.conversationRepository.createQueryBuilder('*');
     query.select(['id', 'user1', 'user2']);
     query.setParameter('conversationId', id);
     query.where('id = :conversationId');
@@ -141,9 +140,8 @@ export class ConversationsService {
     authorId: UserId,
     receiverId: UserId,
   ): Promise<ConversationEntity> {
-    const query = await this.conversationRepository.createQueryBuilder(
-      'conversation',
-    );
+    const query =
+      this.conversationRepository.createQueryBuilder('conversation');
     query.setParameter('authorId', authorId);
     query.setParameter('receiverId', receiverId);
     query.andWhere(
@@ -160,7 +158,7 @@ export class ConversationsService {
     const conversation = await query.getOne();
 
     if (!conversation) {
-      return await this.conversationRepository.save({
+      return this.conversationRepository.save({
         user1: authorId,
         user2: receiverId,
       });

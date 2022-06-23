@@ -9,7 +9,6 @@ import {
 import bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Optional } from '@nestjs/common';
 
 export type UserId = string;
 export type UserName = string;

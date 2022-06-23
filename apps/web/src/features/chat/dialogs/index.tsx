@@ -7,7 +7,7 @@ import { TDispatch, TStore } from 'shared/store'
 import { dialogsActions } from 'shared/store/dialogs/dialogsSlice'
 import { Dialog, DialogTypes } from 'shared/store/dialogs/types'
 import { DialogId } from 'shared/config'
-import useIsDevice from 'shared/lib/useDevice'
+import useIsDevice from 'shared/lib/useIsDevice'
 
 interface DialogsProps {}
 

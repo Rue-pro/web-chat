@@ -35,11 +35,11 @@ const dialogsSlice = createSlice({
   reducers: {
     receiveAllDialogs: (
       state,
-      action: PayloadAction<{
+      _action: PayloadAction<{
         dialogs: RawDialog[]
       }>,
     ) => {
-      const dialogs = action.payload.dialogs
+      const dialogs = _action.payload.dialogs
       const isDialogsArr = RawDialogArrSchema.guard(dialogs)
       if (!isDialogsArr) {
         const error = generateWrongFetchedFormatError({
@@ -58,7 +58,6 @@ const dialogsSlice = createSlice({
     },
     getAllDialogs: state => {
       state.status = 'loading'
-      return
     },
     setCurrentDialog: (state, action: PayloadAction<CurrentDialogPayload>) => {
       state.data.currentDialog = action.payload

@@ -1,4 +1,4 @@
-import { Middleware } from 'redux'
+import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux'
 import { io, Socket } from 'socket.io-client'
 
 import { SOCKET_URL } from 'shared/config'
@@ -17,6 +17,7 @@ export const socketMiddleware: Middleware = store => {
   return next => action => {
     const isConnectionEstablished =
       socket && store.getState().SocketReducer.isConnectionEstablished
+
     if (socketActions.startConnecting.match(action)) {
       socket = io(SOCKET_URL, {
         withCredentials: true,
@@ -29,19 +30,7 @@ export const socketMiddleware: Middleware = store => {
       })
 
       socket.on('error', async (error: any) => {
-        if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
-          store.dispatch(authActions.logout())
-        }
-        if (error.name === 'TokenExpiredError') {
-          const data = await TokenService.refreshTokens()
-          if (typeof data === 'object') {
-            if (socket.io.engine) socket.io.engine.close()
-            socket.emit(error.query.event, error.query.payload)
-          }
-          if (data === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
-            store.dispatch(authActions.logout())
-          }
-        }
+        socketErrorHandler(socket, error, store)
       })
 
       messagesSocketListeners(socket, store)
@@ -52,5 +41,26 @@ export const socketMiddleware: Middleware = store => {
     dialogsSocketEmiters(socket, action, isConnectionEstablished)
 
     return next(action)
+  }
+}
+
+const socketErrorHandler = async (
+  socket: Socket,
+  error: any,
+  store: MiddlewareAPI<Dispatch<AnyAction>, any>,
+) => {
+  if (error.message.name === 'ERROR_FOUND_NO_COOKIE') {
+    store.dispatch(authActions.logout())
+    return
+  }
+  if (error.name === 'TokenExpiredError') {
+    const data = await TokenService.refreshTokens()
+    if (typeof data === 'object') {
+      if (socket.io.engine) socket.io.engine.close()
+      socket.emit(error.query.event, error.query.payload)
+    }
+    if (data === RefreshTokensResultError.REFRESH_TOKEN_EXPIRED) {
+      store.dispatch(authActions.logout())
+    }
   }
 }

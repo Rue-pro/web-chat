@@ -15,6 +15,7 @@ export class DialogEntity {
   message: ConversationMessage;
 
   constructor(user: ConversationUser, message?: ConversationMessage) {
-    (this.user = user), (this.message = message);
+    this.user = user;
+    this.message = message;
   }
 }

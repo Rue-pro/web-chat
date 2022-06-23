@@ -1,6 +1,6 @@
 import { Middleware } from 'redux'
 
-export const myLogger: Middleware = store => next => action => {
+export const myLogger: Middleware = _store => next => action => {
   /*=console.group(`Request ${action?.type}`)
   console.log('store', store)
   console.log(' [f(action)]', next)

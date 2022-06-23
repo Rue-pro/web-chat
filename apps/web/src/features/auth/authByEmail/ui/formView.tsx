@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormikProps } from 'formik'
-import { Stack, styled } from '@mui/material'
+import { Stack } from '@mui/material'
 
 import { Input } from 'shared/ui/input'
 import { ActionButton } from 'shared/ui/button'

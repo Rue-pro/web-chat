@@ -4,7 +4,6 @@ import { DeleteResult, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 
-import { ConnectionArgsDto } from 'src/page/dto';
 import {
   CreateUserRequestDto,
   SearchFilterUserRequestDto,
@@ -42,8 +41,6 @@ export class UsersService {
 
     return query.getMany();
   }
-
-  async findPage(connectionArgs: ConnectionArgsDto) {}
 
   async findOne(id: UserId): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ where: { id } });

@@ -41,7 +41,7 @@ export class SocketGateway implements OnGatewayConnection {
      */
   }
 
-  async handleConnection(socket: Socket, ...args: any[]) {
+  async handleConnection(socket: Socket) {
     try {
       const user = await this.tokenService.getUserFromSocket(socket);
 

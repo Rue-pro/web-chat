@@ -1,6 +1,6 @@
 import React from 'react'
 
-import useIsDevice from 'shared/lib/useDevice'
+import useIsDevice from 'shared/lib/useIsDevice'
 import DesktopChat from './desktop'
 import MobileChat from './mobile'
 
