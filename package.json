@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/Rue-pro/web-chat.git"
   },
+  "scripts": {
+    "sonar": "docker run --rm -v \"${PWD}:/usr/src\" sonarsource/sonar-scanner-cli"
+  },
   "author": "Rue Sullivan",
   "bugs": {
     "url": "https://github.com/Rue-pro/web-chat/issues"
